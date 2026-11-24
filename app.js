@@ -26,11 +26,16 @@ if(FB_OK)for(const k of Object.keys(COL)){
   if(!S.canW)status('');rerender();
  },()=>status('Synchronisation interrompue'));
 }
-async function put(k,o){const {id,...data}=o;
+async function put(k,o){const {id,src,...data}=o;
  const i=D[k].findIndex(x=>x.id===id);i<0?D[k].push(o):D[k][i]=o;rerender();
  try{await setDoc(doc(db,COL[k],id),data);status('Publié')}catch(e){status('Échec : '+(e.code||'erreur'))}}
-async function drop(k,id){const o=D[k].find(x=>x.id===id);D[k]=D[k].filter(x=>x.id!==id);rerender();
- try{await deleteDoc(doc(db,COL[k],id));status('Supprimé')}catch(e){status('Échec : '+(e.code||'erreur'))}return o}
+async function drop(k,id){const o=all(k).find(x=>x.id===id);D[k]=D[k].filter(x=>x.id!==id);
+ const fromR=R[k].some(x=>x.id===id);if(fromR)HID.add(id);rerender();
+ try{await deleteDoc(doc(db,COL[k],id));if(fromR)await setDoc(doc(db,'masques','liste'),{ids:[...HID]});status('Supprimé')}catch(e){status('Échec : '+(e.code||'erreur'))}return o}
+if(FB_OK)onSnapshot(doc(db,'masques','liste'),s=>{HID=new Set(s.exists()?s.data().ids||[]:[]);rerender()},()=>{});
+async function loadR(){try{const r=await fetch('data.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+ for(const k of ['notes','ann','photos'])R[k]=Array.isArray(j[k])?j[k].map(x=>({...x,src:'claude'})):[];rerender()}catch(e){}}
+loadR();setInterval(loadR,60*1000);
 
 /* ---------- connexion du propriétaire ---------- */
 $('#login').addEventListener('click',async()=>{
@@ -99,16 +104,16 @@ $('#n-colors').innerHTML=COLORS.map(c=>`<button type="button" class="sw${c===S.c
 $('#n-colors').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;S.col=b.dataset.c;document.querySelectorAll('.sw').forEach(x=>x.classList.toggle('sel',x===b))});
 const nc=c=>COLORS.includes(c)?c:COLORS[0];
 function renderNotes(){
- const L=[...D.notes].sort((x,y)=>(y.pin|0)-(x.pin|0)||(x.done|0)-(y.done|0)||y.t-x.t);
+ const L=[...all('notes')].sort((x,y)=>(y.pin|0)-(x.pin|0)||(x.done|0)-(y.done|0)||y.t-x.t);
  $('#n-list').innerHTML=L.length?L.map((n,i)=>`<article class="note${n.done?' done':''}" style="background:${nc(n.c)};--r:${[-1.2,.8,-.4,1.1,0][i%5]}deg"><small>${n.pin?'Épinglée · ':''}${esc(new Date(n.t).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}))}</small><p>${esc(n.text)}</p>${S.canW?`<div class="row"><button type="button" data-n="done" data-id="${esc(n.id)}" aria-label="Fait">${n.done?'↺':'✓'}</button><button type="button" data-n="pin" data-id="${esc(n.id)}">${n.pin?'Désépingler':'Épingler'}</button><button type="button" data-n="edit" data-id="${esc(n.id)}">Modifier</button><button type="button" data-n="del" data-id="${esc(n.id)}" aria-label="Supprimer">✕</button></div>`:''}</article>`).join(''):'<div class="empty plate">Aucune note pour l\'instant.</div>';
  $('#h-notes').innerHTML=L.filter(n=>!n.done).slice(0,5).map(n=>`<li class="mline"><span class="dot" style="background:${nc(n.c)}"></span><span>${esc(n.text.length>90?n.text.slice(0,90)+'…':n.text)}</span></li>`).join('')||'<li class="empty">Rien à signaler.</li>';
 }
 $('#n-add').addEventListener('click',()=>{const text=$('#n-text').value.trim();if(!text||!S.canW)return;
- if(S.edit){const n=D.notes.find(x=>x.id===S.edit);if(n)put('notes',{...n,text,c:S.col});S.edit=null;$('#n-add').textContent='Ajouter la note';$('#n-cancel').hidden=true}
+ if(S.edit){const n=all('notes').find(x=>x.id===S.edit);if(n)put('notes',{...n,text,c:S.col});S.edit=null;$('#n-add').textContent='Ajouter la note';$('#n-cancel').hidden=true}
  else put('notes',{id:'n'+Date.now().toString(36),text,c:S.col,done:false,pin:false,t:Date.now()});
  $('#n-text').value=''});
 $('#n-cancel').addEventListener('click',()=>{S.edit=null;$('#n-text').value='';$('#n-add').textContent='Ajouter la note';$('#n-cancel').hidden=true});
-$('#n-list').addEventListener('click',async e=>{const b=e.target.closest('[data-n]');if(!b||!S.canW)return;const n=D.notes.find(x=>x.id===b.dataset.id);if(!n)return;const a=b.dataset.n;
+$('#n-list').addEventListener('click',async e=>{const b=e.target.closest('[data-n]');if(!b||!S.canW)return;const n=all('notes').find(x=>x.id===b.dataset.id);if(!n)return;const a=b.dataset.n;
  if(a==='done')put('notes',{...n,done:!n.done});
  if(a==='pin')put('notes',{...n,pin:!n.pin});
  if(a==='edit'){S.edit=n.id;$('#n-text').value=n.text;S.col=nc(n.c);$('#n-add').textContent='Enregistrer';$('#n-cancel').hidden=false;$('#n-text').focus()}
@@ -118,19 +123,19 @@ $('#n-list').addEventListener('click',async e=>{const b=e.target.closest('[data-
 $('#a-kind').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;S.kind=b.dataset.k;$('#a-kind').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});
 $('#a-filter').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;S.filt=b.dataset.f;$('#a-filter').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));renderAnn()});
 function renderAnn(){
- const L=[...D.ann].sort((x,y)=>(x.done|0)-(y.done|0)||y.t-x.t),F=L.filter(a=>S.filt==='all'||a.k===S.filt);
+ const L=[...all('ann')].sort((x,y)=>(x.done|0)-(y.done|0)||y.t-x.t),F=L.filter(a=>S.filt==='all'||a.k===S.filt);
  $('#a-list').innerHTML=F.length?F.map(a=>`<li class="item${a.done?' done':''}">${a.k==='tache'?`<button type="button" class="check${a.done?' on':''}" data-a="done" data-id="${esc(a.id)}" ${S.canW?'':'disabled'} aria-label="Fait">${a.done?'✓':''}</button>`:'<span class="tag n">Nouvelle</span>'}<div><h3>${esc(a.title)}</h3>${a.body?`<p>${esc(a.body)}</p>`:''}<div class="hint">${esc(new Date(a.t).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))}${a.k==='tache'?' · tâche':''}</div></div>${S.canW?`<button type="button" class="ghost" data-a="del" data-id="${esc(a.id)}" aria-label="Supprimer">✕</button>`:'<span></span>'}</li>`).join(''):'<li class="empty plate">Rien de publié ici.</li>';
  $('#h-ann').innerHTML=L.filter(a=>!a.done).slice(0,4).map(a=>`<li class="mline"><span class="tag ${a.k==='tache'?'t':'n'}">${a.k==='tache'?'Tâche':'Nouvelle'}</span><span>${esc(a.title)}</span></li>`).join('')||'<li class="empty">Aucune tâche en cours.</li>';
 }
 $('#a-add').addEventListener('click',()=>{const title=$('#a-title').value.trim();if(!title||!S.canW)return;
  put('ann',{id:'a'+Date.now().toString(36),k:S.kind,title,body:$('#a-body').value.trim(),done:false,t:Date.now()});$('#a-title').value='';$('#a-body').value=''});
-$('#a-list').addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b||!S.canW)return;const a=D.ann.find(x=>x.id===b.dataset.id);if(!a)return;
+$('#a-list').addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b||!S.canW)return;const a=all('ann').find(x=>x.id===b.dataset.id);if(!a)return;
  if(b.dataset.a==='done')put('ann',{...a,done:!a.done});
  else{const o=await drop('ann',a.id);undo('Annonce supprimée',()=>put('ann',o))}});
 
 /* ---------- photos (réduites puis stockées dans Firestore) ---------- */
-const ok=u=>typeof u==='string'&&u.startsWith('data:image/jpeg;base64,');
-const ph=()=>D.photos.filter(p=>ok(p.img)).sort((x,y)=>y.t-x.t);
+const ok=u=>typeof u==='string'&&(u.startsWith('data:image/jpeg;base64,')||/^photos\/[\w.-]+\.(jpe?g|png|webp)$/i.test(u));
+const ph=()=>all('photos').map(p=>({...p,img:p.img||p.file})).filter(p=>ok(p.img)).sort((x,y)=>y.t-x.t);
 function renderPhotos(){
  const L=ph();
  $('#p-grid').innerHTML=L.length?L.map((p,i)=>`<button type="button" class="thumb" data-p="${i}"><img src="${p.img}" alt="${esc(p.cap||'Photo')}" loading="lazy"></button>`).join(''):'<div class="empty plate" style="grid-column:1/-1">Aucune photo pour l\'instant.</div>';
