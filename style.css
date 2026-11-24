@@ -295,3 +295,20 @@ body.editing .editbar{translate:-50% 0}
 .vo-help ul{margin:8px 0 0;padding-left:18px;color:rgba(235,240,255,.85);font-size:15px}.vo-help li{margin:4px 0}
 @media(max-width:600px){.mic{width:54px;height:54px;bottom:auto;top:max(14px,env(safe-area-inset-top));right:12px}.vo{padding-bottom:100px}.vo-card{gap:12px;padding:12px 12px 12px 14px}.orb{width:44px;height:44px}.vo-heard{font-size:17px}#vo-x{padding:0 12px}}
 @media(prefers-reduced-motion:reduce){.orb i,.orb.on{animation:none}}
+
+/* youtube */
+.yt-search input{flex:1;min-width:200px;border-radius:999px}
+.chips{margin-top:12px}.chips button{padding:0 16px;min-height:40px;background:rgba(255,255,255,.1);border:1px solid var(--edge);font-size:14px}
+.brave{display:flex;align-items:center;gap:10px;margin-top:14px;cursor:pointer;font-weight:500}
+.brave input{position:absolute;opacity:0;pointer-events:none}
+.brave .bx{width:24px;height:24px;border-radius:8px;border:2px solid rgba(255,255,255,.35);display:grid;place-items:center;font-weight:800;color:transparent}
+.brave input:checked~.bx{background:linear-gradient(135deg,#ff8a3c,#fb542b);border-color:transparent;color:#fff}
+.brave input:focus-visible~.bx{outline:2px solid #fff;outline-offset:2px}
+#yt-play input{flex:1;min-width:200px;border-radius:999px}
+.player{margin-top:14px;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 24px 50px -20px #000}
+.player iframe{width:100%;height:100%;border:0;display:block}
+.yt-recent{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.yt-recent button{width:100%;padding:0;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid var(--edge);text-align:left;display:block}
+.yt-recent img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.yt-recent span{display:block;padding:8px 10px;font-size:13px;color:var(--mut)}
+#vo-go{text-decoration:none}
