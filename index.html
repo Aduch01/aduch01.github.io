@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=21">
+<link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -106,7 +106,7 @@
     <h1 class="v"><svg class="ic-l"><use href="#i-utile"/></svg>Utile</h1>
     <div class="tiles" data-sort="utile">
       <a class="tile glass" href="#recettes"><svg><use href="#i-recette"/></svg><b>Recettes</b><small id="u-rc">—</small></a>
-      <a class="tile glass" href="#video"><svg><use href="#i-video"/></svg><b>YouTube</b><small>Recherche et lecture</small></a>
+      <a class="tile glass" href="#video"><svg><use href="#i-video"/></svg><b>YouTube</b><small>Sans pub avec Brave</small></a>
       <a class="tile glass" href="#courses"><svg><use href="#i-courses"/></svg><b>Liste de courses</b><small id="u-cs">—</small></a>
     </div>
     <div class="hint">D'autres catégories arriveront ici : demande-les à Claude.</div>
@@ -141,18 +141,16 @@
     <a class="back" href="#utile">‹ Utile</a>
     <h1 class="v"><svg class="ic-l"><use href="#i-video"/></svg>YouTube</h1>
     <section class="plate">
-      <form class="row yt-search" id="yt-form"><input type="search" id="yt-q" placeholder="Chercher une vidéo…" enterkeyhint="search"><button class="btn" type="submit">Chercher</button></form>
+      <form class="row yt-search" id="yt-form"><input type="text" id="yt-q" placeholder="Chercher une vidéo…" enterkeyhint="search"><button class="btn" type="submit">Chercher</button></form>
       <div class="row chips" id="yt-chips"></div>
-    </section>
-    <section class="plate yt-stage" id="yt-stage" hidden>
-      <div class="player" id="yt-player"></div>
-      <div class="row yt-now"><b id="yt-title"></b><button class="ghost" id="yt-close" type="button">Fermer la vidéo</button></div>
+      <label class="brave"><input type="checkbox" id="yt-brave"><span class="bx">✓</span><span>Ouvrir avec <b>Brave</b> (bloque les pubs)</span></label>
+      <div class="hint" id="yt-hint"></div>
     </section>
     <section class="plate">
-      <h2 id="yt-rtitle">Vidéos récentes</h2>
-      <div class="hint" id="yt-msg"></div>
-      <ul class="yt-grid" id="yt-results"></ul>
-      <form class="row yt-link" id="yt-play"><input type="text" id="yt-url" placeholder="Ou colle un lien YouTube"><button class="ghost" type="submit">Lire</button></form>
+      <h2>Lire une vidéo ici</h2>
+      <form class="row" id="yt-play"><input type="text" id="yt-url" placeholder="Colle un lien YouTube (youtu.be/… ou youtube.com/watch?v=…)"><button class="btn" type="submit">Lire</button></form>
+      <div class="player" id="yt-player" hidden></div>
+      <ul class="yt-recent" id="yt-recent"></ul>
     </section>
   </main>
 
@@ -236,6 +234,6 @@
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=21"></script>
+<script type="module" src="app.js?v=20"></script>
 </body>
 </html>
