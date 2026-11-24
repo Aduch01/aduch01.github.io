@@ -8,6 +8,6 @@ export const firebaseConfig = {
   appId: "1:511122856346:web:2935d4a3ff68ccf2eec223"
 };
 /* Identifiant Firebase du propriétaire (seul compte autorisé à publier) */
-export const OWNER_UID = "A_REMPLIR";
+export const OWNER_UID = "nxyZ955VNwYbBtVJSTW2q3v9aOh2";
 /* Lieu de la météo */
 export const PLACE = { name: "Feillens", lat: 46.3367, lon: 4.8889 };

@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Tout le monde lit. Seul le propriétaire écrit.
+    match /{col}/{id} {
+      allow read: if col in ['notes', 'annonces', 'photos', 'masques'];
+      allow write: if request.auth != null
+                   && request.auth.uid == "nxyZ955VNwYbBtVJSTW2q3v9aOh2"
+                   && col in ['notes', 'annonces', 'photos', 'masques'];
+    }
+  }
+}
