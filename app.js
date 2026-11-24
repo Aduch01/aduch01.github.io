@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=9';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=10';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -228,13 +228,44 @@ $('#c-list').addEventListener('click',async e=>{const b=e.target.closest('[data-
  else{const o=await drop('ann',r.id);undo('Rendez-vous supprimé',()=>put('ann',o))}});
 setInterval(()=>{if(!document.hidden&&$('#h-rdv'))renderCal()},5*60*1000);
 
+
+/* ---------- utile : recettes (recettes.json, publiées depuis la conversation) ---------- */
+let RC=[];const RS={};
+async function loadRC(){try{const r=await fetch('recettes.json?t='+Date.now(),{cache:'no-store'});if(r.ok)RC=await r.json()}catch(e){}renderRC();route()}
+const fmtQ=(q,u)=>{if(!q)return '';let v=q;if(u==='g'&&v>=1000){v=v/1000;u='kg'}
+ const r=v>=10?Math.round(v):Math.round(v*4)/4;const s=Number.isInteger(r)?String(r):String(r).replace('.',',');return s+(u?' '+u:'')};
+function renderRC(){
+ $('#u-rc').textContent=RC.length+' recette'+(RC.length>1?'s':'');
+ $('#rc-list').innerHTML=RC.length?RC.map(r=>`<a class="rcard" href="#recette-${esc(r.id)}"><h3>${esc(r.titre)}</h3><p>${esc(r.intro||'')}</p><div class="meta"><span>${esc(r.portions)} pers.</span><span>Prépa ${esc(r.prep)}</span><span>Cuisson ${esc(r.cuisson)}</span></div></a>`).join(''):'<div class="empty plate">Aucune recette pour l\'instant.</div>'}
+function renderOne(id){
+ const r=RC.find(x=>x.id===id);if(!r){$('#rc-one').innerHTML='<div class="empty plate">Recette introuvable.</div>';return}
+ const st=RS[id]??={p:r.portions,ing:new Set(),ok:new Set()},k=st.p/r.portions;
+ $('#rc-one').innerHTML=`<div class="rhead"><h1 class="v"><svg class="ic-l"><use href="#i-recette"/></svg>${esc(r.titre)}</h1><p>${esc(r.intro||'')}</p><div class="meta"><span>Prépa ${esc(r.prep)}</span><span>Cuisson ${esc(r.cuisson)}</span></div></div>
+ <div class="rgrid"><section class="plate"><h2>Ingrédients</h2><div class="serv"><button type="button" data-sv="-1" aria-label="Moins">−</button><b>${st.p} personne${st.p>1?'s':''}</b><button type="button" data-sv="1" aria-label="Plus">+</button></div>
+ <ul class="ing">${r.ingredients.map((g,i)=>`<li><label><input type="checkbox" data-ing="${i}" ${st.ing.has(i)?'checked':''}><span>${g.q?`<span class="q">${esc(fmtQ(g.q*k,g.u))}</span> `:''}${esc(g.n)}</span></label></li>`).join('')}</ul></section>
+ <section class="plate"><h2>Étapes</h2><ol class="steps">${r.etapes.map((e,i)=>`<li data-st="${i}" class="${st.ok.has(i)?'ok':''}"><div><b>${esc(e.t)}</b><p>${esc(e.d)}</p>${e.min?`<button type="button" class="timer" data-tm="${e.min}">⏱ Minuteur ${e.min} min</button>`:''}</div></li>`).join('')}</ol>
+ ${r.astuces?.length?`<h2 style="margin-top:18px">Astuces</h2><ul class="tips">${r.astuces.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:''}</section></div>`}
+$('#rc-one').addEventListener('click',e=>{const id=location.hash.slice(9),st=RS[id];if(!st)return;
+ const sv=e.target.closest('[data-sv]');if(sv){st.p=Math.max(1,Math.min(20,st.p+ +sv.dataset.sv));renderOne(id);return}
+ const tm=e.target.closest('[data-tm]');if(tm){e.stopPropagation();startTimer(tm);return}
+ const li=e.target.closest('[data-st]');if(li){const i=+li.dataset.st;st.ok.has(i)?st.ok.delete(i):st.ok.add(i);li.classList.toggle('ok')}});
+$('#rc-one').addEventListener('change',e=>{const c=e.target.closest('[data-ing]'),st=RS[location.hash.slice(9)];if(!c||!st)return;const i=+c.dataset.ing;c.checked?st.ing.add(i):st.ing.delete(i)});
+function startTimer(b){if(b._iv){clearInterval(b._iv);b._iv=null;b.className='timer';b.textContent='⏱ Minuteur '+b.dataset.tm+' min';return}
+ const end=Date.now()+b.dataset.tm*60000;b.className='timer run';
+ const t=()=>{const s=Math.max(0,Math.round((end-Date.now())/1000));b.textContent='⏱ '+Math.floor(s/60)+':'+pad(s%60)+' · arrêter';
+  if(!s){clearInterval(b._iv);b._iv=null;b.className='timer done';b.textContent='✓ Terminé !';try{const a=new AudioContext(),o=a.createOscillator();o.connect(a.destination);o.frequency.value=880;o.start();o.stop(a.currentTime+.6)}catch(e){}if(navigator.vibrate)navigator.vibrate([300,150,300])}};
+ t();b._iv=setInterval(t,1000)}
+loadRC();
+
 /* ---------- divers ---------- */
 let tt;function undo(msg,fn){$('#toast-t').textContent=msg;$('#toast').classList.add('on');clearTimeout(tt);$('#toast-b').onclick=()=>{fn();$('#toast').classList.remove('on')};tt=setTimeout(()=>$('#toast').classList.remove('on'),6000)}
 function rerender(){renderNotes();renderAnn();renderPhotos();renderCal()}
 function lockUI(){for(const s of ['#n-compose','#a-compose','#p-up','#r-compose'])$(s).hidden=!S.canW}
-function route(){const v=location.hash.slice(1)||'home',ok=['home','meteo','agenda','notes','photos','annonces'].includes(v)?v:'home';
+function route(){const v=location.hash.slice(1)||'home';let ok=['home','meteo','agenda','notes','photos','annonces','utile','recettes'].includes(v)?v:'home';
+ if(/^recette-[a-z0-9-]+$/.test(v)){ok='recette';renderOne(v.slice(8))}
+ const tab={recettes:'utile',recette:'utile'}[ok]||ok;
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+ok));
- document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===ok));window.scrollTo(0,0)}
+ document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===tab));window.scrollTo(0,0)}
 addEventListener('hashchange',route);route();
 
 let lock=null;

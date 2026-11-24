@@ -1,0 +1,35 @@
+[
+  {
+    "id": "puree-grand-mere",
+    "titre": "Purée de grand-mère",
+    "intro": "La vraie purée maison, onctueuse, au beurre et à la muscade. Tout se joue sur la pomme de terre farineuse et le presse-purée, jamais le mixeur.",
+    "portions": 4,
+    "prep": "15 min",
+    "cuisson": "25 min",
+    "ingredients": [
+      {"q": 1000, "u": "g", "n": "pommes de terre farineuses (Bintje, Agria ou Mona Lisa)"},
+      {"q": 25, "u": "cl", "n": "lait entier"},
+      {"q": 80, "u": "g", "n": "beurre doux bien froid, coupé en dés"},
+      {"q": 1, "u": "c. à soupe", "n": "gros sel pour l'eau de cuisson"},
+      {"q": 2, "u": "pincées", "n": "noix de muscade râpée"},
+      {"q": 0, "u": "", "n": "sel fin et poivre, au goût"},
+      {"q": 2, "u": "c. à soupe", "n": "crème fraîche épaisse (facultatif, la touche de grand-mère)"}
+    ],
+    "etapes": [
+      {"t": "Éplucher et couper", "d": "Épluche les pommes de terre et coupe-les en morceaux de même taille (environ 4 cm) pour qu'elles cuisent en même temps."},
+      {"t": "Départ à l'eau froide", "d": "Mets-les dans une grande casserole, couvre d'eau froide de 2 cm et ajoute le gros sel. Porte à ébullition.", "min": 0},
+      {"t": "Cuire à frémissement", "d": "Laisse cuire à petits bouillons 20 à 25 minutes. Elles sont prêtes quand la pointe d'un couteau s'enfonce sans résistance.", "min": 22},
+      {"t": "Chauffer le lait", "d": "Pendant la cuisson, fais chauffer le lait dans une petite casserole sans le faire bouillir."},
+      {"t": "Égoutter et sécher", "d": "Égoutte bien, remets les pommes de terre dans la casserole chaude sur feu doux 1 à 2 minutes en remuant : l'eau restante s'évapore et la purée sera plus légère.", "min": 2},
+      {"t": "Écraser", "d": "Passe-les au presse-purée (ou écrase au pilon). Jamais au mixeur : la purée deviendrait collante comme de la colle."},
+      {"t": "Le beurre d'abord", "d": "Hors du feu, incorpore les dés de beurre froid petit à petit avec une spatule."},
+      {"t": "Puis le lait chaud", "d": "Verse le lait chaud en filet en remuant, jusqu'à la texture voulue. Ajoute la crème si tu veux plus d'onctuosité."},
+      {"t": "Assaisonner et servir", "d": "Sale, poivre, ajoute la muscade, goûte et rectifie. Sers bien chaud, avec une noisette de beurre qui fond sur le dessus."}
+    ],
+    "astuces": [
+      "Pour la garder chaude : couvre et pose la casserole au bain-marie, ajoute un trait de lait chaud avant de servir.",
+      "Version gratinée : mets la purée dans un plat, parsème de gruyère râpé et passe 10 min sous le gril.",
+      "Reste de purée : fais-en des galettes poêlées au beurre le lendemain."
+    ]
+  }
+]
