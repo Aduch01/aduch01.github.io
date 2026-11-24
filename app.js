@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=20';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=21';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -379,29 +379,35 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&editing)setEdit(fal
 
 
 
-/* ---------- YouTube (ouverture dans Brave pour éviter les pubs) ---------- */
-const IS_ANDROID=/Android/i.test(navigator.userAgent),IN_BRAVE=!!navigator.brave;
-let YTB=IS_ANDROID&&!IN_BRAVE;try{const v=localStorage.getItem('yt-brave');if(v!==null)YTB=v==='1'}catch(e){}
-$('#yt-brave').checked=YTB;
-$('#yt-brave').addEventListener('change',e=>{YTB=e.target.checked;try{localStorage.setItem('yt-brave',YTB?'1':'0')}catch(_){}ytHint()});
-function ytHint(){$('#yt-hint').textContent=IN_BRAVE?'Tu es déjà dans Brave : les pubs sont bloquées, y compris dans le lecteur ci-dessous.'
- :YTB?(IS_ANDROID?'Les recherches s\'ouvrent dans l\'application Brave (installe-la depuis le Play Store si besoin).':'Sur ordinateur ou iPhone, ouvre plutôt Le Tableau lui-même dans Brave : tout s\'ouvrira sans pub.')
- :'Les recherches s\'ouvrent dans ce navigateur.'}
-ytHint();
-function ytLink(url){if(YTB&&IS_ANDROID&&!IN_BRAVE){const u=new URL(url);return 'intent://'+u.host+u.pathname+u.search+'#Intent;scheme=https;package=com.brave.browser;S.browser_fallback_url='+encodeURIComponent(url)+';end'}return url}
-const ytSearchUrl=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
-function ytOpen(url){const a=document.createElement('a');a.href=ytLink(url);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
-$('#yt-form').addEventListener('submit',e=>{e.preventDefault();const q=$('#yt-q').value.trim();ytOpen(q?ytSearchUrl(q):'https://www.youtube.com/')});
+/* ---------- YouTube dans l'appli (YouTube Data API v3 + lecteur intégré) ---------- */
+const YT_KEY=firebaseConfig.apiKey;
+const dec=x=>new DOMParser().parseFromString(String(x||''),'text/html').documentElement.textContent;
+let YTR=[];try{YTR=JSON.parse(localStorage.getItem('yt-recent2')||'[]')}catch(e){}
+const ytId=u=>{const m=String(u).match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);return m?m[1]:(/^[\w-]{11}$/.test(String(u).trim())?String(u).trim():null)};
+function ytCards(list){return list.map(v=>`<li><button type="button" data-yid="${esc(v.id)}" data-yt="${esc(v.t)}"><img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy"><b>${esc(v.t||'Vidéo')}</b><small>${esc(v.c||'')}</small></button></li>`).join('')}
+function ytShowRecent(){$('#yt-rtitle').textContent='Vidéos récentes';$('#yt-msg').textContent=YTR.length?'':'Cherche une vidéo ou touche un raccourci ci-dessus.';$('#yt-results').innerHTML=ytCards(YTR)}
+function ytPlay(id,title,chan){$('#yt-stage').hidden=false;
+ $('#yt-player').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Vidéo"></iframe>`;
+ $('#yt-title').textContent=title||'';YTR=[{id,t:title||'',c:chan||''},...YTR.filter(x=>x.id!==id)].slice(0,12);try{localStorage.setItem('yt-recent2',JSON.stringify(YTR))}catch(e){}
+ $('#yt-stage').scrollIntoView({behavior:'smooth',block:'start'})}
+function ytStop(){$('#yt-player').innerHTML='';$('#yt-stage').hidden=true}
+$('#yt-close').addEventListener('click',ytStop);
+let ytAbort=null;
+async function ytSearch(q){$('#yt-q').value=q;$('#yt-rtitle').textContent='Résultats pour « '+q+' »';$('#yt-msg').textContent='Recherche…';$('#yt-results').innerHTML='';
+ ytAbort?.abort();ytAbort=new AbortController();
+ try{const u='https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=24&regionCode=FR&relevanceLanguage=fr&safeSearch=moderate&q='+encodeURIComponent(q)+'&key='+encodeURIComponent(YT_KEY);
+  const r=await fetch(u,{signal:ytAbort.signal}),j=await r.json();
+  if(!r.ok){const why=j?.error?.errors?.[0]?.reason||j?.error?.status||r.status;
+   $('#yt-msg').textContent=why==='quotaExceeded'?'Limite de recherches du jour atteinte, réessaie demain.':(/accessNotConfigured|SERVICE_DISABLED|PERMISSION_DENIED|forbidden|API_KEY_SERVICE_BLOCKED/i.test(why)?'La recherche YouTube n\'est pas encore activée dans le projet Google (réglage à faire une fois).':'Recherche impossible ('+why+').');return 0}
+  const L=(j.items||[]).filter(i=>i.id?.videoId).map(i=>({id:i.id.videoId,t:dec(i.snippet.title),c:dec(i.snippet.channelTitle)}));
+  $('#yt-msg').textContent=L.length?'':'Aucun résultat.';$('#yt-results').innerHTML=ytCards(L);return L.length}
+ catch(e){if(e.name!=='AbortError')$('#yt-msg').textContent='Pas de connexion internet ?';return 0}}
+$('#yt-form').addEventListener('submit',e=>{e.preventDefault();const q=$('#yt-q').value.trim();if(q){$('#yt-q').blur();ytSearch(q)}else ytShowRecent()});
 $('#yt-chips').innerHTML=['Musique','Actualités','Tutos mécanique','Recettes','Bricolage','Sport','Documentaires','Dessins animés'].map(x=>`<button type="button" data-yq="${esc(x)}">${esc(x)}</button>`).join('');
-$('#yt-chips').addEventListener('click',e=>{const b=e.target.closest('[data-yq]');if(b)ytOpen(ytSearchUrl(b.dataset.yq))});
-const ytId=u=>{const m=String(u).match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);return m?m[1]:(/^[\w-]{11}$/.test(u.trim())?u.trim():null)};
-let YTR=[];try{YTR=JSON.parse(localStorage.getItem('yt-recent')||'[]')}catch(e){}
-function ytPlay(id){$('#yt-player').hidden=false;$('#yt-player').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Vidéo"></iframe>`;
- YTR=[id,...YTR.filter(x=>x!==id)].slice(0,8);try{localStorage.setItem('yt-recent',JSON.stringify(YTR))}catch(e){}ytRecent()}
-function ytRecent(){$('#yt-recent').innerHTML=YTR.map(id=>`<li><button type="button" data-yid="${id}"><img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy"><span>Revoir</span></button></li>`).join('')}
-$('#yt-recent').addEventListener('click',e=>{const b=e.target.closest('[data-yid]');if(b)ytPlay(b.dataset.yid)});
-$('#yt-play').addEventListener('submit',e=>{e.preventDefault();const id=ytId($('#yt-url').value);if(id){ytPlay(id);$('#yt-url').value=''}else{$('#yt-url').value='';$('#yt-url').placeholder='Lien non reconnu, colle un lien youtube.com ou youtu.be'}});
-ytRecent();
+$('#yt-chips').addEventListener('click',e=>{const b=e.target.closest('[data-yq]');if(b)ytSearch(b.dataset.yq)});
+$('#yt-results').addEventListener('click',e=>{const b=e.target.closest('[data-yid]');if(!b)return;const c=b.querySelector('small')?.textContent||'';ytPlay(b.dataset.yid,b.dataset.yt,c)});
+$('#yt-play').addEventListener('submit',e=>{e.preventDefault();const id=ytId($('#yt-url').value);$('#yt-url').value='';if(id)ytPlay(id,'','');else $('#yt-url').placeholder='Lien non reconnu : colle un lien youtube.com ou youtu.be'});
+ytShowRecent();
 
 /* ---------- commande vocale ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -455,11 +461,13 @@ const accents=(norm,raw)=>{const W=raw.split(/\s+/);return norm.split(' ').map(w
 const owner=()=>{if(S.canW)return true;say('Seul le propriétaire connecté peut faire ça.');return false};
 function handle(raw){const t=N(raw);let m;
  if(/^(aide|help|que sais-tu faire|qu'est-ce que tu sais faire|commandes?)\b/.test(t)){$('#vo-help').hidden=false;say('Voici ce que tu peux me demander.');return}
- if(/^(ferme|stop|annule|merci|rien)\b/.test(t)){say('D\'accord.');setTimeout(voClose,900);return}
+ if(/^(ferme|stop|annule|merci|rien)\b/.test(t)&&!/video/.test(t)){say('D\'accord.');setTimeout(voClose,900);return}
  // youtube
- if(/\b(youtube|you tube|video)\b/.test(t)){const q=t.replace(/\b(cherche|recherche|trouve|mets|lance|ouvre|affiche|montre|moi|une|des|la|le|les|video|videos|sur|dans|de|youtube|you tube)\b/g,' ').replace(/\s+/g,' ').trim();
+ if(/^(stop|arrete|ferme|coupe)\s+(la\s+)?video/.test(t)){ytStop();say('Vidéo arrêtée.');setTimeout(voClose,1200);return}
+ if(/\b(youtube|you tube|video|videos)\b/.test(t)){const q=t.replace(/\b(cherche|recherche|trouve|mets|met|lance|ouvre|affiche|montre|joue|moi|une|des|la|le|les|video|videos|sur|dans|de|du|youtube|you tube)\b/g,' ').replace(/\s+/g,' ').trim();
   location.hash='video';if(!q){say('Voici YouTube.');setTimeout(voClose,1500);return}
-  $('#yt-q').value=q;const go=$('#vo-go');go.href=ytLink(ytSearchUrl(q));go.textContent='Ouvrir « '+q+' »';go.hidden=false;say('Touche le bouton pour voir les résultats pour '+q+'.');return}
+  ytSearch(q).then(n=>{say(n?'Voici les vidéos pour '+q+'. Touche celle que tu veux.':'Je n\'ai pas pu chercher '+q+'.');setTimeout(voClose,2600)});return}
+ if(/^(stop|arrete|ferme)\s+(la\s+)?video/.test(t)){ytStop();say('Vidéo arrêtée.');setTimeout(voClose,1200);return}
  // note
  if(m=t.match(/^(?:ajoute|cree|ecris|nouvelle|prends?)\s+(?:une\s+)?note\s*(?:qui dit|que)?\s*:?\s*(.+)$/)){if(!owner())return;
   put('notes',{id:'n'+Date.now().toString(36),text:cap(raw.replace(/^.*?note\s*(qui dit|que)?\s*:?\s*/i,'')),c:COLORS[0],done:false,pin:false,t:Date.now()});go('notes','Note ajoutée.');return}
@@ -508,7 +516,7 @@ function rerender(){renderNotes();renderAnn();renderPhotos();renderCal()}
 function lockUI(){for(const s of ['#n-compose','#a-compose','#p-up','#r-compose'])$(s).hidden=!S.canW}
 function route(){const v=location.hash.slice(1)||'home';let ok=['home','meteo','agenda','notes','photos','annonces','utile','recettes','courses','video'].includes(v)?v:'home';
  if(/^recette-[a-z0-9-]+$/.test(v)){ok='recette';renderOne(v.slice(8))}
- const tab={recettes:'utile',recette:'utile',courses:'utile',video:'utile'}[ok]||ok;if(ok!=='video'&&$('#yt-player').innerHTML){$('#yt-player').innerHTML='';$('#yt-player').hidden=true}if(ok==='courses')renderCS();
+ const tab={recettes:'utile',recette:'utile',courses:'utile',video:'utile'}[ok]||ok;if(ok!=='video'&&$('#yt-player').innerHTML)ytStop();if(ok==='courses')renderCS();
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+ok));
  document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===tab));window.scrollTo(0,0)}
 addEventListener('hashchange',route);route();
