@@ -7,29 +7,202 @@
     "prep": "15 min",
     "cuisson": "25 min",
     "ingredients": [
-      {"q": 1000, "u": "g", "n": "pommes de terre farineuses (Bintje, Agria ou Mona Lisa)"},
-      {"q": 25, "u": "cl", "n": "lait entier"},
-      {"q": 80, "u": "g", "n": "beurre doux bien froid, coupé en dés"},
-      {"q": 1, "u": "c. à soupe", "n": "gros sel pour l'eau de cuisson"},
-      {"q": 2, "u": "pincées", "n": "noix de muscade râpée"},
-      {"q": 0, "u": "", "n": "sel fin et poivre, au goût"},
-      {"q": 2, "u": "c. à soupe", "n": "crème fraîche épaisse (facultatif, la touche de grand-mère)"}
+      {
+        "q": 1000,
+        "u": "g",
+        "n": "pommes de terre farineuses (Bintje, Agria ou Mona Lisa)"
+      },
+      {
+        "q": 25,
+        "u": "cl",
+        "n": "lait entier"
+      },
+      {
+        "q": 80,
+        "u": "g",
+        "n": "beurre doux bien froid, coupé en dés"
+      },
+      {
+        "q": 1,
+        "u": "c. à soupe",
+        "n": "gros sel pour l'eau de cuisson"
+      },
+      {
+        "q": 2,
+        "u": "pincées",
+        "n": "noix de muscade râpée"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "sel fin et poivre, au goût"
+      },
+      {
+        "q": 2,
+        "u": "c. à soupe",
+        "n": "crème fraîche épaisse (facultatif, la touche de grand-mère)"
+      }
     ],
     "etapes": [
-      {"t": "Éplucher et couper", "d": "Épluche les pommes de terre et coupe-les en morceaux de même taille (environ 4 cm) pour qu'elles cuisent en même temps."},
-      {"t": "Départ à l'eau froide", "d": "Mets-les dans une grande casserole, couvre d'eau froide de 2 cm et ajoute le gros sel. Porte à ébullition.", "min": 0},
-      {"t": "Cuire à frémissement", "d": "Laisse cuire à petits bouillons 20 à 25 minutes. Elles sont prêtes quand la pointe d'un couteau s'enfonce sans résistance.", "min": 22},
-      {"t": "Chauffer le lait", "d": "Pendant la cuisson, fais chauffer le lait dans une petite casserole sans le faire bouillir."},
-      {"t": "Égoutter et sécher", "d": "Égoutte bien, remets les pommes de terre dans la casserole chaude sur feu doux 1 à 2 minutes en remuant : l'eau restante s'évapore et la purée sera plus légère.", "min": 2},
-      {"t": "Écraser", "d": "Passe-les au presse-purée (ou écrase au pilon). Jamais au mixeur : la purée deviendrait collante comme de la colle."},
-      {"t": "Le beurre d'abord", "d": "Hors du feu, incorpore les dés de beurre froid petit à petit avec une spatule."},
-      {"t": "Puis le lait chaud", "d": "Verse le lait chaud en filet en remuant, jusqu'à la texture voulue. Ajoute la crème si tu veux plus d'onctuosité."},
-      {"t": "Assaisonner et servir", "d": "Sale, poivre, ajoute la muscade, goûte et rectifie. Sers bien chaud, avec une noisette de beurre qui fond sur le dessus."}
+      {
+        "t": "Éplucher et couper",
+        "d": "Épluche les pommes de terre et coupe-les en morceaux de même taille (environ 4 cm) pour qu'elles cuisent en même temps."
+      },
+      {
+        "t": "Départ à l'eau froide",
+        "d": "Mets-les dans une grande casserole, couvre d'eau froide de 2 cm et ajoute le gros sel. Porte à ébullition.",
+        "min": 0
+      },
+      {
+        "t": "Cuire à frémissement",
+        "d": "Laisse cuire à petits bouillons 20 à 25 minutes. Elles sont prêtes quand la pointe d'un couteau s'enfonce sans résistance.",
+        "min": 22
+      },
+      {
+        "t": "Chauffer le lait",
+        "d": "Pendant la cuisson, fais chauffer le lait dans une petite casserole sans le faire bouillir."
+      },
+      {
+        "t": "Égoutter et sécher",
+        "d": "Égoutte bien, remets les pommes de terre dans la casserole chaude sur feu doux 1 à 2 minutes en remuant : l'eau restante s'évapore et la purée sera plus légère.",
+        "min": 2
+      },
+      {
+        "t": "Écraser",
+        "d": "Passe-les au presse-purée (ou écrase au pilon). Jamais au mixeur : la purée deviendrait collante comme de la colle."
+      },
+      {
+        "t": "Le beurre d'abord",
+        "d": "Hors du feu, incorpore les dés de beurre froid petit à petit avec une spatule."
+      },
+      {
+        "t": "Puis le lait chaud",
+        "d": "Verse le lait chaud en filet en remuant, jusqu'à la texture voulue. Ajoute la crème si tu veux plus d'onctuosité."
+      },
+      {
+        "t": "Assaisonner et servir",
+        "d": "Sale, poivre, ajoute la muscade, goûte et rectifie. Sers bien chaud, avec une noisette de beurre qui fond sur le dessus."
+      }
     ],
     "astuces": [
       "Pour la garder chaude : couvre et pose la casserole au bain-marie, ajoute un trait de lait chaud avant de servir.",
       "Version gratinée : mets la purée dans un plat, parsème de gruyère râpé et passe 10 min sous le gril.",
       "Reste de purée : fais-en des galettes poêlées au beurre le lendemain."
+    ]
+  },
+  {
+    "id": "brioche-1kg",
+    "titre": "Brioche pur beurre (1 kg)",
+    "intro": "Une grosse brioche moelleuse et filante d'environ 1 kg après cuisson, façon Nanterre. Le secret : une pâte bien pétrie, du beurre froid ajouté à la fin, et du temps pour lever.",
+    "portions": 1,
+    "unite": [
+      "brioche de 1 kg",
+      "brioches de 1 kg"
+    ],
+    "prep": "30 min",
+    "cuisson": "35 à 40 min",
+    "repos": "3 h 30 (ou une nuit au frais)",
+    "ingredients": [
+      {
+        "q": 500,
+        "u": "g",
+        "n": "farine T45 (ou farine de gruau pour plus de moelleux)"
+      },
+      {
+        "q": 6,
+        "u": "",
+        "n": "œufs moyens, bien froids (environ 300 g)"
+      },
+      {
+        "q": 250,
+        "u": "g",
+        "n": "beurre doux froid, coupé en dés"
+      },
+      {
+        "q": 60,
+        "u": "g",
+        "n": "sucre en poudre"
+      },
+      {
+        "q": 10,
+        "u": "g",
+        "n": "sel fin"
+      },
+      {
+        "q": 20,
+        "u": "g",
+        "n": "levure fraîche de boulanger (ou 7 g de levure sèche)"
+      },
+      {
+        "q": 5,
+        "u": "cl",
+        "n": "lait entier tiède"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "jaune d'œuf + 1 c. à soupe de lait, pour la dorure"
+      },
+      {
+        "q": 1,
+        "u": "poignée",
+        "n": "sucre perlé (facultatif)"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Délayer la levure",
+        "d": "Émiette la levure dans le lait tiède (environ 35 °C, pas plus chaud) et mélange."
+      },
+      {
+        "t": "Premier pétrissage",
+        "d": "Dans la cuve du robot (crochet) : farine, sucre, sel d'un côté, levure de l'autre pour qu'ils ne se touchent pas. Ajoute les œufs froids et pétris 5 min en vitesse lente, puis 8 à 10 min en vitesse moyenne, jusqu'à ce que la pâte se décolle des parois.",
+        "min": 15
+      },
+      {
+        "t": "Incorporer le beurre",
+        "d": "Ajoute le beurre froid en dés, une poignée à la fois, en attendant que chaque ajout soit absorbé. Pétris encore 5 à 8 min : la pâte doit être lisse, brillante et élastique (elle s'étire en fine membrane sans se déchirer).",
+        "min": 8
+      },
+      {
+        "t": "Première pousse",
+        "d": "Mets la pâte en boule dans un saladier, couvre d'un film et laisse lever 1 h à température ambiante (22 à 25 °C) : elle doit gonfler d'environ un tiers.",
+        "min": 60
+      },
+      {
+        "t": "Dégazer et mettre au froid",
+        "d": "Rabats la pâte avec le poing pour chasser l'air, reforme une boule, filme au contact et place au réfrigérateur au moins 2 h, idéalement une nuit (12 h). Le froid rend la pâte facile à façonner et développe le goût.",
+        "min": 120
+      },
+      {
+        "t": "Façonner",
+        "d": "Beurre un grand moule à cake (environ 30 × 11 cm). Divise la pâte froide en 8 boules de même poids (environ 140 g chacune, pèse-les). Boule chaque morceau bien serré et place-les deux par deux en quinconce dans le moule."
+      },
+      {
+        "t": "Deuxième pousse",
+        "d": "Couvre d'un torchon et laisse lever 1 h 30 à 2 h dans un endroit tiède (25 °C, par exemple four éteint avec un bol d'eau chaude) : la pâte doit atteindre le bord du moule.",
+        "min": 120
+      },
+      {
+        "t": "Préchauffer et dorer",
+        "d": "Préchauffe le four à 170 °C chaleur tournante (180 °C convection naturelle). Badigeonne délicatement de dorure (jaune + lait) au pinceau, sans couler sur les bords du moule. Parsème de sucre perlé si tu veux."
+      },
+      {
+        "t": "Cuire",
+        "d": "Enfourne 35 à 40 min. Si le dessus colore trop vite, couvre d'une feuille d'aluminium après 20 min. La brioche est cuite quand elle sonne creux en tapant dessous (ou 92 °C à cœur au thermomètre).",
+        "min": 38
+      },
+      {
+        "t": "Refroidir",
+        "d": "Démoule tout de suite et laisse refroidir sur une grille au moins 30 min avant de couper, sinon la mie sera collante.",
+        "min": 30
+      }
+    ],
+    "astuces": [
+      "Les œufs et le beurre doivent être froids : la pâte chauffe pendant le pétrissage et deviendrait grasse.",
+      "Sans robot : pétris à la main 15 à 20 min en étirant et repliant la pâte sur le plan de travail, elle collera au début, c'est normal.",
+      "Version gourmande : ajoute 150 g de pépites de chocolat ou de pralines roses concassées à la fin du pétrissage.",
+      "Conservation : 3 jours dans un sac fermé, ou en tranches au congélateur ; elle est parfaite toastée."
     ]
   }
 ]
