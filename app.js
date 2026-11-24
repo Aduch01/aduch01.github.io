@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=12';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=13';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -324,6 +324,42 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
   let ex=csItems().find(x=>slug(x.n)===slug(nm)||slug(nm).startsWith(slug(x.n)+'-')||slug(nm)===slug(x.n)+'s');
   if(!ex){ex={id:'p-'+slug(nm),n:nm,cat:'ps'};CS.perso=[...(CS.perso||[]),ex]}CS.sel[ex.id]=CS.sel[ex.id]||1;n++}
  csSave();renderCS();b.textContent='✓ '+n+' ingrédients ajoutés à la liste de courses'});
+
+
+/* ---------- organiser par appui long (disposition propre à chaque appareil) ---------- */
+const keyOf=el=>el.dataset.k||el.dataset.v||el.getAttribute('href')||'';
+const ORDK='ordre-v1';
+let ORD={};try{ORD=JSON.parse(localStorage.getItem(ORDK)||'{}')||{}}catch(e){}
+const DEF={};
+document.querySelectorAll('[data-sort]').forEach(c=>{DEF[c.dataset.sort]=[...c.children].map(keyOf);applyOrd(c)});
+function applyOrd(c){const o=ORD[c.dataset.sort];if(!Array.isArray(o))return;const m=new Map([...c.children].map(e=>[keyOf(e),e]));for(const k of o){const e=m.get(k);if(e)c.appendChild(e)}for(const e of m.values())if(!o.includes(keyOf(e)))c.appendChild(e)}
+function saveOrd(c){ORD[c.dataset.sort]=[...c.children].map(keyOf);try{localStorage.setItem(ORDK,JSON.stringify(ORD))}catch(e){}}
+let editing=false,press=null,drag=null;
+function setEdit(on){editing=on;document.body.classList.toggle('editing',on);if(navigator.vibrate&&on)navigator.vibrate(15)}
+$('#ed-done').addEventListener('click',()=>setEdit(false));
+$('#ed-reset').addEventListener('click',()=>{ORD={};try{localStorage.removeItem(ORDK)}catch(e){}document.querySelectorAll('[data-sort]').forEach(c=>{const m=new Map([...c.children].map(e=>[keyOf(e),e]));for(const k of DEF[c.dataset.sort])m.get(k)&&c.appendChild(m.get(k))})});
+function itemAt(x,y,c){const el=document.elementFromPoint(x,y);const it=el&&el.closest('[data-sort]>*');return it&&it.parentElement===c?it:null}
+function startDrag(el,e){const r=el.getBoundingClientRect();drag={el,c:el.parentElement,ox:e.clientX-r.left,oy:e.clientY-r.top,id:e.pointerId};el.classList.add('drag');el.style.pointerEvents='none';try{el.setPointerCapture(e.pointerId)}catch(_){}follow(e.clientX,e.clientY)}
+function follow(x,y){const el=drag.el;el.style.transform='';const r=el.getBoundingClientRect();el.style.transform=`translate(${x-drag.ox-r.left}px,${y-drag.oy-r.top}px)`}
+function flip(c,fn){const kids=[...c.children].filter(k=>k!==drag.el),before=new Map(kids.map(k=>[k,k.getBoundingClientRect()]));fn();
+ for(const k of kids){const a=before.get(k),b=k.getBoundingClientRect(),dx=a.left-b.left,dy=a.top-b.top;if(!dx&&!dy)continue;
+  k.style.transition='none';k.style.transform=`translate(${dx}px,${dy}px)`;requestAnimationFrame(()=>{k.style.transition='transform .25s cubic-bezier(.2,.8,.2,1)';k.style.transform=''})}}
+document.addEventListener('pointerdown',e=>{const it=e.target.closest('[data-sort]>*');if(!it||e.button>0)return;
+ if(editing){if(e.target.closest('.editbar'))return;e.preventDefault();startDrag(it,e);return}
+ press={it,x:e.clientX,y:e.clientY,t:setTimeout(()=>{setEdit(true);startDrag(it,{clientX:press.x,clientY:press.y,pointerId:e.pointerId});press=null},480)}},{passive:false});
+document.addEventListener('pointermove',e=>{
+ if(press&&Math.hypot(e.clientX-press.x,e.clientY-press.y)>10){clearTimeout(press.t);press=null}
+ if(!drag)return;e.preventDefault();follow(e.clientX,e.clientY);
+ const t=itemAt(e.clientX,e.clientY,drag.c);if(!t||t===drag.el)return;
+ const kids=[...drag.c.children],a=kids.indexOf(drag.el),b=kids.indexOf(t);
+ flip(drag.c,()=>{a<b?t.after(drag.el):t.before(drag.el)});follow(e.clientX,e.clientY)},{passive:false});
+function endDrag(){if(press){clearTimeout(press.t);press=null}if(!drag)return;const {el,c}=drag;el.classList.remove('drag');el.style.pointerEvents='';
+ el.style.transition='transform .22s cubic-bezier(.2,.8,.2,1)';el.style.transform='';setTimeout(()=>{el.style.transition=''},250);saveOrd(c);drag=null;justDragged=Date.now()}
+let justDragged=0;
+document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
+document.addEventListener('click',e=>{if((editing||Date.now()-justDragged<400)&&e.target.closest('[data-sort]')){e.preventDefault();e.stopPropagation()}},true);
+document.addEventListener('contextmenu',e=>{if(e.target.closest('[data-sort]'))e.preventDefault()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&editing)setEdit(false)});
 
 /* ---------- divers ---------- */
 let tt;function undo(msg,fn){$('#toast-t').textContent=msg;$('#toast').classList.add('on');clearTimeout(tt);$('#toast-b').onclick=()=>{fn();$('#toast').classList.remove('on')};tt=setTimeout(()=>$('#toast').classList.remove('on'),6000)}

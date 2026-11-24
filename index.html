@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -63,14 +63,12 @@
     </div>
   </header>
 
-  <main class="view home" id="v-home">
-    <section class="plate wx" id="wxcard"><h2><svg class="ic"><use href="#i-meteo"/></svg>Météo<a href="#meteo">Détails ›</a></h2><div id="h-wx"></div></section>
-    <section class="plate frame"><h2><svg class="ic"><use href="#i-photos"/></svg>Photo du moment<a href="#photos">Toutes ›</a></h2><div class="pic" id="h-pic"></div><div class="cap" id="h-cap"></div></section>
-    <section class="mini">
-      <div class="plate"><h2><svg class="ic"><use href="#i-agenda"/></svg>Agenda<a href="#agenda">Ouvrir ›</a></h2><ul id="h-rdv"></ul></div>
-      <div class="plate"><h2><svg class="ic"><use href="#i-notes"/></svg>Notes<a href="#notes">Ouvrir ›</a></h2><ul id="h-notes"></ul></div>
-      <div class="plate"><h2><svg class="ic"><use href="#i-ann"/></svg>Annonces<a href="#annonces">Ouvrir ›</a></h2><ul id="h-ann"></ul></div>
-    </section>
+  <main class="view home" id="v-home" data-sort="home">
+    <section class="plate wx big" id="wxcard" data-k="meteo"><h2><svg class="ic"><use href="#i-meteo"/></svg>Météo<a href="#meteo">Détails ›</a></h2><div id="h-wx"></div></section>
+    <section class="plate frame big" data-k="photo"><h2><svg class="ic"><use href="#i-photos"/></svg>Photo du moment<a href="#photos">Toutes ›</a></h2><div class="pic" id="h-pic"></div><div class="cap" id="h-cap"></div></section>
+    <section class="plate" data-k="agenda"><h2><svg class="ic"><use href="#i-agenda"/></svg>Agenda<a href="#agenda">Ouvrir ›</a></h2><ul class="wl" id="h-rdv"></ul></section>
+    <section class="plate" data-k="notes"><h2><svg class="ic"><use href="#i-notes"/></svg>Notes<a href="#notes">Ouvrir ›</a></h2><ul class="wl" id="h-notes"></ul></section>
+    <section class="plate" data-k="annonces"><h2><svg class="ic"><use href="#i-ann"/></svg>Annonces<a href="#annonces">Ouvrir ›</a></h2><ul class="wl" id="h-ann"></ul></section>
   </main>
 
   <main class="view" id="v-meteo">
@@ -104,7 +102,7 @@
 
   <main class="view" id="v-utile">
     <h1 class="v"><svg class="ic-l"><use href="#i-utile"/></svg>Utile</h1>
-    <div class="tiles">
+    <div class="tiles" data-sort="utile">
       <a class="tile glass" href="#recettes"><svg><use href="#i-recette"/></svg><b>Recettes</b><small id="u-rc">—</small></a>
       <a class="tile glass" href="#courses"><svg><use href="#i-courses"/></svg><b>Liste de courses</b><small id="u-cs">—</small></a>
     </div>
@@ -174,7 +172,7 @@
   </main>
 </div>
 
-<nav class="dock glass" id="dock">
+<nav class="dock glass" id="dock" data-sort="dock">
   <a href="#" data-v="home"><svg><use href="#i-home"/></svg><span>Accueil</span></a>
   <a href="#meteo" data-v="meteo"><svg><use href="#i-meteo"/></svg><span>Météo</span></a>
   <a href="#agenda" data-v="agenda"><svg><use href="#i-agenda"/></svg><span>Agenda</span></a>
@@ -185,8 +183,9 @@
 </nav>
 
 <div class="viewer" id="viewer"><div class="strip" id="strip"></div><div class="vbar"><button id="vp" type="button">‹ Précédente</button><button id="vdel" type="button">Supprimer</button><button id="vx" type="button">Fermer</button><button id="vn" type="button">Suivante ›</button></div></div>
+<div class="editbar glass" id="editbar"><span>Fais glisser pour organiser</span><button class="ghost" id="ed-reset" type="button">Réinitialiser</button><button class="btn" id="ed-done" type="button">Terminé</button></div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=12"></script>
+<script type="module" src="app.js?v=13"></script>
 </body>
 </html>
