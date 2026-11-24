@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=5';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=6';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -157,8 +157,12 @@ function goV(d){const n=$('#strip').children.length;if(!n)return;$('#strip').chi
 $('#vp').addEventListener('click',()=>goV(-1));$('#vn').addEventListener('click',()=>goV(1));$('#vx').addEventListener('click',()=>$('#viewer').classList.remove('on'));
 $('#vdel').addEventListener('click',async()=>{const p=ph()[curV()];if(!p||!S.canW)return;$('#viewer').classList.remove('on');const o=await drop('photos',p.id);undo('Photo retirée',()=>put('photos',o))});
 document.addEventListener('keydown',e=>{if(!$('#viewer').classList.contains('on'))return;if(e.key==='ArrowLeft')goV(-1);if(e.key==='ArrowRight')goV(1);if(e.key==='Escape')$('#viewer').classList.remove('on')});
+async function readImg(file){
+ try{return await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){}
+ const url=URL.createObjectURL(file);
+ try{const im=new Image();im.src=url;await im.decode();return im}finally{setTimeout(()=>URL.revokeObjectURL(url),5000)}}
 async function shrink(file){
- const bmp=await createImageBitmap(file,{imageOrientation:'from-image'});
+ const bmp=await readImg(file);
  let max=1600,q=.82,out='';
  for(let k=0;k<6;k++){const r=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');
   c.width=Math.round(bmp.width*r);c.height=Math.round(bmp.height*r);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
