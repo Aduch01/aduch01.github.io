@@ -261,3 +261,10 @@ body.editing .editbar{translate:-50% 0}
 .editbar .btn{min-height:40px}
 @media(max-width:600px){.editbar span{display:none}}
 @media(prefers-reduced-motion:reduce){body.editing .dock a,body.editing .tile{animation:none;outline:2px dashed rgba(255,255,255,.4);outline-offset:2px}}
+
+/* vitesse du diaporama */
+.seg.wrap{flex-wrap:wrap;border-radius:24px}
+.sp-now{margin-left:auto;font-size:14px;font-weight:600;padding:4px 12px;border-radius:999px;background:linear-gradient(135deg,#ff7ac6,#e5195e)}
+.sp-custom{margin-top:14px}.sp-custom label{font-weight:500;color:var(--mut)}
+.sp-custom input{flex:1;min-width:160px;accent-color:#ff4f8b;height:32px}
+.sp-custom b{min-width:4.5em;text-align:right;font-variant-numeric:tabular-nums}

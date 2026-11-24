@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=15';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=17';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -156,7 +156,17 @@ function slide(keep){const L=ph(),P=$('#h-pic');
  if(!L.length){P.innerHTML='<div class="empty">Pas encore de photo.</div>';$('#h-cap').textContent='';return}
  if(!keep)S.pi=(S.pi+1)%L.length;S.pi%=L.length;const p=L[S.pi];
  P.innerHTML=`<img src="${p.img}" alt="${esc(p.cap||'Photo')}">`;$('#h-cap').textContent=p.cap||''}
-setInterval(()=>{if(!document.hidden)slide(false)},9000);
+let SPD=9;try{const v=localStorage.getItem('diapo');if(v!==null&&!isNaN(+v))SPD=+v}catch(e){}
+let spT=null;
+function spRun(){clearInterval(spT);spT=null;if(SPD>0)spT=setInterval(()=>{if(!document.hidden)slide(false)},SPD*1000)}
+const spLbl=v=>!v?'Arrêt':v<60?v+' s':(v%60?Math.floor(v/60)+' min '+(v%60)+' s':(v/60)+' min');
+function spShow(){$('#p-now').textContent=spLbl(SPD);$('#p-speed').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.s===SPD));
+ $('#p-sec').value=Math.min(120,Math.max(2,SPD||10));$('#p-secv').textContent=SPD?spLbl(SPD):'—'}
+function spSet(v){SPD=v;try{localStorage.setItem('diapo',String(v))}catch(e){}spShow();spRun()}
+$('#p-speed').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(b)spSet(+b.dataset.s)});
+$('#p-sec').addEventListener('input',e=>{$('#p-secv').textContent=spLbl(+e.target.value)});
+$('#p-sec').addEventListener('change',e=>spSet(+e.target.value));
+spShow();spRun();
 $('#p-grid').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)openV(+b.dataset.p)});
 $('#h-pic').addEventListener('click',()=>{if(ph().length)openV(S.pi)});
 const curV=()=>Math.round($('#strip').scrollLeft/Math.max(1,$('#strip').clientWidth));

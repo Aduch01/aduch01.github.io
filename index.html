@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -151,6 +151,12 @@
 
   <main class="view" id="v-photos">
     <h1 class="v"><svg class="ic-l"><use href="#i-photos"/></svg>Photos</h1>
+    <section class="plate speed">
+      <h2>Défilement sur l'accueil <span class="sp-now" id="p-now"></span></h2>
+      <div class="seg wrap" id="p-speed"><button type="button" data-s="3">3 s</button><button type="button" data-s="5">5 s</button><button type="button" data-s="10">10 s</button><button type="button" data-s="30">30 s</button><button type="button" data-s="60">1 min</button><button type="button" data-s="300">5 min</button><button type="button" data-s="0">Arrêt</button></div>
+      <div class="row sp-custom"><label for="p-sec">Autre durée</label><input type="range" id="p-sec" min="2" max="120" step="1"><b id="p-secv">—</b></div>
+      <div class="hint">Réglage propre à cet appareil : chacun choisit sa vitesse.</div>
+    </section>
     <section class="plate compose" id="p-up">
       <div class="row"><label class="btn">Ajouter des photos<input type="file" id="p-file" accept="image/*" multiple hidden></label><input type="text" id="p-cap" placeholder="Légende (facultatif)"></div>
       <div class="hint" id="p-msg">Les photos sont réduites automatiquement pour rester légères, puis défilent sur l'accueil.</div>
@@ -186,6 +192,6 @@
 <div class="editbar glass" id="editbar"><span>Fais glisser · touche ailleurs pour terminer</span><button class="ghost" id="ed-reset" type="button">Réinitialiser</button><button class="btn" id="ed-done" type="button">Terminé</button></div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=15"></script>
+<script type="module" src="app.js?v=17"></script>
 </body>
 </html>
