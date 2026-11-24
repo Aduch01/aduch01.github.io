@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=18';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=19';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -376,6 +376,101 @@ document.addEventListener('pointerup',endDrag);document.addEventListener('pointe
 document.addEventListener('click',e=>{if(editing||Date.now()-justDragged<400){if(e.target.closest('.editbar'))return;e.preventDefault();e.stopPropagation()}},true);
 document.addEventListener('contextmenu',e=>{if(e.target.closest('[data-sort]'))e.preventDefault()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&editing)setEdit(false)});
+
+
+/* ---------- commande vocale ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const N=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9':,\s-]/g,' ').replace(/\s+/g,' ').trim();
+let rec=null,listening=false;
+function say(t){$('#vo-res').textContent=t;try{if(!speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=1.05;
+ const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+function voOpen(){$('#vo').hidden=false;$('#vo-help').hidden=true;$('#vo-heard').textContent='Je t\'écoute…';$('#vo-res').textContent='';}
+function voClose(){$('#vo').hidden=true;try{rec&&rec.abort()}catch(e){}listening=false;$('#orb').classList.remove('on')}
+$('#vo-x').addEventListener('click',voClose);
+$('#vo').addEventListener('click',e=>{if(e.target.id==='vo')voClose()});
+$('#mic').addEventListener('click',()=>{
+ if(!SR){voOpen();$('#orb').classList.remove('on');$('#vo-heard').textContent='Micro non disponible ici';say('La commande vocale n\'est pas disponible sur ce navigateur. Ouvre le site avec Chrome.');return}
+ if(listening){try{rec.stop()}catch(e){}return}
+ voOpen();rec=new SR();rec.lang='fr-FR';rec.interimResults=true;rec.maxAlternatives=1;rec.continuous=false;
+ rec.onstart=()=>{listening=true;$('#orb').classList.add('on')};
+ rec.onresult=e=>{let t='';for(const r of e.results)t+=r[0].transcript;$('#vo-heard').textContent='« '+t+' »';if(e.results[e.results.length-1].isFinal)handle(t)};
+ rec.onerror=e=>{listening=false;$('#orb').classList.remove('on');
+  const m={'not-allowed':'Autorise le micro : touche le cadenas à gauche de l\'adresse, puis Autorisations, Micro.','no-speech':'Je n\'ai rien entendu. Touche le micro et parle.','network':'Connexion nécessaire pour la reconnaissance vocale.'}[e.error];
+  if(m){$('#vo-heard').textContent='Oups';say(m)}};
+ rec.onend=()=>{listening=false;$('#orb').classList.remove('on')};
+ try{rec.start()}catch(e){}});
+const go=(h,msg)=>{location.hash=h;say(msg);setTimeout(voClose,1800)};
+const NUM={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,douze:12};
+function csAddVoice(list){const done=[];
+ for(let raw of list.split(/,|\set\s|\spuis\s|\savec\s/)){let t=N(raw).replace(/^(du|de la|de l'|des|de|d'|un|une|le|la|les|l'|quelques|aussi|encore)\s*/,'').replace(/^(du|de la|de l'|des|de|d')\s*/,'').trim();
+  if(!t)continue;let q=1;const m=t.match(/^(\d+|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|douze)\s+(.*)$/);if(m){q=+m[1]||NUM[m[1]]||1;t=m[2].replace(/^(de|d')\s*/,'')}
+  t=t.replace(/^(paquets?|boites?|bouteilles?|packs?|kilos?|kg|litres?|sachets?|pots?|tranches?)\s+(de|d')\s*/,'');
+  const sg=x=>slug(x).replace(/(?<=\w{3})(s|x)\b/g,'');const k=sg(t);
+  let it=csItems().find(x=>sg(x.n)===k)||csItems().find(x=>sg(x.n).startsWith(k)||k.startsWith(sg(x.n)+'-'));
+  if(!it){const nm=t.charAt(0).toUpperCase()+t.slice(1);it={id:'p-'+slug(nm),n:nm,cat:'ps'};CS.perso=[...(CS.perso||[]),it]}
+  CS.sel[it.id]=Math.max(CS.sel[it.id]||0,q);CS.got=CS.got.filter(x=>x!==it.id);done.push((q>1?q+' ':'')+it.n.toLowerCase())}
+ csSave();renderCS();return done}
+const JOURS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],MOIS=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+function parseDate(t){const d=new Date();d.setHours(12,0,0,0);let used='';
+ if(/apres[- ]demain/.test(t)){d.setDate(d.getDate()+2);used=/apres[- ]demain/}
+ else if(/\bdemain\b/.test(t)){d.setDate(d.getDate()+1);used=/\bdemain\b/}
+ else if(/\baujourd'?hui\b|\bce soir\b|\bcet apres-midi\b/.test(t)){used=/\baujourd'?hui\b|\bce soir\b|\bcet apres-midi\b/}
+ else{const m=t.match(/\b(?:le\s+)?(\d{1,2}|premier|1er)\s+(janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)?\b(?!\s*h)/);
+  const w=t.match(/\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b/);
+  if(m&&!/^\d{1,2}\s*(h|heure)/.test(m[0].replace(/^le\s+/,''))&&(m[2]||/\ble\s+\d/.test(m[0]))){const day=/prem|1er/.test(m[1])?1:+m[1];let mo=m[2]?MOIS.indexOf(m[2]):d.getMonth();
+   const c=new Date(d.getFullYear(),mo,day,12);if(c<new Date(new Date().setHours(0,0,0,0)))m[2]?c.setFullYear(c.getFullYear()+1):c.setMonth(c.getMonth()+1);d.setTime(c.getTime());used=new RegExp(m[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))}
+  else if(w){const target=JOURS.indexOf(w[1]);let diff=(target-d.getDay()+7)%7;if(diff===0)diff=7;d.setDate(d.getDate()+diff);used=new RegExp('\\b(ce |prochain |)'+w[1]+'( prochain)?\\b')}}
+ return {date:iso(d),rest:used?t.replace(used,' '):t,found:!!used}}
+function parseTime(t){const m=t.match(/\b(?:a\s+)?(\d{1,2})\s*(?:h|heures?|:)\s*(\d{2})?\b/)||t.match(/\b(?:a\s+)?(midi|minuit)\b/);
+ if(!m)return {heure:'',rest:t};let hh=m[1]==='midi'?12:m[1]==='minuit'?0:+m[1],mm=+(m[2]||0);if(/\b(apres-midi|du soir)\b/.test(t)&&hh<12)hh+=12;
+ return {heure:pad(hh)+':'+pad(mm),rest:t.replace(m[0],' ')}}
+const cap=x=>{x=x.replace(/\s+/g,' ').trim();return x.charAt(0).toUpperCase()+x.slice(1)};
+const accents=(norm,raw)=>{const W=raw.split(/\s+/);return norm.split(' ').map(w=>{const f=W.find(r=>N(r)===w);return f?f.replace(/[.,;:!?«»"]/g,''):w}).join(' ')};
+const owner=()=>{if(S.canW)return true;say('Seul le propriétaire connecté peut faire ça.');return false};
+function handle(raw){const t=N(raw);let m;
+ if(/^(aide|help|que sais-tu faire|qu'est-ce que tu sais faire|commandes?)\b/.test(t)){$('#vo-help').hidden=false;say('Voici ce que tu peux me demander.');return}
+ if(/^(ferme|stop|annule|merci|rien)\b/.test(t)){say('D\'accord.');setTimeout(voClose,900);return}
+ // note
+ if(m=t.match(/^(?:ajoute|cree|ecris|nouvelle|prends?)\s+(?:une\s+)?note\s*(?:qui dit|que)?\s*:?\s*(.+)$/)){if(!owner())return;
+  put('notes',{id:'n'+Date.now().toString(36),text:cap(raw.replace(/^.*?note\s*(qui dit|que)?\s*:?\s*/i,'')),c:COLORS[0],done:false,pin:false,t:Date.now()});go('notes','Note ajoutée.');return}
+ // tâche / annonce
+ if(m=t.match(/^(?:ajoute|cree|publie|nouvelle)\s+(?:une\s+)?(tache|annonce|nouvelle)\s*:?\s*(.+)$/)){if(!owner())return;
+  put('ann',{id:'a'+Date.now().toString(36),k:m[1]==='tache'?'tache':'nouvelle',title:cap(raw.replace(/^.*?(tâche|tache|annonce|nouvelle)\s*:?\s*/i,'')),body:'',done:false,t:Date.now()});go('annonces',m[1]==='tache'?'Tâche ajoutée.':'Annonce publiée.');return}
+ // rendez-vous
+ if(/\b(rendez[- ]vous|rdv)\b/.test(t)&&!/^(ouvre|affiche|montre|va)/.test(t)){if(!owner())return;
+  let r=t.replace(/^(ajoute|cree|note|mets|programme|nouveau|j'ai)\s*(un\s+)?/,'').replace(/\b(rendez[- ]vous|rdv)\b/,' ');
+  const D1=parseDate(r);r=D1.rest;const T=parseTime(r);r=T.rest;
+  let tt=r.replace(/\s+/g,' ').trim();for(let i=0;i<4;i++)tt=tt.replace(/^(pour|avec|chez|de|du|au|a|le|la|les|l'|:)\s+/,'').replace(/\s+(pour|le|la|a|au|avec|chez|de)$/,'');
+  const title=cap(accents(tt,raw)||'Rendez-vous');
+  put('ann',{id:'r'+Date.now().toString(36),k:'rdv',title,date:D1.date,heure:T.heure,lieu:'',body:'',c:COLORS[1],done:false,t:Date.now()});
+  S.cd=D1.date;const dd=new Date(D1.date+'T12:00');S.cm=new Date(dd.getFullYear(),dd.getMonth(),1);renderCal();
+  go('agenda','Rendez-vous « '+title+' » ajouté '+dd.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(T.heure?' à '+T.heure.replace(':','h'):'')+'.');return}
+ // courses : vider / enlever / ajouter
+ if(/^(vide|efface|remets? a zero)\s+(la\s+)?liste/.test(t)){CS.sel={};CS.got=[];csSave();renderCS();go('courses','Liste de courses vidée.');return}
+ if(m=t.match(/^(?:enleve|retire|supprime|barre|plus besoin de?)\s+(.+?)(?:\s+(?:de|dans)\s+la\s+liste.*)?$/)){const rm=[];
+  for(const p of m[1].split(/,|\set\s/)){const k=slug(N(p).replace(/^(du|de la|de l'|des|le|la|les|l'|d')\s*/,'')).replace(/s$/,'');const it=csItems().find(x=>CS.sel[x.id]&&slug(x.n).replace(/s$/,'').startsWith(k));if(it){delete CS.sel[it.id];rm.push(it.n.toLowerCase())}}
+  csSave();renderCS();go('courses',rm.length?'J\'ai retiré '+rm.join(', ')+'.':'Je n\'ai pas trouvé cet article dans la liste.');return}
+ if(m=t.match(/^(?:ajoute|rajoute|mets|met|achete|acheter|il (?:me |nous )?faut(?: acheter)?|il manque|prends?)\s+(.+?)(?:\s+(?:a|dans|sur|aux|sur la)\s+(?:la\s+|ma\s+)?(?:liste(?: de courses?)?|courses)\s*)?$/)){
+  const d=csAddVoice(m[1]);go('courses',d.length?'J\'ai ajouté '+d.join(', ')+' à la liste de courses.':'Je n\'ai pas compris l\'article.');return}
+ // météo parlée
+ if(/\b(meteo|temps|pleuvoir|pleut|temperature|fait-il|fera-t-il|froid|chaud|neige)\b/.test(t)&&!/^(ouvre|affiche|montre|va)/.test(t)&&D.wx?.jours){
+  const P=parseDate(t),i=Math.max(0,D.wx.jours.findIndex(j=>j.date===P.date)),j=D.wx.jours[i]||D.wx.jours[0];S.day=i;renderWx();location.hash='meteo';
+  const quand=i===0?'Aujourd\'hui':i===1?'Demain':new Date(j.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'long'});
+  say(quand+' à '+D.wx.ville+' : '+j.cond.toLowerCase()+', de '+j.min+' à '+j.max+' degrés, '+j.pluie+' pour cent de risque de pluie.'+(i===0?' Il fait actuellement '+D.wx.actuelle+' degrés.':''));return}
+ // photos
+ if(/\b(photo|image)\s+suivante\b|^suivante$/.test(t)){slide(false);location.hash='';say('Photo suivante.');setTimeout(voClose,1200);return}
+ if(/\b(photo|image)\s+precedente\b|^precedente$/.test(t)){S.pi=(S.pi-2+ph().length*2)%Math.max(1,ph().length);slide(false);location.hash='';say('Photo précédente.');setTimeout(voClose,1200);return}
+ // ouvrir une recette
+ if(/\brecette\b/.test(t)){const w=t.replace(/^.*?recettes?\s*(de la|du|des|de l'|de|d')?\s*/,'').trim();
+  if(w){const r=RC.map(r=>({r,s:N(r.titre).split(' ').filter(x=>x.length>2&&w.includes(x.replace(/s$/,''))).length})).sort((a,b)=>b.s-a.s)[0];
+   if(r&&r.s){go('recette-'+r.r.id,'J\'ouvre '+r.r.titre+'.');return}}
+  go('recettes','Voici les recettes.');return}
+ // navigation
+ const NAV=[[/\b(accueil|maison|debut|ecran principal)\b/,'','Accueil.'],[/\b(liste de courses?|courses?|caddie)\b/,'courses','Voici la liste de courses.'],[/\b(meteo|temps)\b/,'meteo','Voici la météo.'],[/\b(agenda|calendrier|rendez-vous|planning)\b/,'agenda','Voici l\'agenda.'],
+  [/\bnotes?\b/,'notes','Voici les notes.'],[/\b(photos?|galerie|images?)\b/,'photos','Voici les photos.'],[/\b(annonces?|taches?|nouvelles)\b/,'annonces','Voici les annonces.'],[/\butiles?\b/,'utile','Voici la page Utile.']];
+ for(const [re,h,msg] of NAV)if(re.test(t)){go(h,msg);return}
+ $('#vo-help').hidden=false;say('Je n\'ai pas compris. Voici des exemples de commandes.')}
+window.tableauVoix=handle;
 
 /* ---------- divers ---------- */
 let tt;function undo(msg,fn){$('#toast-t').textContent=msg;$('#toast').classList.add('on');clearTimeout(tt);$('#toast-b').onclick=()=>{fn();$('#toast').classList.remove('on')};tt=setTimeout(()=>$('#toast').classList.remove('on'),6000)}

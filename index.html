@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=18">
+<link rel="stylesheet" href="style.css?v=19">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -190,8 +190,28 @@
 
 <div class="viewer" id="viewer"><div class="strip" id="strip"></div><div class="vbar"><button id="vp" type="button">‹ Précédente</button><button id="vdel" type="button">Supprimer</button><button id="vx" type="button">Fermer</button><button id="vn" type="button">Suivante ›</button></div></div>
 <div class="editbar glass" id="editbar"><span>Fais glisser · touche ailleurs pour terminer</span><button class="ghost" id="ed-reset" type="button">Réinitialiser</button><button class="btn" id="ed-done" type="button">Terminé</button></div>
+<button class="mic" id="mic" type="button" aria-label="Commande vocale"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="#fff"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>
+<div class="vo" id="vo" hidden>
+  <div class="vo-card glass">
+    <div class="orb" id="orb"><i></i><i></i><i></i></div>
+    <div class="vo-txt"><div class="vo-heard" id="vo-heard">Je t'écoute…</div><div class="vo-res" id="vo-res"></div></div>
+    <button class="ghost" id="vo-x" type="button">Fermer</button>
+  </div>
+  <div class="vo-help glass" id="vo-help" hidden>
+    <b>Exemples de commandes</b>
+    <ul>
+      <li>« Ouvre la liste de courses » · « Ouvre la météo » · « Va sur les photos »</li>
+      <li>« Ajoute du lait, des œufs et 2 baguettes » · « Enlève le beurre de la liste » · « Vide la liste »</li>
+      <li>« Quel temps fera-t-il demain ? » · « Météo samedi »</li>
+      <li>« Ouvre la recette de la brioche » · « Photo suivante »</li>
+      <li>« Ajoute une note : appeler le garage » · « Ajoute une tâche : vidange samedi »</li>
+      <li>« Rendez-vous demain à 14 h 30 contrôle technique » · « Rendez-vous le 28 à 9 h dentiste »</li>
+      <li>« Aide » pour revoir cette liste</li>
+    </ul>
+  </div>
+</div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=18"></script>
+<script type="module" src="app.js?v=19"></script>
 </body>
 </html>
