@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=10';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=11';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -51,7 +51,7 @@ if(FB_OK)onAuthStateChanged(auth,u=>{
  const box=$('#uid');
  if(u&&!S.canW){box.hidden=false;box.textContent='Connecté, mais pas propriétaire. Identifiant à envoyer à Claude : '+u.uid}else box.hidden=true;
  status(S.canW?'Mode publication : toi seul peux modifier':'');
- lockUI();rerender()});
+ lockUI();rerender();if(typeof csApply==='function')csApply()});
 
 /* ---------- horloge ---------- */
 const fD=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -242,7 +242,7 @@ function renderOne(id){
  const st=RS[id]??={p:r.portions,ing:new Set(),ok:new Set()},k=st.p/r.portions;
  $('#rc-one').innerHTML=`<div class="rhead"><h1 class="v"><svg class="ic-l"><use href="#i-recette"/></svg>${esc(r.titre)}</h1><p>${esc(r.intro||'')}</p><div class="meta"><span>Prépa ${esc(r.prep)}</span><span>Cuisson ${esc(r.cuisson)}</span></div></div>
  <div class="rgrid"><section class="plate"><h2>Ingrédients</h2><div class="serv"><button type="button" data-sv="-1" aria-label="Moins">−</button><b>${st.p} personne${st.p>1?'s':''}</b><button type="button" data-sv="1" aria-label="Plus">+</button></div>
- <ul class="ing">${r.ingredients.map((g,i)=>`<li><label><input type="checkbox" data-ing="${i}" ${st.ing.has(i)?'checked':''}><span>${g.q?`<span class="q">${esc(fmtQ(g.q*k,g.u))}</span> `:''}${esc(g.n)}</span></label></li>`).join('')}</ul></section>
+ <button type="button" class="ghost rcadd" data-tocs="${esc(r.id)}">🛒 Ajouter à la liste de courses</button><ul class="ing" style="margin-top:12px">${r.ingredients.map((g,i)=>`<li><label><input type="checkbox" data-ing="${i}" ${st.ing.has(i)?'checked':''}><span>${g.q?`<span class="q">${esc(fmtQ(g.q*k,g.u))}</span> `:''}${esc(g.n)}</span></label></li>`).join('')}</ul></section>
  <section class="plate"><h2>Étapes</h2><ol class="steps">${r.etapes.map((e,i)=>`<li data-st="${i}" class="${st.ok.has(i)?'ok':''}"><div><b>${esc(e.t)}</b><p>${esc(e.d)}</p>${e.min?`<button type="button" class="timer" data-tm="${e.min}">⏱ Minuteur ${e.min} min</button>`:''}</div></li>`).join('')}</ol>
  ${r.astuces?.length?`<h2 style="margin-top:18px">Astuces</h2><ul class="tips">${r.astuces.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:''}</section></div>`}
 $('#rc-one').addEventListener('click',e=>{const id=location.hash.slice(9),st=RS[id];if(!st)return;
@@ -257,13 +257,80 @@ function startTimer(b){if(b._iv){clearInterval(b._iv);b._iv=null;b.className='ti
  t();b._iv=setInterval(t,1000)}
 loadRC();
 
+
+/* ---------- liste de courses ---------- */
+const CAT=[
+ ['fl','Fruits et légumes',['Pommes de terre','Oignons','Ail','Échalotes','Carottes','Tomates','Salade','Courgettes','Poireaux','Champignons','Concombre','Poivrons','Persil','Pommes','Bananes','Citrons','Oranges','Clémentines','Raisin']],
+ ['bo','Boulangerie',['Baguette','Pain de campagne','Pain de mie','Biscottes','Croissants','Brioche']],
+ ['cr','Crèmerie et œufs',['Lait','Beurre','Œufs','Crème fraîche','Yaourts','Fromage blanc','Fromage râpé','Emmental','Comté','Camembert','Mozzarella','Desserts lactés']],
+ ['vi','Viandes et poissons',['Steak haché','Poulet','Jambon','Lardons','Saucisses','Côtes de porc','Rôti','Charcuterie','Filets de poisson','Crevettes','Thon en boîte','Sardines']],
+ ['es','Épicerie salée',['Pâtes','Riz','Semoule','Lentilles','Farine','Huile d\'olive','Huile de tournesol','Vinaigre','Moutarde','Mayonnaise','Ketchup','Sel','Poivre','Épices','Bouillon cube','Sauce tomate','Concentré de tomate','Conserves de légumes','Chips','Apéritif']],
+ ['su','Épicerie sucrée et petit-déjeuner',['Sucre','Café','Thé','Chocolat en poudre','Céréales','Confiture','Pâte à tartiner','Miel','Biscuits','Chocolat','Compotes','Levure']],
+ ['bs','Boissons',['Eau plate','Eau gazeuse','Jus de fruits','Sodas','Sirop','Bière','Vin rouge','Vin blanc']],
+ ['sg','Surgelés',['Légumes surgelés','Frites','Pizza','Poisson pané','Steaks surgelés','Glaces']],
+ ['hy','Hygiène',['Papier toilette','Gel douche','Shampoing','Dentifrice','Brosses à dents','Déodorant','Rasoirs','Mousse à raser','Mouchoirs','Coton','Crème mains']],
+ ['en','Entretien',['Liquide vaisselle','Pastilles lave-vaisselle','Lessive','Adoucissant','Éponges','Sacs poubelle','Essuie-tout','Nettoyant multi-usage','Javel','Papier aluminium','Film alimentaire','Sacs congélation']],
+ ['ga','Bricolage et garage',['Piles','Ampoules','Gants nitrile','Dégraissant','Dégrippant','Chiffons','Lave-glace','Huile moteur','Scotch','Colliers de serrage']],
+ ['an','Animaux',['Croquettes','Pâtée','Litière','Friandises']],
+ ['ps','Ajouts perso',[]]];
+const slug=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+let CS={sel:{},got:[],perso:[]};
+const CSKEY='courses-v1';
+try{const j=JSON.parse(localStorage.getItem(CSKEY)||'null');if(j)CS={...CS,...j}}catch(e){}
+const csItems=()=>{const L=[];for(const [k,n,a] of CAT)for(const x of a)L.push({id:k+'-'+slug(x),n:x,cat:k});for(const p of CS.perso||[])L.push(p);return L};
+const catName=k=>(CAT.find(c=>c[0]===k)||CAT[CAT.length-1])[1];
+$('#cs-cat').innerHTML=CAT.map(([k,n])=>`<option value="${k}"${k==='ps'?' selected':''}>${esc(n)}</option>`).join('');
+let csT;
+function csSave(){try{localStorage.setItem(CSKEY,JSON.stringify(CS))}catch(e){}
+ if(S.canW&&FB_OK){clearTimeout(csT);csT=setTimeout(()=>setDoc(doc(db,'masques','courses'),{sel:CS.sel,got:CS.got,perso:CS.perso,t:Date.now()}).catch(()=>{}),700)}}
+let CSR=null;
+function csApply(){if(!CSR||!S.canW)return;CS={sel:CSR.sel||{},got:CSR.got||[],perso:CSR.perso||[]};try{localStorage.setItem(CSKEY,JSON.stringify(CS))}catch(e){}renderCS()}
+if(FB_OK)onSnapshot(doc(db,'masques','courses'),sn=>{if(!sn.exists())return;CSR=sn.data();csApply()},()=>{});
+function renderCS(){
+ const q=slug($('#cs-find').value||''),all=csItems(),n=Object.keys(CS.sel).length;
+ $('#cs-cats').innerHTML=CAT.map(([k,name])=>{const it=all.filter(x=>x.cat===k&&(!q||slug(x.n).includes(q)));if(!it.length)return '';
+  const c=it.filter(x=>CS.sel[x.id]).length;
+  return `<div class="cat"><h3>${esc(name)}${c?`<small>${c} coché${c>1?'s':''}</small>`:''}</h3><ul class="items">${it.map(x=>`<li class="it"><label><input type="checkbox" data-cs="${esc(x.id)}" ${CS.sel[x.id]?'checked':''}><span class="bx">✓</span><span>${esc(x.n)}</span></label></li>`).join('')}</ul></div>`}).join('')||'<div class="empty">Aucun article ne correspond. Ajoute-le avec le champ ci-dessus.</div>';
+ const chosen=all.filter(x=>CS.sel[x.id]);
+ $('#cs-count').textContent=n;$('#cs-fabn').textContent=n;$('#u-cs').textContent=n?n+' article'+(n>1?'s':'')+' à acheter':'Rien à acheter';
+ $('#cs-fab').hidden=!(n&&innerWidth<900&&location.hash==='#courses');
+ $('#cs-sum').innerHTML=chosen.length?CAT.map(([k,name])=>{const g=chosen.filter(x=>x.cat===k);if(!g.length)return '';
+  return `<div class="rg"><h4>${esc(name)}</h4><ul class="rl">${g.map(x=>`<li class="${CS.got.includes(x.id)?'got':''}"><button type="button" class="ck" data-got="${esc(x.id)}" aria-label="Dans le caddie">${CS.got.includes(x.id)?'✓':''}</button><span>${esc(x.n)}</span><span class="qty"><button type="button" data-qt="-1" data-id="${esc(x.id)}" aria-label="Moins">−</button><b>${CS.sel[x.id]}</b><button type="button" data-qt="1" data-id="${esc(x.id)}" aria-label="Plus">+</button></span></li>`).join('')}</ul></div>`}).join(''):'<div class="empty">Coche les articles dont tu as besoin : ils apparaissent ici, rangés par rayon.</div>';
+}
+function csText(){const all=csItems().filter(x=>CS.sel[x.id]);return 'Liste de courses\n'+CAT.map(([k,name])=>{const g=all.filter(x=>x.cat===k);return g.length?'\n'+name+'\n'+g.map(x=>'- '+x.n+(CS.sel[x.id]>1?' ×'+CS.sel[x.id]:'')).join('\n'):''}).join('\n')}
+$('#cs-cats').addEventListener('change',e=>{const c=e.target.closest('[data-cs]');if(!c)return;const id=c.dataset.cs;
+ if(c.checked)CS.sel[id]=CS.sel[id]||1;else{delete CS.sel[id];CS.got=CS.got.filter(x=>x!==id)}csSave();renderCS()});
+$('#cs-sum').addEventListener('click',e=>{const g=e.target.closest('[data-got]'),qb=e.target.closest('[data-qt]');
+ if(g){const id=g.dataset.got;CS.got=CS.got.includes(id)?CS.got.filter(x=>x!==id):[...CS.got,id]}
+ else if(qb){const id=qb.dataset.id,v=(CS.sel[id]||1)+ +qb.dataset.qt;if(v<1){delete CS.sel[id];CS.got=CS.got.filter(x=>x!==id)}else CS.sel[id]=Math.min(99,v)}else return;
+ csSave();renderCS()});
+$('#cs-find').addEventListener('input',renderCS);
+$('#cs-addb').addEventListener('click',()=>{const n=$('#cs-new').value.trim();if(!n)return;const cat=$('#cs-cat').value;const id='p-'+slug(n);
+ if(!csItems().some(x=>x.id===id||slug(x.n)===slug(n)))CS.perso=[...(CS.perso||[]),{id,n,cat}];
+ const ex=csItems().find(x=>x.id===id||slug(x.n)===slug(n));CS.sel[ex.id]=CS.sel[ex.id]||1;$('#cs-new').value='';csSave();renderCS()});
+$('#cs-new').addEventListener('keydown',e=>{if(e.key==='Enter')$('#cs-addb').click()});
+$('#cs-copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(csText());$('#cs-msg').textContent='Liste copiée : colle-la dans un SMS ou une note.'}catch(e){$('#cs-msg').textContent='Copie impossible sur cet appareil.'}});
+$('#cs-share').addEventListener('click',async()=>{const t=csText();if(navigator.share){try{await navigator.share({title:'Liste de courses',text:t})}catch(e){}}else{try{await navigator.clipboard.writeText(t);$('#cs-msg').textContent='Partage indisponible ici : liste copiée à la place.'}catch(e){}}});
+$('#cs-clear').addEventListener('click',()=>{const old=JSON.parse(JSON.stringify(CS));CS.sel={};CS.got=[];csSave();renderCS();undo('Liste vidée',()=>{CS=old;csSave();renderCS()})});
+addEventListener('resize',()=>{$('#cs-fab').hidden=!(Object.keys(CS.sel).length&&innerWidth<900&&location.hash==='#courses')});
+$('#cs-fab').addEventListener('click',e=>{e.preventDefault();$('#cs-recap').scrollIntoView({behavior:'smooth'})});
+let csSeen=false;
+const csIO=new IntersectionObserver(es=>{csSeen=es[0].isIntersecting;$('#cs-fab').style.display=csSeen?'none':''});csIO.observe($('#cs-recap'));
+renderCS();
+/* recette → liste de courses */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if(!b)return;const r=RC.find(x=>x.id===b.dataset.tocs);if(!r)return;
+ let n=0;for(const g of r.ingredients){if(!g.q)continue;const name=g.n.replace(/\s*\(.*?\)\s*/g,' ').replace(/,.*$/,'').trim();const nm=name.charAt(0).toUpperCase()+name.slice(1);
+  let ex=csItems().find(x=>slug(x.n)===slug(nm)||slug(nm).startsWith(slug(x.n)+'-')||slug(nm)===slug(x.n)+'s');
+  if(!ex){ex={id:'p-'+slug(nm),n:nm,cat:'ps'};CS.perso=[...(CS.perso||[]),ex]}CS.sel[ex.id]=CS.sel[ex.id]||1;n++}
+ csSave();renderCS();b.textContent='✓ '+n+' ingrédients ajoutés à la liste de courses'});
+
 /* ---------- divers ---------- */
 let tt;function undo(msg,fn){$('#toast-t').textContent=msg;$('#toast').classList.add('on');clearTimeout(tt);$('#toast-b').onclick=()=>{fn();$('#toast').classList.remove('on')};tt=setTimeout(()=>$('#toast').classList.remove('on'),6000)}
 function rerender(){renderNotes();renderAnn();renderPhotos();renderCal()}
 function lockUI(){for(const s of ['#n-compose','#a-compose','#p-up','#r-compose'])$(s).hidden=!S.canW}
-function route(){const v=location.hash.slice(1)||'home';let ok=['home','meteo','agenda','notes','photos','annonces','utile','recettes'].includes(v)?v:'home';
+function route(){const v=location.hash.slice(1)||'home';let ok=['home','meteo','agenda','notes','photos','annonces','utile','recettes','courses'].includes(v)?v:'home';
  if(/^recette-[a-z0-9-]+$/.test(v)){ok='recette';renderOne(v.slice(8))}
- const tab={recettes:'utile',recette:'utile'}[ok]||ok;
+ const tab={recettes:'utile',recette:'utile',courses:'utile'}[ok]||ok;if(ok==='courses')renderCS();
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+ok));
  document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===tab));window.scrollTo(0,0)}
 addEventListener('hashchange',route);route();
