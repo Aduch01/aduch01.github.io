@@ -3,12 +3,15 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=4';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=5';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const COLORS=['#ffd84d','#ff9eb8','#8fd0ff','#f1f1ea','#ffb37a'];
 const D={notes:[],ann:[],photos:[],wx:null};
+const R={notes:[],ann:[],photos:[]};   // publié depuis la conversation (data.json)
+let HID=new Set();                       // éléments de data.json masqués depuis la tablette
+const all=k=>{const m=new Map();for(const x of R[k])if(!HID.has(x.id))m.set(x.id,x);for(const x of D[k])m.set(x.id,x);return[...m.values()]};
 const S={canW:false,user:null,day:0,kind:'tache',filt:'all',col:COLORS[0],edit:null,pi:0};
 
 /* ---------- Firebase ---------- */
