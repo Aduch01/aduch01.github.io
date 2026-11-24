@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le Tableau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#121518">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+/* VOICE: calme, net, lisible de loin — un tableau d'atelier accroché au mur
+   IDEA: le panneau perforé d'atelier : des plaques vissées, des étiquettes, des post-it
+   PICTURE: la grande horloge + la météo dessinée, la photo du moment en cadre
+   COLOUR and TYPE: graphite profond / blanc craie, orange signal en accent, bleu ciel pour la météo ; Archivo 800 + Archivo
+   LAYOUT: tablette paysage = 3 colonnes de plaques ; portrait/téléphone = une pile ; dock de navigation en bas */
+:root{color-scheme:light dark;
+--bg:light-dark(#f4f3ef,#121518);--panel:light-dark(#ffffff,#1c2125);--panel2:light-dark(#ebeae5,#252b30);
+--ink:light-dark(#15181a,#eef1ee);--mut:light-dark(#5d666c,#94a0a7);--line:light-dark(#dcdad3,#2e353b);
+--acc:#ff6b3d;--sky:light-dark(#1d8fd1,#6cc3f0);--hole:light-dark(#d9d7cf,#1a1e22)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif;overflow-x:clip;
+background-image:radial-gradient(var(--hole) 1.6px,transparent 1.8px);background-size:26px 26px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;min-height:44px;border-radius:12px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.app{max-width:1400px;margin:0 auto;padding:16px max(2.5vw,12px) 104px;display:flex;flex-direction:column;gap:16px;min-height:100%}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.clock{font-weight:800;font-size:clamp(56px,9vw,112px);line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.date{font-size:20px;color:var(--mut);text-transform:capitalize}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--panel);border:1px solid var(--line);padding:0 16px;display:inline-flex;align-items:center;gap:8px;font-weight:500}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#1b0d06}
+.plate{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;position:relative;box-shadow:0 1px 0 var(--line),0 10px 24px -18px #0008}
+.plate::before,.plate::after{content:"";position:absolute;top:12px;width:8px;height:8px;border-radius:50%;background:var(--panel2);box-shadow:inset 0 1px 1px #0004}
+.plate::before{left:12px}.plate::after{right:12px}
+h2{font-size:15px;font-weight:600;margin:0 0 12px;color:var(--mut);display:flex;justify-content:space-between;align-items:center;gap:8px}
+h2 a{color:var(--acc);text-decoration:none;font-weight:600}
+h1.v{font-size:clamp(32px,4vw,44px);line-height:1.05;margin:4px 0 4px;font-weight:800;text-wrap:balance}
+.home{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr);gap:16px;flex:1}
+.view{display:none}.view.on{display:flex;flex-direction:column;gap:16px}.home.on{display:grid}
+/* météo */
+.wx-now{display:flex;align-items:center;gap:18px}
+.wx-now svg{width:118px;height:118px;flex:none}
+.big{font-size:clamp(56px,7vw,84px);font-weight:800;line-height:1;letter-spacing:-.03em}
+.cond{font-size:18px}
+.alert{margin-top:12px;background:color-mix(in srgb,var(--acc) 16%,transparent);border-left:4px solid var(--acc);padding:8px 12px;border-radius:8px;font-weight:500}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:16px}
+.day{background:var(--panel2);border-radius:12px;padding:8px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid transparent}
+.day.sel{border-color:var(--sky)}
+.day svg{width:34px;height:34px}
+.day b{font-size:16px}.day small{color:var(--mut);font-size:13px}
+.maj{font-size:13px;color:var(--mut);margin-top:10px}
+.range{display:grid;grid-template-columns:5.5em minmax(0,1fr) 5em;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.track{height:12px;background:var(--panel2);border-radius:6px;position:relative}
+.track i{position:absolute;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--sky),var(--acc))}
+.rain{height:6px;background:var(--sky);border-radius:3px;margin-top:4px;opacity:.7}
+.wx-detail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+.stat{background:var(--panel2);border-radius:14px;padding:12px}.stat span{display:block;font-size:13px;color:var(--mut)}.stat b{font-size:24px;white-space:nowrap}
+/* photos */
+.frame{padding:12px}.frame .pic{aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:var(--panel2);display:grid;place-items:center;position:relative}
+.pic img{width:100%;height:100%;object-fit:cover;display:block;animation:fade .8s}
+@keyframes fade{from{opacity:0}}@media(prefers-reduced-motion:reduce){.pic img{animation:none}}
+.cap{font-size:15px;margin-top:8px;color:var(--mut);min-height:1.5em}
+.empty{color:var(--mut);text-align:center;padding:24px 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.thumb{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1;background:var(--panel2);padding:0}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.viewer{position:fixed;inset:0;background:#000e;z-index:20;display:none;flex-direction:column}
+.viewer.on{display:flex}
+.strip{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.strip figure{flex:0 0 100%;scroll-snap-align:center;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:8px}
+.strip img{max-width:100%;max-height:calc(100vh - 140px);border-radius:8px}
+.strip figcaption{color:#ddd}
+.vbar{display:flex;justify-content:center;gap:10px;padding:12px;flex-wrap:wrap}
+.vbar button{background:#ffffff22;color:#fff;padding:0 18px}
+/* notes & annonces */
+.compose{display:flex;flex-direction:column;gap:10px}
+textarea,input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:16px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid transparent}.sw.sel{border-color:var(--ink)}
+.btn{background:var(--acc);color:#1b0d06;font-weight:600;padding:0 20px}
+.ghost{background:var(--panel2);padding:0 14px}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.note{border-radius:6px 6px 18px 6px;padding:16px 16px 8px;color:#1d1a10;box-shadow:0 8px 18px -12px #000a;display:flex;flex-direction:column;gap:8px;min-height:150px;transform:rotate(var(--r,0deg))}
+.note p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:17px;flex:1}
+.note.done p{text-decoration:line-through;opacity:.55}
+.note .row{gap:2px;justify-content:flex-end}.note button{min-width:44px;color:#1d1a10}
+.note small{font-size:13px;opacity:.65}
+.mini{display:flex;flex-direction:column;gap:8px}
+.mini li,.ann li{list-style:none}
+.mini ul,.ann{margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mline{display:flex;gap:10px;align-items:flex-start;background:var(--panel2);border-radius:12px;padding:10px 12px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:6px}
+.ann .item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.tag{font-size:13px;font-weight:600;padding:2px 10px;border-radius:20px;background:var(--panel2);white-space:nowrap}
+.tag.t{background:color-mix(in srgb,var(--acc) 22%,transparent)}.tag.n{background:color-mix(in srgb,var(--sky) 22%,transparent)}
+.item h3{margin:0;font-size:19px}.item p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--mut)}
+.item.done h3{text-decoration:line-through;opacity:.6}
+.check{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);display:grid;place-items:center;font-weight:800}
+.check.on{background:var(--acc);border-color:var(--acc);color:#1b0d06}
+.seg{display:inline-flex;background:var(--panel2);border-radius:12px;padding:3px}.seg button{padding:0 14px;min-height:40px}.seg button.on{background:var(--panel);font-weight:600}
+.hint{font-size:13px;color:var(--mut)}
+/* dock */
+.dock{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:10;display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:6px;box-shadow:0 12px 30px -12px #000a;max-width:calc(100vw - 16px)}
+.dock a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:72px;min-height:56px;padding:4px 8px;border-radius:16px;color:var(--mut);text-decoration:none;font-size:13px;font-weight:500}
+.dock a svg{width:24px;height:24px}
+.dock a.on{background:var(--ink);color:var(--bg)}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 12px 10px 18px;border-radius:14px;display:none;align-items:center;gap:12px;z-index:30;max-width:calc(100vw - 24px)}
+.toast.on{display:flex}.toast button{color:var(--acc);font-weight:600;padding:0 10px}
+.status{font-size:13px;color:var(--mut);align-self:center}
+.owner-id{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:40;background:var(--acc);color:#1b0d06;padding:10px 14px;border-radius:12px;font-size:14px;max-width:calc(100vw - 16px);overflow-wrap:anywhere}
+.wx-more{font-size:13px;color:var(--mut);margin-top:6px}
+@media(max-width:1000px){.home{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.home .c1{grid-column:1/-1}}
+@media(max-width:600px){.home{grid-template-columns:minmax(0,1fr)}.days{grid-template-columns:repeat(4,minmax(0,1fr))}.wx-detail{grid-template-columns:repeat(2,minmax(0,1fr))}.dock a{min-width:56px;padding:4px}.dock a span{font-size:12px}.wx-now svg{width:84px;height:84px}.range{grid-template-columns:4.5em minmax(0,1fr) 4.5em}}
+</style>
+</head>
+<body>
+<div class="owner-id" id="uid" hidden></div>
+<div class="app" id="app">
+  <header class="top">
+    <div><div class="clock" id="clock">--:--</div><div class="date" id="date"></div></div>
+    <div class="tools">
+      <span class="status" id="status"></span>
+      <button class="chip" id="login" type="button">Connexion</button>
+      <button class="chip" id="wake" type="button">Écran toujours allumé</button>
+      <button class="chip" id="fs" type="button">Plein écran</button>
+    </div>
+  </header>
+
+  <main class="view home" id="v-home">
+    <section class="plate c1"><h2>Météo <a href="#meteo">Détails</a></h2><div id="h-wx"></div></section>
+    <section class="plate frame"><h2 style="padding:0 8px">Photo du moment <a href="#photos">Toutes</a></h2><div class="pic" id="h-pic"></div><div class="cap" id="h-cap"></div></section>
+    <section class="mini">
+      <div class="plate"><h2>Notes <a href="#notes">Ouvrir</a></h2><ul id="h-notes"></ul></div>
+      <div class="plate"><h2>Annonces <a href="#annonces">Ouvrir</a></h2><ul id="h-ann"></ul></div>
+    </section>
+  </main>
+
+  <main class="view" id="v-meteo">
+    <h1 class="v" id="m-title">Météo</h1>
+    <section class="plate" id="m-day"></section>
+    <section class="plate"><h2>La semaine</h2><div id="m-week"></div><div class="maj" id="m-maj"></div></section>
+  </main>
+
+  <main class="view" id="v-notes">
+    <h1 class="v">Notes</h1>
+    <section class="plate compose" id="n-compose">
+      <textarea id="n-text" rows="3" placeholder="Écris une note… (pièce à commander, rappel, idée)"></textarea>
+      <div class="row" id="n-colors"></div>
+      <div class="row"><button class="btn" id="n-add" type="button">Ajouter la note</button><button class="ghost" id="n-cancel" type="button" hidden>Annuler</button></div>
+    </section>
+    <div class="notes" id="n-list"></div>
+  </main>
+
+  <main class="view" id="v-photos">
+    <h1 class="v">Photos</h1>
+    <section class="plate compose" id="p-up">
+      <div class="row"><label class="btn" style="display:inline-flex;align-items:center;min-height:44px;border-radius:12px;cursor:pointer">Ajouter des photos<input type="file" id="p-file" accept="image/*" multiple hidden></label><input type="text" id="p-cap" placeholder="Légende (facultatif)" style="flex:1;min-width:200px"></div>
+      <div class="hint" id="p-msg">Les photos sont réduites automatiquement pour rester légères, puis défilent sur l'accueil.</div>
+    </section>
+    <div class="grid" id="p-grid"></div>
+  </main>
+
+  <main class="view" id="v-annonces">
+    <h1 class="v">Tâches et nouvelles</h1>
+    <section class="plate compose" id="a-compose">
+      <div class="seg" id="a-kind"><button type="button" data-k="tache" class="on">Tâche</button><button type="button" data-k="nouvelle">Nouvelle</button></div>
+      <input type="text" id="a-title" placeholder="Titre (ex. Vidange du Patrol samedi)">
+      <textarea id="a-body" rows="2" placeholder="Détails (facultatif)"></textarea>
+      <div class="row"><button class="btn" id="a-add" type="button">Publier</button></div>
+      <div class="hint">Tout ce que tu publies est visible tout de suite par ceux qui ont le lien. Lien direct vers cet écran : ajoute #annonces à la fin.</div>
+    </section>
+    <div class="seg" id="a-filter"><button type="button" data-f="all" class="on">Tout</button><button type="button" data-f="tache">Tâches</button><button type="button" data-f="nouvelle">Nouvelles</button></div>
+    <ul class="ann" id="a-list"></ul>
+  </main>
+</div>
+
+<nav class="dock" id="dock">
+  <a href="#" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Accueil</span></a>
+  <a href="#meteo" data-v="meteo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="4"/><path d="M8 20h9a4 4 0 0 0 0-8 6 6 0 0 0-1 .1"/></svg><span>Météo</span></a>
+  <a href="#notes" data-v="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v12l-6 6H5z"/><path d="M13 21v-6h6"/></svg><span>Notes</span></a>
+  <a href="#photos" data-v="photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span>Photos</span></a>
+  <a href="#annonces" data-v="annonces"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10v4h3l6 4V6L7 10z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg><span>Annonces</span></a>
+</nav>
+
+<div class="viewer" id="viewer"><div class="strip" id="strip"></div><div class="vbar"><button id="vp" type="button">← Précédente</button><button id="vdel" type="button">Supprimer</button><button id="vx" type="button">Fermer</button><button id="vn" type="button">Suivante →</button></div></div>
+<div class="toast" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
