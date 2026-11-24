@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=6';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=8';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -71,18 +71,24 @@ async function loadWx(){
 loadWx();setInterval(loadWx,30*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&D.wx&&Date.now()-new Date(D.wx.maj)>30*60*1000)loadWx()});
 
-function ico(c){c=(c||'').toLowerCase();
- const sun='<circle cx="32" cy="30" r="11" fill="#ffc53d"/><g stroke="#ffc53d" stroke-width="3" stroke-linecap="round">'+[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return `<line x1="${32+17*Math.cos(r)}" y1="${30+17*Math.sin(r)}" x2="${32+22*Math.cos(r)}" y2="${30+22*Math.sin(r)}"/>`}).join('')+'</g>';
- const cloud=(x,y,f)=>`<path d="M${x} ${y}h26a9 9 0 0 0 0-18 13 13 0 0 0-25-2 10 10 0 0 0-1 20z" transform="translate(-4 0)" fill="${f}"/>`;
- let s='';
- if(/neige|grain/.test(c))s=cloud(14,38,'#c9d3da')+'<g fill="#9fd8ff">'+[20,32,44].map(x=>`<circle cx="${x}" cy="50" r="3"/>`).join('')+'</g>';
- else if(/orage/.test(c))s=cloud(14,36,'#6f7d89')+'<path d="M30 40l-6 10h6l-3 9 10-13h-6l3-6z" fill="#ffc53d"/>';
- else if(/pluie|averse|bruine/.test(c))s=cloud(14,36,'#8a99a6')+'<g stroke="#4fb3f0" stroke-width="3" stroke-linecap="round">'+[20,30,40].map(x=>`<line x1="${x}" y1="44" x2="${x-4}" y2="54"/>`).join('')+'</g>';
- else if(/brume|brouillard/.test(c))s=cloud(14,32,'#b5c0c8')+'<g stroke="#9aa6af" stroke-width="3" stroke-linecap="round"><line x1="12" y1="42" x2="50" y2="42"/><line x1="18" y1="50" x2="54" y2="50"/></g>';
- else if(/clair|soleil/.test(c))s=sun;
- else if(/éclairc|partiel/.test(c))s='<g transform="translate(-8 -8)">'+sun+'</g>'+cloud(20,46,'#c3ccd3');
- else s=cloud(10,36,'#aab5be')+cloud(22,46,'#8796a2');
+function ico(c,night){c=(c||'').toLowerCase();
+ const sun=(x=32,y=28,r=13)=>`<circle cx="${x}" cy="${y}" r="${r*1.9}" fill="url(#w-glow)"/><circle cx="${x}" cy="${y}" r="${r}" fill="url(#w-sun)" filter="url(#w-sh)"/>`;
+ const moon=(x=30,y=26)=>`<path d="M${x+6} ${y-14}a14 14 0 1 0 10 22 11 11 0 0 1-10-22z" fill="url(#w-cloud)" filter="url(#w-sh)"/>`;
+ const cloud=(dx=0,dy=0,k=1,f='w-cloud')=>`<path transform="translate(${dx} ${dy}) scale(${k})" d="M17 48h30a10 10 0 0 0 1.2-19.9A14 14 0 0 0 21.3 27 10.5 10.5 0 0 0 17 48z" fill="url(#${f})" filter="url(#w-sh)"/>`;
+ const drops=[21,32,43].map((x,i)=>{const y=47+i%2*4;return `<path d="M${x} ${y}c-3 5-4.5 7.5-4.5 9.5a4.5 4.5 0 0 0 9 0c0-2-1.5-4.5-4.5-9.5z" fill="url(#w-drop)" filter="url(#w-sh)" transform="rotate(14 ${x} ${y+7})"/>`}).join('');
+ let s;
+ if(/neige|grain/.test(c))s=cloud(0,-6)+[20,32,44].map((x,i)=>`<circle cx="${x}" cy="${52+i%2*4}" r="3.2" fill="#fff" filter="url(#w-sh)"/>`).join('');
+ else if(/orage/.test(c))s=cloud(0,-6,1,'w-cloud2')+'<path d="M33 44l-7 11h6l-3 9 11-14h-6l3-6z" fill="url(#w-bolt)" filter="url(#w-sh)"/>';
+ else if(/pluie|averse|bruine/.test(c))s=cloud(0,-8,1,/forte|violent/.test(c)?'w-cloud2':'w-cloud')+drops;
+ else if(/brume|brouillard/.test(c))s=cloud(0,-6,1,'w-cloud2')+'<g stroke="#dfe6f2" stroke-width="3.5" stroke-linecap="round" opacity=".85"><line x1="12" y1="50" x2="46" y2="50"/><line x1="20" y1="57" x2="54" y2="57"/></g>';
+ else if(/clair|soleil/.test(c))s=night?moon(32,32):sun(32,32,14);
+ else if(/éclairc|partiel/.test(c))s=(night?moon(24,22):sun(24,22,11))+cloud(6,6,.9);
+ else s=cloud(-6,-8,.85,'w-cloud2')+cloud(4,2,.95);
  return `<svg viewBox="0 0 64 64" aria-hidden="true">${s}</svg>`}
+function sky(c,night){c=(c||'').toLowerCase();
+ if(/orage/.test(c))return 'storm';if(/neige|grain/.test(c))return 'snow';if(/pluie|averse|bruine/.test(c))return night?'night':'rain';
+ if(/brume|brouillard/.test(c))return 'fog';if(night)return 'night';if(/clair|soleil|éclairc|partiel/.test(c))return 'sun';return 'cloud'}
+function isNight(d){const t=new Date().toTimeString().slice(0,5);return !!(d&&d.lever&&d.coucher)&&(t<d.lever||t>d.coucher)}
 const jour=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'}).replace('.','');
 const jourL=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
 const fmtMaj=s=>{const d=new Date(s);return isNaN(d)?'—':d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})};
@@ -92,10 +98,12 @@ function renderWx(){
  if(!w||!w.jours?.length){H.innerHTML='<div class="empty">Météo indisponible pour le moment.</div>';$('#m-day').innerHTML=H.innerHTML;$('#m-week').innerHTML='';return}
  const J=w.jours,t=J[0];
  const days=J.map((d,i)=>`<button type="button" class="day${i===S.day?' sel':''}" data-day="${i}"><small>${i?esc(jour(d.date)):'Auj.'}</small>${ico(d.cond)}<b>${esc(d.max)}°</b><small>${esc(d.min)}°</small></button>`).join('');
- H.innerHTML=`<div class="wx-now">${ico(w.condNow||t.cond)}<div><div class="big">${esc(w.actuelle)}°</div><div class="cond">${esc(w.condNow||t.cond)} · ${esc(w.ville)}</div><div class="wx-more">Ressenti ${esc(w.ressenti)}° · humidité ${esc(w.hum)} %</div></div></div><div class="days">${days}</div><div class="maj">Mise à jour automatique · ${esc(fmtMaj(w.maj))}</div>`;
+ const nt=isNight(t);$('#wxcard').dataset.sky=sky(w.condNow||t.cond,nt);
+ H.innerHTML=`<div class="wx-now">${ico(w.condNow||t.cond,nt)}<div><div class="big">${esc(w.actuelle)}°</div><div class="cond">${esc(w.condNow||t.cond)} · ${esc(w.ville)}</div><div class="wx-more">Ressenti ${esc(w.ressenti)}° · humidité ${esc(w.hum)} %</div></div></div><div class="days">${days}</div><div class="maj">Mise à jour automatique · ${esc(fmtMaj(w.maj))}</div>`;
  const d=J[S.day]||t;
  $('#m-title').textContent='Météo à '+w.ville;
- $('#m-day').innerHTML=`<h2>${esc(jourL(d.date))}</h2><div class="wx-now">${ico(d.cond)}<div><div class="big">${esc(d.max)}° <span style="font-size:.5em;color:var(--mut)">/ ${esc(d.min)}°</span></div><div class="cond">${esc(d.cond)}</div></div></div><div class="wx-detail"><div class="stat"><span>Risque de pluie</span><b>${esc(d.pluie)} %</b></div><div class="stat"><span>Cumul</span><b>${esc(d.mm)} mm</b></div><div class="stat"><span>Vent max</span><b>${esc(d.vent)} km/h ${esc(d.dir)}</b></div><div class="stat"><span>Soleil</span><b>${esc(d.lever)} – ${esc(d.coucher)}</b></div></div><div class="days">${days}</div>`;
+ $('#m-day').dataset.sky=sky(d.cond,S.day===0&&nt);
+ $('#m-day').innerHTML=`<h2>${esc(jourL(d.date))}</h2><div class="wx-now">${ico(d.cond,S.day===0&&nt)}<div><div class="big">${esc(d.max)}° <span style="font-size:.5em;color:var(--mut)">/ ${esc(d.min)}°</span></div><div class="cond">${esc(d.cond)}</div></div></div><div class="wx-detail"><div class="stat"><span>Risque de pluie</span><b>${esc(d.pluie)} %</b></div><div class="stat"><span>Cumul</span><b>${esc(d.mm)} mm</b></div><div class="stat"><span>Vent max</span><b>${esc(d.vent)} km/h ${esc(d.dir)}</b></div><div class="stat"><span>Soleil</span><b>${esc(d.lever)} – ${esc(d.coucher)}</b></div></div><div class="days">${days}</div>`;
  const lo=Math.min(...J.map(x=>x.min)),hi=Math.max(...J.map(x=>x.max)),sp=(hi-lo)||1;
  $('#m-week').innerHTML=J.map((x,i)=>`<button type="button" class="range" data-day="${i}" style="width:100%;text-align:left;border-radius:0"><span>${i?esc(jour(x.date)):'Auj.'} <b>${esc(x.min)}°</b></span><span><span class="track"><i style="left:${(x.min-lo)/sp*100}%;right:${100-(x.max-lo)/sp*100}%"></i></span><span class="rain" style="display:block;width:${Math.max(2,+x.pluie||0)}%"></span></span><span style="text-align:right"><b>${esc(x.max)}°</b> · ${esc(x.pluie)}%</span></button>`).join('');
  $('#m-maj').textContent='Barre colorée : écart min–max · trait bleu : risque de pluie. Source Open-Meteo, mise à jour toutes les 30 min (dernière à '+fmtMaj(w.maj)+').';
@@ -108,8 +116,8 @@ $('#n-colors').addEventListener('click',e=>{const b=e.target.closest('[data-c]')
 const nc=c=>COLORS.includes(c)?c:COLORS[0];
 function renderNotes(){
  const L=[...all('notes')].sort((x,y)=>(y.pin|0)-(x.pin|0)||(x.done|0)-(y.done|0)||y.t-x.t);
- $('#n-list').innerHTML=L.length?L.map((n,i)=>`<article class="note${n.done?' done':''}" style="background:${nc(n.c)};--r:${[-1.2,.8,-.4,1.1,0][i%5]}deg"><small>${n.pin?'Épinglée · ':''}${esc(new Date(n.t).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}))}</small><p>${esc(n.text)}</p>${S.canW?`<div class="row"><button type="button" data-n="done" data-id="${esc(n.id)}" aria-label="Fait">${n.done?'↺':'✓'}</button><button type="button" data-n="pin" data-id="${esc(n.id)}">${n.pin?'Désépingler':'Épingler'}</button><button type="button" data-n="edit" data-id="${esc(n.id)}">Modifier</button><button type="button" data-n="del" data-id="${esc(n.id)}" aria-label="Supprimer">✕</button></div>`:''}</article>`).join(''):'<div class="empty plate">Aucune note pour l\'instant.</div>';
- $('#h-notes').innerHTML=L.filter(n=>!n.done).slice(0,5).map(n=>`<li class="mline"><span class="dot" style="background:${nc(n.c)}"></span><span>${esc(n.text.length>90?n.text.slice(0,90)+'…':n.text)}</span></li>`).join('')||'<li class="empty">Rien à signaler.</li>';
+ $('#n-list').innerHTML=L.length?L.map((n,i)=>`<article class="note${n.done?' done':''}" style="--nc:${nc(n.c)}"><small>${n.pin?'Épinglée · ':''}${esc(new Date(n.t).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}))}</small><p>${esc(n.text)}</p>${S.canW?`<div class="row"><button type="button" data-n="done" data-id="${esc(n.id)}" aria-label="Fait">${n.done?'↺':'✓'}</button><button type="button" data-n="pin" data-id="${esc(n.id)}">${n.pin?'Désépingler':'Épingler'}</button><button type="button" data-n="edit" data-id="${esc(n.id)}">Modifier</button><button type="button" data-n="del" data-id="${esc(n.id)}" aria-label="Supprimer">✕</button></div>`:''}</article>`).join(''):'<div class="empty plate">Aucune note pour l\'instant.</div>';
+ $('#h-notes').innerHTML=L.filter(n=>!n.done).slice(0,5).map(n=>`<li class="mline"><span class="dot" style="background:${nc(n.c)};color:${nc(n.c)}"></span><span>${esc(n.text.length>90?n.text.slice(0,90)+'…':n.text)}</span></li>`).join('')||'<li class="empty">Rien à signaler.</li>';
 }
 $('#n-add').addEventListener('click',()=>{const text=$('#n-text').value.trim();if(!text||!S.canW)return;
  if(S.edit){const n=all('notes').find(x=>x.id===S.edit);if(n)put('notes',{...n,text,c:S.col});S.edit=null;$('#n-add').textContent='Ajouter la note';$('#n-cancel').hidden=true}
