@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20">
+<link rel="stylesheet" href="style.css?v=19">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -43,8 +43,6 @@
   <symbol id="i-recette" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-recette)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><g filter="url(#f-glyph)"><path d="M24 14c-2 3 2 4 0 7M30 12c-2 3 2 4 0 7M36 14c-2 3 2 4 0 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".85"/><path d="M12 27h36v3a14 14 0 0 1-14 14h-8a14 14 0 0 1-14-14z" fill="url(#g-glyph)"/><rect x="9" y="25" width="42" height="4" rx="2" fill="#fff"/><rect x="20" y="44" width="20" height="4" rx="2" fill="#ffd2b0"/></g></symbol>
   <linearGradient id="g-courses" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ee0a0"/><stop offset="1" stop-color="#14a05a"/></linearGradient>
   <symbol id="i-courses" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-courses)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><g filter="url(#f-glyph)"><path d="M10 15h5.5l5 22h21l4.5-15H18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 22h26l-4.5 15h-18z" fill="url(#g-glyph)"/><circle cx="23" cy="44" r="3.4" fill="#fff"/><circle cx="39" cy="44" r="3.4" fill="#fff"/><path d="M27 29l3 3 6-6" fill="none" stroke="#14a05a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g></symbol>
-  <linearGradient id="g-video" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6a5c"/><stop offset="1" stop-color="#c4102b"/></linearGradient>
-  <symbol id="i-video" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-video)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><g filter="url(#f-glyph)"><rect x="11" y="15" width="38" height="26" rx="6" fill="url(#g-glyph)"/><path d="M26 22.5v11l9.5-5.5z" fill="#e0263b"/><rect x="22" y="44" width="16" height="3.5" rx="1.75" fill="#fff"/></g></symbol>
   <symbol id="i-home" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-home)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><path filter="url(#f-glyph)" fill="url(#g-glyph)" d="M30 14.5 13 28.2c-1.4 1.1-.6 3.3 1.2 3.3H17V44a2 2 0 0 0 2 2h7.5V36h7v10H41a2 2 0 0 0 2-2V31.5h2.8c1.8 0 2.6-2.2 1.2-3.3z"/></symbol>
   <symbol id="i-meteo" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-meteo)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><circle cx="24" cy="23" r="9" fill="url(#w-sun)" filter="url(#f-glyph)"/><path filter="url(#f-glyph)" fill="url(#g-glyph)" d="M20 45h21a8 8 0 0 0 1-15.9A11 11 0 0 0 21.3 31 7 7 0 0 0 20 45z"/></symbol>
   <symbol id="i-notes" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-notes)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><g filter="url(#f-glyph)"><path fill="url(#g-glyph)" d="M17 13h26a3 3 0 0 1 3 3v19L35 47H17a3 3 0 0 1-3-3V16a3 3 0 0 1 3-3z"/><path fill="#ffd27a" d="M46 35H38a3 3 0 0 0-3 3v9z"/><rect x="20" y="20" width="20" height="3" rx="1.5" fill="#ffb020"/><rect x="20" y="27" width="16" height="3" rx="1.5" fill="#ffb020" opacity=".7"/><rect x="20" y="34" width="10" height="3" rx="1.5" fill="#ffb020" opacity=".5"/></g></symbol>
@@ -106,7 +104,6 @@
     <h1 class="v"><svg class="ic-l"><use href="#i-utile"/></svg>Utile</h1>
     <div class="tiles" data-sort="utile">
       <a class="tile glass" href="#recettes"><svg><use href="#i-recette"/></svg><b>Recettes</b><small id="u-rc">—</small></a>
-      <a class="tile glass" href="#video"><svg><use href="#i-video"/></svg><b>YouTube</b><small>Sans pub avec Brave</small></a>
       <a class="tile glass" href="#courses"><svg><use href="#i-courses"/></svg><b>Liste de courses</b><small id="u-cs">—</small></a>
     </div>
     <div class="hint">D'autres catégories arriveront ici : demande-les à Claude.</div>
@@ -135,23 +132,6 @@
       </section>
     </div>
     <a class="fab" id="cs-fab" href="#courses" hidden>Récap · <b id="cs-fabn">0</b></a>
-  </main>
-
-  <main class="view" id="v-video">
-    <a class="back" href="#utile">‹ Utile</a>
-    <h1 class="v"><svg class="ic-l"><use href="#i-video"/></svg>YouTube</h1>
-    <section class="plate">
-      <form class="row yt-search" id="yt-form"><input type="text" id="yt-q" placeholder="Chercher une vidéo…" enterkeyhint="search"><button class="btn" type="submit">Chercher</button></form>
-      <div class="row chips" id="yt-chips"></div>
-      <label class="brave"><input type="checkbox" id="yt-brave"><span class="bx">✓</span><span>Ouvrir avec <b>Brave</b> (bloque les pubs)</span></label>
-      <div class="hint" id="yt-hint"></div>
-    </section>
-    <section class="plate">
-      <h2>Lire une vidéo ici</h2>
-      <form class="row" id="yt-play"><input type="text" id="yt-url" placeholder="Colle un lien YouTube (youtu.be/… ou youtube.com/watch?v=…)"><button class="btn" type="submit">Lire</button></form>
-      <div class="player" id="yt-player" hidden></div>
-      <ul class="yt-recent" id="yt-recent"></ul>
-    </section>
   </main>
 
   <main class="view" id="v-recette">
@@ -215,7 +195,6 @@
   <div class="vo-card glass">
     <div class="orb" id="orb"><i></i><i></i><i></i></div>
     <div class="vo-txt"><div class="vo-heard" id="vo-heard">Je t'écoute…</div><div class="vo-res" id="vo-res"></div></div>
-    <a class="btn" id="vo-go" href="#" target="_blank" rel="noopener" hidden>Ouvrir</a>
     <button class="ghost" id="vo-x" type="button">Fermer</button>
   </div>
   <div class="vo-help glass" id="vo-help" hidden>
@@ -227,13 +206,12 @@
       <li>« Ouvre la recette de la brioche » · « Photo suivante »</li>
       <li>« Ajoute une note : appeler le garage » · « Ajoute une tâche : vidange samedi »</li>
       <li>« Rendez-vous demain à 14 h 30 contrôle technique » · « Rendez-vous le 28 à 9 h dentiste »</li>
-      <li>« Ouvre YouTube » · « Cherche tuto vidange sur YouTube »</li>
       <li>« Aide » pour revoir cette liste</li>
     </ul>
   </div>
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=20"></script>
+<script type="module" src="app.js?v=19"></script>
 </body>
 </html>
