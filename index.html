@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -35,6 +35,8 @@
   <linearGradient id="w-bolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff27a"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient>
   <filter id="w-sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#0b1a3a" flood-opacity=".45"/></filter>
 
+  <linearGradient id="g-agenda" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b6b"/><stop offset="1" stop-color="#d7193f"/></linearGradient>
+  <symbol id="i-agenda" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-agenda)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><g filter="url(#f-glyph)"><rect x="13" y="15" width="34" height="32" rx="6" fill="url(#g-glyph)"/><path d="M13 21a6 6 0 0 1 6-6h22a6 6 0 0 1 6 6v3H13z" fill="#ff8a8a"/><rect x="20" y="11" width="4" height="9" rx="2" fill="#fff"/><rect x="36" y="11" width="4" height="9" rx="2" fill="#fff"/><g fill="#e5304f"><rect x="18" y="29" width="5" height="4" rx="1.2"/><rect x="27.5" y="29" width="5" height="4" rx="1.2"/><rect x="37" y="29" width="5" height="4" rx="1.2"/><rect x="18" y="37" width="5" height="4" rx="1.2"/><rect x="27.5" y="37" width="5" height="4" rx="1.2" opacity=".45"/></g></g></symbol>
   <symbol id="i-home" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-home)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><path filter="url(#f-glyph)" fill="url(#g-glyph)" d="M30 14.5 13 28.2c-1.4 1.1-.6 3.3 1.2 3.3H17V44a2 2 0 0 0 2 2h7.5V36h7v10H41a2 2 0 0 0 2-2V31.5h2.8c1.8 0 2.6-2.2 1.2-3.3z"/></symbol>
   <symbol id="i-meteo" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-meteo)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><circle cx="24" cy="23" r="9" fill="url(#w-sun)" filter="url(#f-glyph)"/><path filter="url(#f-glyph)" fill="url(#g-glyph)" d="M20 45h21a8 8 0 0 0 1-15.9A11 11 0 0 0 21.3 31 7 7 0 0 0 20 45z"/></symbol>
   <symbol id="i-notes" viewBox="0 0 60 60"><rect width="60" height="60" rx="15" fill="url(#g-notes)"/><rect width="60" height="60" rx="15" fill="url(#g-gloss)"/><g filter="url(#f-glyph)"><path fill="url(#g-glyph)" d="M17 13h26a3 3 0 0 1 3 3v19L35 47H17a3 3 0 0 1-3-3V16a3 3 0 0 1 3-3z"/><path fill="#ffd27a" d="M46 35H38a3 3 0 0 0-3 3v9z"/><rect x="20" y="20" width="20" height="3" rx="1.5" fill="#ffb020"/><rect x="20" y="27" width="16" height="3" rx="1.5" fill="#ffb020" opacity=".7"/><rect x="20" y="34" width="10" height="3" rx="1.5" fill="#ffb020" opacity=".5"/></g></symbol>
@@ -59,6 +61,7 @@
     <section class="plate wx" id="wxcard"><h2><svg class="ic"><use href="#i-meteo"/></svg>Météo<a href="#meteo">Détails ›</a></h2><div id="h-wx"></div></section>
     <section class="plate frame"><h2><svg class="ic"><use href="#i-photos"/></svg>Photo du moment<a href="#photos">Toutes ›</a></h2><div class="pic" id="h-pic"></div><div class="cap" id="h-cap"></div></section>
     <section class="mini">
+      <div class="plate"><h2><svg class="ic"><use href="#i-agenda"/></svg>Agenda<a href="#agenda">Ouvrir ›</a></h2><ul id="h-rdv"></ul></div>
       <div class="plate"><h2><svg class="ic"><use href="#i-notes"/></svg>Notes<a href="#notes">Ouvrir ›</a></h2><ul id="h-notes"></ul></div>
       <div class="plate"><h2><svg class="ic"><use href="#i-ann"/></svg>Annonces<a href="#annonces">Ouvrir ›</a></h2><ul id="h-ann"></ul></div>
     </section>
@@ -68,6 +71,29 @@
     <h1 class="v"><svg class="ic-l"><use href="#i-meteo"/></svg><span id="m-title">Météo</span></h1>
     <section class="plate wx" id="m-day"></section>
     <section class="plate"><h2>La semaine</h2><div id="m-week"></div><div class="maj" id="m-maj"></div></section>
+  </main>
+
+  <main class="view" id="v-agenda">
+    <h1 class="v"><svg class="ic-l"><use href="#i-agenda"/></svg>Agenda</h1>
+    <div class="agenda">
+      <section class="plate">
+        <div class="cal-head"><button class="ghost nav" id="c-prev" type="button" aria-label="Mois précédent">‹</button><h2 id="c-title">Mois</h2><button class="ghost nav" id="c-next" type="button" aria-label="Mois suivant">›</button><button class="chip" id="c-today" type="button">Aujourd'hui</button></div>
+        <div class="wk"><span>lun</span><span>mar</span><span>mer</span><span>jeu</span><span>ven</span><span>sam</span><span>dim</span></div>
+        <div class="cal" id="cal"></div>
+      </section>
+      <section class="plate dayp">
+        <h2 id="c-day">Jour</h2>
+        <ul class="ann" id="c-list"></ul>
+        <div class="compose" id="r-compose">
+          <input type="text" id="r-title" placeholder="Rendez-vous (ex. Contrôle technique Patrol)">
+          <div class="row"><input type="date" id="r-date"><input type="time" id="r-time"></div>
+          <input type="text" id="r-lieu" placeholder="Lieu (facultatif)">
+          <textarea id="r-note" rows="2" placeholder="Détails (facultatif)"></textarea>
+          <div class="row" id="r-colors"></div>
+          <div class="row"><button class="btn" id="r-add" type="button">Ajouter le RDV</button><button class="ghost" id="r-cancel" type="button" hidden>Annuler</button></div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <main class="view" id="v-notes">
@@ -106,6 +132,7 @@
 <nav class="dock glass" id="dock">
   <a href="#" data-v="home"><svg><use href="#i-home"/></svg><span>Accueil</span></a>
   <a href="#meteo" data-v="meteo"><svg><use href="#i-meteo"/></svg><span>Météo</span></a>
+  <a href="#agenda" data-v="agenda"><svg><use href="#i-agenda"/></svg><span>Agenda</span></a>
   <a href="#notes" data-v="notes"><svg><use href="#i-notes"/></svg><span>Notes</span></a>
   <a href="#photos" data-v="photos"><svg><use href="#i-photos"/></svg><span>Photos</span></a>
   <a href="#annonces" data-v="annonces"><svg><use href="#i-ann"/></svg><span>Annonces</span></a>
@@ -114,6 +141,6 @@
 <div class="viewer" id="viewer"><div class="strip" id="strip"></div><div class="vbar"><button id="vp" type="button">‹ Précédente</button><button id="vdel" type="button">Supprimer</button><button id="vx" type="button">Fermer</button><button id="vn" type="button">Suivante ›</button></div></div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=8"></script>
+<script type="module" src="app.js?v=9"></script>
 </body>
 </html>

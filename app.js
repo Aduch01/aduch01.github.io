@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=8';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=9';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -117,7 +117,7 @@ const nc=c=>COLORS.includes(c)?c:COLORS[0];
 function renderNotes(){
  const L=[...all('notes')].sort((x,y)=>(y.pin|0)-(x.pin|0)||(x.done|0)-(y.done|0)||y.t-x.t);
  $('#n-list').innerHTML=L.length?L.map((n,i)=>`<article class="note${n.done?' done':''}" style="--nc:${nc(n.c)}"><small>${n.pin?'Épinglée · ':''}${esc(new Date(n.t).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}))}</small><p>${esc(n.text)}</p>${S.canW?`<div class="row"><button type="button" data-n="done" data-id="${esc(n.id)}" aria-label="Fait">${n.done?'↺':'✓'}</button><button type="button" data-n="pin" data-id="${esc(n.id)}">${n.pin?'Désépingler':'Épingler'}</button><button type="button" data-n="edit" data-id="${esc(n.id)}">Modifier</button><button type="button" data-n="del" data-id="${esc(n.id)}" aria-label="Supprimer">✕</button></div>`:''}</article>`).join(''):'<div class="empty plate">Aucune note pour l\'instant.</div>';
- $('#h-notes').innerHTML=L.filter(n=>!n.done).slice(0,5).map(n=>`<li class="mline"><span class="dot" style="background:${nc(n.c)};color:${nc(n.c)}"></span><span>${esc(n.text.length>90?n.text.slice(0,90)+'…':n.text)}</span></li>`).join('')||'<li class="empty">Rien à signaler.</li>';
+ $('#h-notes').innerHTML=L.filter(n=>!n.done).slice(0,4).map(n=>`<li class="mline"><span class="dot" style="background:${nc(n.c)};color:${nc(n.c)}"></span><span>${esc(n.text.length>90?n.text.slice(0,90)+'…':n.text)}</span></li>`).join('')||'<li class="empty">Rien à signaler.</li>';
 }
 $('#n-add').addEventListener('click',()=>{const text=$('#n-text').value.trim();if(!text||!S.canW)return;
  if(S.edit){const n=all('notes').find(x=>x.id===S.edit);if(n)put('notes',{...n,text,c:S.col});S.edit=null;$('#n-add').textContent='Ajouter la note';$('#n-cancel').hidden=true}
@@ -134,9 +134,9 @@ $('#n-list').addEventListener('click',async e=>{const b=e.target.closest('[data-
 $('#a-kind').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;S.kind=b.dataset.k;$('#a-kind').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});
 $('#a-filter').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;S.filt=b.dataset.f;$('#a-filter').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));renderAnn()});
 function renderAnn(){
- const L=[...all('ann')].sort((x,y)=>(x.done|0)-(y.done|0)||y.t-x.t),F=L.filter(a=>S.filt==='all'||a.k===S.filt);
+ const L=[...all('ann')].filter(a=>a.k!=='rdv').sort((x,y)=>(x.done|0)-(y.done|0)||y.t-x.t),F=L.filter(a=>S.filt==='all'||a.k===S.filt);
  $('#a-list').innerHTML=F.length?F.map(a=>`<li class="item${a.done?' done':''}">${a.k==='tache'?`<button type="button" class="check${a.done?' on':''}" data-a="done" data-id="${esc(a.id)}" ${S.canW?'':'disabled'} aria-label="Fait">${a.done?'✓':''}</button>`:'<span class="tag n">Nouvelle</span>'}<div><h3>${esc(a.title)}</h3>${a.body?`<p>${esc(a.body)}</p>`:''}<div class="hint">${esc(new Date(a.t).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))}${a.k==='tache'?' · tâche':''}</div></div>${S.canW?`<button type="button" class="ghost" data-a="del" data-id="${esc(a.id)}" aria-label="Supprimer">✕</button>`:'<span></span>'}</li>`).join(''):'<li class="empty plate">Rien de publié ici.</li>';
- $('#h-ann').innerHTML=L.filter(a=>!a.done).slice(0,4).map(a=>`<li class="mline"><span class="tag ${a.k==='tache'?'t':'n'}">${a.k==='tache'?'Tâche':'Nouvelle'}</span><span>${esc(a.title)}</span></li>`).join('')||'<li class="empty">Aucune tâche en cours.</li>';
+ $('#h-ann').innerHTML=L.filter(a=>!a.done).slice(0,3).map(a=>`<li class="mline"><span class="tag ${a.k==='tache'?'t':'n'}">${a.k==='tache'?'Tâche':'Nouvelle'}</span><span>${esc(a.title)}</span></li>`).join('')||'<li class="empty">Aucune tâche en cours.</li>';
 }
 $('#a-add').addEventListener('click',()=>{const title=$('#a-title').value.trim();if(!title||!S.canW)return;
  put('ann',{id:'a'+Date.now().toString(36),k:S.kind,title,body:$('#a-body').value.trim(),done:false,t:Date.now()});$('#a-title').value='';$('#a-body').value=''});
@@ -182,11 +182,57 @@ $('#p-file').addEventListener('change',async e=>{const fs=[...e.target.files];e.
   catch(err){$('#p-msg').textContent='Échec pour une photo : '+(err?.message||'format non lu');}}
  $('#p-cap').value='';if(n)$('#p-msg').textContent=n+' photo(s) publiée(s).'});
 
+
+/* ---------- agenda (RDV stockés avec les annonces, type "rdv") ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const TODAY=()=>iso(new Date());
+S.cm=new Date();S.cm.setDate(1);S.cd=TODAY();S.rcol=COLORS[1];S.redit=null;
+const rdvs=()=>all('ann').filter(a=>a.k==='rdv'&&/^\d{4}-\d{2}-\d{2}$/.test(a.date||'')).sort((x,y)=>(x.date+(x.heure||'')).localeCompare(y.date+(y.heure||'')));
+function feries(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;
+ const P=new Date(y,mo-1,da),add=n=>iso(new Date(y,mo-1,da+n));
+ return {[y+'-01-01']:"Jour de l'an",[add(1)]:'Lundi de Pâques',[y+'-05-01']:'Fête du Travail',[y+'-05-08']:'Victoire 1945',[add(39)]:'Ascension',[add(50)]:'Lundi de Pentecôte',[y+'-07-14']:'Fête nationale',[y+'-08-15']:'Assomption',[y+'-11-01']:'Toussaint',[y+'-11-11']:'Armistice',[y+'-12-25']:'Noël'}}
+$('#r-colors').innerHTML=COLORS.map(c=>`<button type="button" class="sw${c===S.rcol?' sel':''}" data-c="${c}" style="background:${c}" aria-label="Couleur"></button>`).join('');
+$('#r-colors').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;S.rcol=b.dataset.c;$('#r-colors').querySelectorAll('.sw').forEach(x=>x.classList.toggle('sel',x===b))});
+function renderCal(){
+ const y=S.cm.getFullYear(),m=S.cm.getMonth(),F={...feries(y),...feries(y+1),...feries(y-1)};
+ $('#c-title').textContent=S.cm.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+ const start=new Date(y,m,1);start.setDate(1-((start.getDay()+6)%7));
+ const last=new Date(y,m+1,0),cells=Math.ceil(((new Date(y,m,1).getDay()+6)%7+last.getDate())/7)*7;
+ const byDay={};for(const r of rdvs())(byDay[r.date]??=[]).push(r);
+ let h='';const td=TODAY();
+ for(let i=0;i<cells;i++){const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(d),ev=byDay[k]||[],wd=(d.getDay()+6)%7;
+  h+=`<button type="button" class="cd${d.getMonth()!==m?' out':''}${wd>4?' we':''}${k===td?' today':''}${k===S.cd?' sel':''}" data-cd="${k}"><span class="n">${d.getDate()}</span>${F[k]?`<span class="hol">${esc(F[k])}</span>`:''}${ev.slice(0,3).map(r=>`<span class="ev" style="--nc:${nc(r.c)}">${r.heure?esc(r.heure)+' ':''}${esc(r.title)}</span>`).join('')}${ev.length>3?`<span class="more">+${ev.length-3} autre(s)</span>`:''}${ev.length?`<span class="dots">${ev.slice(0,3).map(r=>`<i style="--nc:${nc(r.c)}"></i>`).join('')}</span>`:''}</button>`}
+ $('#cal').innerHTML=h;
+ const dd=new Date(S.cd+'T12:00'),hol=F[S.cd];
+ $('#c-day').textContent=dd.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(hol?' · '+hol:'');
+ const L=byDay[S.cd]||[];
+ $('#c-list').innerHTML=L.length?L.map(r=>`<li class="item rdv" style="--nc:${nc(r.c)}"><span class="h">${esc(r.heure||'Journée')}</span><div><h3>${esc(r.title)}</h3>${r.lieu?`<p>📍 ${esc(r.lieu)}</p>`:''}${r.body?`<p>${esc(r.body)}</p>`:''}</div>${S.canW?`<div class="row"><button type="button" data-r="edit" data-id="${esc(r.id)}">Modifier</button><button type="button" data-r="del" data-id="${esc(r.id)}" aria-label="Supprimer">✕</button></div>`:'<span></span>'}</li>`).join(''):'<li class="empty">Aucun rendez-vous ce jour-là.</li>';
+ if(!S.redit)$('#r-date').value=S.cd;
+ const up=rdvs().filter(r=>r.date>=td).slice(0,4);
+ $('#h-rdv').innerHTML=up.length?up.map(r=>{const d=new Date(r.date+'T12:00');return `<li class="mline up" style="--nc:${nc(r.c)}"><span class="d">${r.date===td?"Auj.":esc(d.toLocaleDateString('fr-FR',{weekday:'short'}).replace('.',''))}<b>${d.getDate()}</b></span><span><b>${esc(r.title)}</b><br><small style="color:var(--mut)">${esc(r.heure||'Journée')}${r.lieu?' · '+esc(r.lieu):''}</small></span></li>`}).join(''):'<li class="empty">Aucun rendez-vous à venir.</li>';
+}
+$('#cal').addEventListener('click',e=>{const b=e.target.closest('[data-cd]');if(!b)return;S.cd=b.dataset.cd;const d=new Date(S.cd+'T12:00');if(d.getMonth()!==S.cm.getMonth()){S.cm=new Date(d.getFullYear(),d.getMonth(),1)}renderCal();if(innerWidth<1000)$('#c-day').scrollIntoView({behavior:'smooth',block:'start'})});
+$('#c-prev').addEventListener('click',()=>{S.cm=new Date(S.cm.getFullYear(),S.cm.getMonth()-1,1);renderCal()});
+$('#c-next').addEventListener('click',()=>{S.cm=new Date(S.cm.getFullYear(),S.cm.getMonth()+1,1);renderCal()});
+$('#c-today').addEventListener('click',()=>{const d=new Date();S.cm=new Date(d.getFullYear(),d.getMonth(),1);S.cd=TODAY();renderCal()});
+function resetR(){S.redit=null;['#r-title','#r-time','#r-lieu','#r-note'].forEach(x=>$(x).value='');$('#r-date').value=S.cd;$('#r-add').textContent='Ajouter le RDV';$('#r-cancel').hidden=true}
+$('#r-add').addEventListener('click',()=>{const title=$('#r-title').value.trim(),date=$('#r-date').value;if(!title||!date||!S.canW)return;
+ const base=S.redit?all('ann').find(x=>x.id===S.redit):null;
+ put('ann',{...(base||{}),id:base?base.id:'r'+Date.now().toString(36),k:'rdv',title,date,heure:$('#r-time').value,lieu:$('#r-lieu').value.trim(),body:$('#r-note').value.trim(),c:S.rcol,done:false,t:base?.t||Date.now()});
+ S.cd=date;const d=new Date(date+'T12:00');S.cm=new Date(d.getFullYear(),d.getMonth(),1);resetR();renderCal()});
+$('#r-cancel').addEventListener('click',()=>{resetR();renderCal()});
+$('#c-list').addEventListener('click',async e=>{const b=e.target.closest('[data-r]');if(!b||!S.canW)return;const r=all('ann').find(x=>x.id===b.dataset.id);if(!r)return;
+ if(b.dataset.r==='edit'){S.redit=r.id;$('#r-title').value=r.title;$('#r-date').value=r.date;$('#r-time').value=r.heure||'';$('#r-lieu').value=r.lieu||'';$('#r-note').value=r.body||'';S.rcol=nc(r.c);
+  $('#r-colors').querySelectorAll('.sw').forEach(x=>x.classList.toggle('sel',x.dataset.c===S.rcol));$('#r-add').textContent='Enregistrer';$('#r-cancel').hidden=false;$('#r-title').focus()}
+ else{const o=await drop('ann',r.id);undo('Rendez-vous supprimé',()=>put('ann',o))}});
+setInterval(()=>{if(!document.hidden&&$('#h-rdv'))renderCal()},5*60*1000);
+
 /* ---------- divers ---------- */
 let tt;function undo(msg,fn){$('#toast-t').textContent=msg;$('#toast').classList.add('on');clearTimeout(tt);$('#toast-b').onclick=()=>{fn();$('#toast').classList.remove('on')};tt=setTimeout(()=>$('#toast').classList.remove('on'),6000)}
-function rerender(){renderNotes();renderAnn();renderPhotos()}
-function lockUI(){for(const s of ['#n-compose','#a-compose','#p-up'])$(s).hidden=!S.canW}
-function route(){const v=location.hash.slice(1)||'home',ok=['home','meteo','notes','photos','annonces'].includes(v)?v:'home';
+function rerender(){renderNotes();renderAnn();renderPhotos();renderCal()}
+function lockUI(){for(const s of ['#n-compose','#a-compose','#p-up','#r-compose'])$(s).hidden=!S.canW}
+function route(){const v=location.hash.slice(1)||'home',ok=['home','meteo','agenda','notes','photos','annonces'].includes(v)?v:'home';
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+ok));
  document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===ok));window.scrollTo(0,0)}
 addEventListener('hashchange',route);route();
