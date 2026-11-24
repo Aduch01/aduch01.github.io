@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=17';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=18';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -155,7 +155,7 @@ function renderPhotos(){
 function slide(keep){const L=ph(),P=$('#h-pic');
  if(!L.length){P.innerHTML='<div class="empty">Pas encore de photo.</div>';$('#h-cap').textContent='';return}
  if(!keep)S.pi=(S.pi+1)%L.length;S.pi%=L.length;const p=L[S.pi];
- P.innerHTML=`<img src="${p.img}" alt="${esc(p.cap||'Photo')}">`;$('#h-cap').textContent=p.cap||''}
+ P.innerHTML=`<img class="bg" src="${p.img}" alt="" aria-hidden="true"><img class="fg" src="${p.img}" alt="${esc(p.cap||'Photo')}">`;$('#h-cap').textContent=p.cap||''}
 let SPD=9;try{const v=localStorage.getItem('diapo');if(v!==null&&!isNaN(+v))SPD=+v}catch(e){}
 let spT=null;
 function spRun(){clearInterval(spT);spT=null;if(SPD>0)spT=setInterval(()=>{if(!document.hidden)slide(false)},SPD*1000)}

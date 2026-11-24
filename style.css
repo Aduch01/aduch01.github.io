@@ -34,7 +34,7 @@ button{cursor:pointer;border:0;background:none;min-height:44px;border-radius:999
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .date{font-size:20px;font-weight:600;color:rgba(255,255,255,.85);text-transform:capitalize;letter-spacing:.01em}
 .clock{font-family:Inter,-apple-system,system-ui,sans-serif;font-weight:200;font-size:clamp(76px,12vw,150px);line-height:.92;letter-spacing:-.045em;font-variant-numeric:tabular-nums;
- background:linear-gradient(180deg,#fff 30%,#c7d2ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 60px rgba(139,123,255,.25)}
+ color:#fff;filter:drop-shadow(0 0 30px rgba(139,123,255,.35))}
 .tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px;border-radius:999px}
 .chip{padding:0 16px;font-size:14px;font-weight:500;background:var(--glass2);box-shadow:none}
 .chip.on{background:linear-gradient(135deg,var(--acc1),var(--acc2));border-color:transparent}
@@ -86,7 +86,9 @@ h1.v{font-size:clamp(32px,4vw,44px);line-height:1.05;margin:6px 0 2px;font-weigh
 
 /* photos */
 .frame .pic{aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:rgba(255,255,255,.06);display:grid;place-items:center;position:relative;box-shadow:0 20px 40px -20px #000}
-.pic img{width:100%;height:100%;object-fit:cover;display:block;animation:fade 1s}
+.pic img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pic img.bg{object-fit:cover;filter:blur(28px) brightness(.7) saturate(1.3);transform:scale(1.15)}
+.pic img.fg{object-fit:contain;animation:fade 1s;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
 @keyframes fade{from{opacity:0;transform:scale(1.03)}}@media(prefers-reduced-motion:reduce){.pic img{animation:none}}
 .cap{font-size:15px;margin-top:10px;color:var(--mut);min-height:1.5em}
 .empty{color:var(--mut);text-align:center;padding:24px 12px}
