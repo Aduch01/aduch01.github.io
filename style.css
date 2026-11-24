@@ -247,17 +247,17 @@ select option{background:#1a1b33}
 
 /* organisation par appui long (comme sur iPhone) */
 [data-sort]>*{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
-body.editing [data-sort]>*{touch-action:none;cursor:grab;animation:jiggle .32s ease-in-out infinite alternate}
-body.editing [data-sort]>*:nth-child(2n){animation-delay:-.16s;animation-duration:.36s}
-body.editing [data-sort]>.plate{animation-name:jiggle-s}
-@keyframes jiggle{from{rotate:-2.2deg}to{rotate:2.2deg}}
-@keyframes jiggle-s{from{rotate:-.5deg}to{rotate:.5deg}}
-body.editing [data-sort]>.drag{animation:none!important;z-index:50;position:relative;scale:1.08;opacity:.95;cursor:grabbing;filter:drop-shadow(0 24px 30px rgba(0,0,0,.55))}
-body.editing [data-sort]>.plate.drag{scale:1.02}
-body.editing .plate a,body.editing .dock a,body.editing .tile{pointer-events:auto}
+[data-sort] a,[data-sort] img,[data-sort] svg{-webkit-user-drag:none}
+body.editing [data-sort]>*{touch-action:none;cursor:grab}
+body.editing .dock a,body.editing .tile{animation:jiggle .3s ease-in-out infinite alternate}
+body.editing .dock a:nth-child(2n),body.editing .tile:nth-child(2n){animation-delay:-.15s}
+@keyframes jiggle{from{rotate:-2deg}to{rotate:2deg}}
+body.editing .home>.plate{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(36,38,72,.92);outline:2px dashed rgba(255,255,255,.35);outline-offset:-6px;scale:.97;transition:scale .2s}
+body.editing .home>.wx{background:linear-gradient(165deg,var(--s1),var(--s2))}
+body.editing [data-sort]>.drag{animation:none!important;z-index:50;position:relative;scale:1.08;cursor:grabbing;filter:drop-shadow(0 20px 26px rgba(0,0,0,.55))}
+body.editing .home>.drag{scale:1;outline-color:#fff}
 .editbar{position:fixed;top:max(12px,env(safe-area-inset-top));left:50%;translate:-50% -160%;z-index:60;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 18px;border-radius:999px;transition:translate .35s cubic-bezier(.2,.9,.3,1.2);font-weight:500;white-space:nowrap;max-width:calc(100vw - 16px)}
 body.editing .editbar{translate:-50% 0}
 .editbar .btn{min-height:40px}
 @media(max-width:600px){.editbar span{display:none}}
-@media(prefers-reduced-motion:reduce){body.editing [data-sort]>*{animation:none;outline:2px dashed rgba(255,255,255,.4);outline-offset:2px}}
-[data-sort] a,[data-sort] img,[data-sort] svg{-webkit-user-drag:none}
+@media(prefers-reduced-motion:reduce){body.editing .dock a,body.editing .tile{animation:none;outline:2px dashed rgba(255,255,255,.4);outline-offset:2px}}
