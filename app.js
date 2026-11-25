@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=42';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=43';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -402,10 +402,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 42 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 42 · chargement des animations…');
+fxBadge(RM?'Version 43 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 43 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 42 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 42 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 42 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 43 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 43 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 43 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -679,7 +679,7 @@ const KPRIO={urgent:['Urgent','#ff3b5c','<path d="M12 2c1 3.5-1.5 5-1.5 7.5A2.5 
 const kIco=p=>`<svg viewBox="0 0 24 24" class="kico" fill="currentColor" aria-hidden="true">${KPRIO[p][2]}</svg>`;
 let KT=[],kFilter='all',kEdit=null,kPrio='prevoir',kCol='todo',kSaveT=null,kLocalT=0,kDrag=null;
 const kToday=()=>iso(new Date());
-function kSave(){kLocalT=Date.now();renderKB();if(!S.canW||!FB_OK)return;clearTimeout(kSaveT);kSaveT=setTimeout(()=>setDoc(doc(db,'masques','taches'),{items:KT,t:kLocalT}).then(()=>status('Publié')).catch(e=>status('Échec : '+(e.code||'erreur'))),600)}
+function kSave(){kLocalT=Date.now();renderKB();if(!FB_OK)return;clearTimeout(kSaveT);kSaveT=setTimeout(()=>setDoc(doc(db,'masques','taches'),{items:KT,t:kLocalT}).then(()=>status('Publié')).catch(e=>{status('Échec : '+(e.code||'erreur'));if(/permission/.test(e.code||''))toastTop('Enregistrement refusé : les règles Firebase doivent être mises à jour')}),600)}
 if(FB_OK)onSnapshot(doc(db,'masques','taches'),sn=>{if(!sn.exists())return;const d=sn.data();if((kDrag&&kDrag.g)||(d.t||0)<kLocalT)return;KT=Array.isArray(d.items)?d.items:[];renderKB()},()=>{});
 function kDue(t){if(!t.due||t.status==='done')return '';const td=kToday(),cls=t.due<td?'late':t.due===td?'today':'';const d=new Date(t.due+'T12:00');
  const txt=t.due<td?'En retard · '+d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):t.due===td?'Aujourd\'hui':d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});return `<span class="kchip due ${cls}">${esc(txt)}</span>`}
@@ -687,7 +687,7 @@ function kCard(t){const P=KPRIO[t.prio]||KPRIO.prevoir;return `<article class="k
  <div class="kc-top"><span class="kbadge">${kIco(t.prio in KPRIO?t.prio:'prevoir')}${esc(P[0])}</span>${kDue(t)}</div>
  <h3>${esc(t.title)}</h3>${t.notes?`<p>${esc(t.notes)}</p>`:''}
  <div class="kc-foot">${t.client?`<span class="kchip">${esc(t.client)}</span>`:''}${t.est?`<span class="kchip">⏱ ${esc(t.est)}</span>`:''}
- ${S.canW?`<span class="kmove"><button type="button" data-kmv="-1" aria-label="Colonne précédente">‹</button><button type="button" data-kmv="1" aria-label="Colonne suivante">›</button></span>`:''}</div></article>`}
+ ${true?`<span class="kmove"><button type="button" data-kmv="-1" aria-label="Colonne précédente">‹</button><button type="button" data-kmv="1" aria-label="Colonne suivante">›</button></span>`:''}</div></article>`}
 function renderKB(){const q=slug($('#kb-q').value||''),vis=t=>(kFilter==='all'||t.prio===kFilter)&&(!q||slug(t.title+' '+(t.client||'')+' '+(t.notes||'')).includes(q));
  const td=kToday(),open=KT.filter(t=>t.status!=='done');
  $('#kb-stats').innerHTML=[['À faire',KT.filter(t=>t.status==='todo').length,'#5ecbff'],['En cours',KT.filter(t=>t.status==='doing').length,'#8b7bff'],['Urgentes',open.filter(t=>t.prio==='urgent').length,'#ff3b5c'],['En retard',open.filter(t=>t.due&&t.due<td).length,'#ff6b3d'],['Faites (7 j)',KT.filter(t=>t.status==='done'&&t.doneAt&&Date.now()-t.doneAt<7*864e5).length,'#30d158']]
@@ -697,8 +697,8 @@ function renderKB(){const q=slug($('#kb-q').value||''),vis=t=>(kFilter==='all'||
  $('#kb-board').innerHTML=KCOLS.map(([k,n,c])=>{const L=KT.filter(t=>t.status===k&&vis(t)).sort(k==='done'?(a,b)=>(b.doneAt||0)-(a.doneAt||0):order);
   return `<section class="kcol" data-kcol="${k}" style="--cc:${c}"><header><i></i><b>${esc(n)}</b><span class="kcount">${L.length}</span>${k==='doing'&&L.length>3?'<span class="kwip">Beaucoup en cours</span>':''}</header>
   <div class="kcards">${L.map(kCard).join('')||`<div class="kempty">${k==='done'?'Les tâches terminées arrivent ici':'Glisse une tâche ici'}</div>`}</div>
-  ${S.canW&&k!=='done'?`<button type="button" class="kadd" data-kadd="${k}">+ Ajouter</button>`:''}</section>`}).join('');
- $('#kb-new').classList.toggle('locked',!S.canW);$('#kb-hint').textContent=S.canW?'Astuce : maintiens une carte puis fais-la glisser vers une autre colonne. Touche une carte pour la modifier.':'Lecture seule : connecte-toi dans les paramètres pour modifier.'}
+  ${k!=='done'?`<button type="button" class="kadd" data-kadd="${k}">+ Ajouter</button>`:''}</section>`}).join('');
+ $('#kb-hint').textContent='Astuce : maintiens une carte puis fais-la glisser vers une autre colonne. Touche une carte pour la modifier.'}
 /* formulaire */
 $('#kb-prio').innerHTML=Object.entries(KPRIO).map(([k,[n,c]])=>`<button type="button" data-kp="${k}" style="--pc:${c}">${kIco(k)}${esc(n)}</button>`).join('');
 $('#kb-col').innerHTML=KCOLS.map(([k,n])=>`<button type="button" data-kc="${k}">${esc(n)}</button>`).join('');
@@ -706,7 +706,7 @@ function kSel(){$('#kb-prio').querySelectorAll('[data-kp]').forEach(b=>b.classLi
 $('#kb-prio').addEventListener('click',e=>{const b=e.target.closest('[data-kp]');if(b){kPrio=b.dataset.kp;kSel()}});
 $('#kb-col').addEventListener('click',e=>{const b=e.target.closest('[data-kc]');if(b){kCol=b.dataset.kc;kSel()}});
 function kNeedLogin(){toastTop('Connecte-toi avec ton compte pour modifier tes tâches');openSettings()}
-function kOpen(t,col){if(!S.canW)return kNeedLogin();kEdit=t?t.id:null;kPrio=t?.prio||'prevoir';kCol=t?.status||col||'todo';
+function kOpen(t,col){kEdit=t?t.id:null;kPrio=t?.prio||'prevoir';kCol=t?.status||col||'todo';
  $('#kb-mtitle').textContent=t?'Modifier la tâche':'Nouvelle tâche';$('#kb-save').textContent=t?'Enregistrer':'Ajouter';$('#kb-del').hidden=!t;
  $('#kb-t').value=t?.title||'';$('#kb-due').value=t?.due||'';$('#kb-est').value=t?.est||'';$('#kb-client').value=t?.client||'';$('#kb-notes').value=t?.notes||'';kSel();
  $('#kb-modal').hidden=false;fx($('#kb-form'),{opacity:[0,1],y:[30,0],scale:[.96,1]},{stiffness:340,damping:26});setTimeout(()=>$('#kb-t').focus(),120)}
@@ -730,7 +730,7 @@ $('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)re
  kOpen(t)});
 /* glisser-déposer (maintien court sur tactile) */
 {let pre=null;const B=$('#kb-board');
- B.addEventListener('pointerdown',e=>{if(!S.canW||e.button>0||e.target.closest('button'))return;const c=e.target.closest('.kcard');if(!c)return;
+ B.addEventListener('pointerdown',e=>{if(e.button>0||e.target.closest('button'))return;const c=e.target.closest('.kcard');if(!c)return;
   pre={c,x:e.clientX,y:e.clientY,id:e.pointerId,t:setTimeout(()=>{if(pre)kStart(pre,e.clientX,e.clientY)},e.pointerType==='mouse'?9999:260)}});
  function kStart(p,x,y){const r=p.c.getBoundingClientRect(),g=p.c.cloneNode(true);g.classList.add('kghost');g.style.width=r.width+'px';document.body.appendChild(g);
   p.c.classList.add('kph');kDrag={c:p.c,g,ox:x-r.left,oy:y-r.top,id:p.c.dataset.kid};pre=null;if(navigator.vibrate)navigator.vibrate(12);kFollow(x,y)}
@@ -773,7 +773,7 @@ $('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)re
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'42'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'43'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -805,7 +805,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='42';
+{const APPV='43';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

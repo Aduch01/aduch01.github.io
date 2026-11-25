@@ -8,5 +8,11 @@ service cloud.firestore {
                    && request.auth.uid == "nxyZ955VNwYbBtVJSTW2q3v9aOh2"
                    && col in ['notes', 'annonces', 'photos', 'masques'];
     }
+    // Tableau de tâches de la page cachée : modifiable par toute personne qui y accède.
+    match /masques/taches {
+      allow write: if request.resource.data.keys().hasOnly(['items', 't'])
+                   && request.resource.data.items is list
+                   && request.resource.data.items.size() <= 500;
+    }
   }
 }
