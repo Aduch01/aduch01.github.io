@@ -204,5 +204,18 @@
       "Version gourmande : ajoute 150 g de pépites de chocolat ou de pralines roses concassées à la fin du pétrissage.",
       "Conservation : 3 jours dans un sac fermé, ou en tranches au congélateur ; elle est parfaite toastée."
     ]
+  },
+  {
+    "id": "chevreuil-bourguignon",
+    "titre": "Chevreuil façon bourguignon",
+    "chef": {
+      "nom": "Lucile",
+      "photo": "photos/chef-lucile.jpg"
+    },
+    "intro": "",
+    "portions": 4,
+    "ingredients": [],
+    "etapes": [],
+    "astuces": []
   }
 ]

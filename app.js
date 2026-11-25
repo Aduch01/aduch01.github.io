@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=25';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=26';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -245,17 +245,21 @@ async function loadRC(){try{const r=await fetch('recettes.json?t='+Date.now(),{c
 const fmtQ=(q,u)=>{if(!q)return '';let v=q;if(u==='g'&&v>=1000){v=v/1000;u='kg'}
  const r=v>=10?Math.round(v):Math.round(v*4)/4;const s=Number.isInteger(r)?String(r):String(r).replace('.',',');return s+(u?' '+u:'')};
 const unit=(r,n)=>{const u=Array.isArray(r.unite)?r.unite:['personne','personnes'];return n+' '+(n>1?u[1]:u[0])};
+const chefOk=c=>c&&typeof c.photo==='string'&&/^photos\/[\w.-]+\.(jpe?g|png|webp)$/i.test(c.photo);
+const metaR=r=>[r.prep&&'Prépa '+r.prep,r.cuisson&&'Cuisson '+r.cuisson,r.repos&&'Repos '+r.repos].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join('');
 function renderRC(){
  $('#u-rc').textContent=RC.length+' recette'+(RC.length>1?'s':'');
- $('#rc-list').innerHTML=RC.length?RC.map(r=>`<a class="rcard" href="#recette-${esc(r.id)}"><h3>${esc(r.titre)}</h3><p>${esc(r.intro||'')}</p><div class="meta"><span>${esc(unit(r,r.portions))}</span><span>Prépa ${esc(r.prep)}</span><span>Cuisson ${esc(r.cuisson)}</span>${r.repos?`<span>Repos ${esc(r.repos)}</span>`:''}</div></a>`).join(''):'<div class="empty plate">Aucune recette pour l\'instant.</div>'}
+ $('#rc-list').innerHTML=RC.length?RC.map(r=>`<a class="rcard${chefOk(r.chef)?' haschef':''}" href="#recette-${esc(r.id)}">${chefOk(r.chef)?`<img class="chefpic" src="${r.chef.photo}" alt="Chef ${esc(r.chef.nom)}">`:''}<div><h3>${esc(r.titre)}</h3>${r.chef?`<div class="chefby">Recette du chef ${esc(r.chef.nom)}</div>`:''}<p>${esc(r.intro||'')}</p><div class="meta">${r.ingredients?.length?`<span>${esc(unit(r,r.portions))}</span>`:''}${metaR(r)}${!r.etapes?.length?'<span>Bientôt</span>':''}</div></div></a>`).join(''):'<div class="empty plate">Aucune recette pour l\'instant.</div>'}
 function renderOne(id){
  const r=RC.find(x=>x.id===id);if(!r){$('#rc-one').innerHTML='<div class="empty plate">Recette introuvable.</div>';return}
  const st=RS[id]??={p:r.portions,ing:new Set(),ok:new Set()},k=st.p/r.portions;
- $('#rc-one').innerHTML=`<div class="rhead"><h1 class="v"><svg class="ic-l"><use href="#i-recette"/></svg>${esc(r.titre)}</h1><p>${esc(r.intro||'')}</p><div class="meta"><span>Prépa ${esc(r.prep)}</span><span>Cuisson ${esc(r.cuisson)}</span>${r.repos?`<span>Repos ${esc(r.repos)}</span>`:''}</div></div>
+ $('#rc-one').innerHTML=`<div class="rhead"><h1 class="v"><svg class="ic-l"><use href="#i-recette"/></svg>${esc(r.titre)}</h1><p>${esc(r.intro||'')}</p><div class="meta">${metaR(r)}</div></div>
+ ${chefOk(r.chef)?`<section class="plate chef"><img src="${r.chef.photo}" alt="Chef ${esc(r.chef.nom)}"><div><small>La recette du chef</small><b>${esc(r.chef.nom)}</b></div></section>`:''}
+ ${!r.ingredients?.length&&!r.etapes?.length?`<section class="plate"><div class="empty">Ingrédients et étapes à venir.</div></section>`:`
  <div class="rgrid"><section class="plate"><h2>Ingrédients</h2><div class="serv"><button type="button" data-sv="-1" aria-label="Moins">−</button><b>${esc(unit(r,st.p))}</b><button type="button" data-sv="1" aria-label="Plus">+</button></div>
  <button type="button" class="ghost rcadd" data-tocs="${esc(r.id)}">🛒 Ajouter à la liste de courses</button><ul class="ing" style="margin-top:12px">${r.ingredients.map((g,i)=>`<li><label><input type="checkbox" data-ing="${i}" ${st.ing.has(i)?'checked':''}><span>${g.q?`<span class="q">${esc(fmtQ(g.q*k,g.u))}</span> `:''}${esc(g.n)}</span></label></li>`).join('')}</ul></section>
  <section class="plate"><h2>Étapes</h2><ol class="steps">${r.etapes.map((e,i)=>`<li data-st="${i}" class="${st.ok.has(i)?'ok':''}"><div><b>${esc(e.t)}</b><p>${esc(e.d)}</p>${e.min?`<button type="button" class="timer" data-tm="${e.min}">⏱ Minuteur ${e.min} min</button>`:''}</div></li>`).join('')}</ol>
- ${r.astuces?.length?`<h2 style="margin-top:18px">Astuces</h2><ul class="tips">${r.astuces.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:''}</section></div>`}
+ ${r.astuces?.length?`<h2 style="margin-top:18px">Astuces</h2><ul class="tips">${r.astuces.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:''}</section></div>`}`}
 $('#rc-one').addEventListener('click',e=>{const id=location.hash.slice(9),st=RS[id];if(!st)return;
  const sv=e.target.closest('[data-sv]');if(sv){st.p=Math.max(1,Math.min(20,st.p+ +sv.dataset.sv));renderOne(id);return}
  const tm=e.target.closest('[data-tm]');if(tm){e.stopPropagation();startTimer(tm);return}
