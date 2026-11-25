@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=24';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=25';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -405,14 +405,15 @@ const WAKE=/(?:^|\s)(?:(?:ok|okay|oke|okey|o k|ho|oh|au|hey|he|eh|aller)\s*,?\s*
 const WAKE_STRICT=/(?:^|\s)(?:ok|okay|oke|okey|o k|ho|oh|au|hey|he|eh)\s*,?\s*(?:d|t)/;
 const isWake=n=>{n=n.replace(/'/g,'');const m=n.match(WAKE);if(!m)return null;const hasOk=WAKE_STRICT.test(m[0]);return (hasOk||m.index===0)?m:null};
 let OKD=false;try{OKD=localStorage.getItem('okduch')==='1'}catch(e){}
-let wrec=null,wOn=false,armed=0,wFails=0,wLast=0;
+let wrec=null,wOn=false,armed=0,wFails=0,wLast=0,wOk=false,needTap=false;
+const ANDROID=/Android/i.test(navigator.userAgent);
 let liveT;function live(t){const el=$('#okd-live');el.hidden=!OKD;el.textContent=t;clearTimeout(liveT);liveT=setTimeout(()=>{if(OKD)el.textContent=wOn?'À l\'écoute de « Ok Duch »…':'Relance de l\'écoute…'},6000)}
 function okdUI(){const b=$('#okd');$('#okd-live').hidden=!OKD;if(!OKD)return void(b.classList.remove('on'),b.textContent='« Ok Duch »',$('#mic').classList.remove('wake'));b.classList.toggle('on',OKD);b.textContent=OKD?'« Ok Duch » activé':'« Ok Duch »';$('#mic').classList.toggle('wake',OKD&&wOn)}
 function wakeStop(){OKDpause=true;try{wrec&&wrec.abort()}catch(e){}wOn=false;okdUI()}
 let OKDpause=false;
 function wakeStart(){OKDpause=false;if(!SR||!OKD||wOn||listening||document.hidden)return;
- wrec=new SR();wrec.lang='fr-FR';wrec.continuous=true;wrec.interimResults=true;wrec.maxAlternatives=3;
- wrec.onstart=()=>{wOn=true;wLast=Date.now();okdUI();live('À l\'écoute de « Ok Duch »…')};
+ wrec=new SR();wrec.lang='fr-FR';wrec.continuous=!ANDROID;wrec.interimResults=true;wrec.maxAlternatives=3;
+ wrec.onstart=()=>{wOn=true;wOk=true;needTap=false;wLast=Date.now();okdUI();live('À l\'écoute de « Ok Duch »…')};
  wrec.onresult=e=>{if(window.speechSynthesis&&speechSynthesis.speaking)return;
   for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];let txt=r[0].transcript,hit=null;
    for(let a=0;a<r.length;a++){const n=N(r[a].transcript).replace(/'/g,''),m=isWake(n);if(m){hit={n,m};txt=r[a].transcript;break}}
@@ -422,11 +423,14 @@ function wakeStart(){OKDpause=false;if(!SR||!OKD||wOn||listening||document.hidde
    if(hit){const rest=hit.n.slice(hit.m.index+hit.m[0].length).replace(/^[\s,]+/,'');
     if($('#vo').hidden){voOpen();if(navigator.vibrate)navigator.vibrate(20)}$('#orb').classList.add('on');$('#vo-heard').textContent=rest?'« '+rest+' »':'Je t\'écoute…';
     if(r.isFinal){if(rest.length>1){handle(rest)}else{armed=Date.now()+8000;say('Oui ?')}}}}};
- wrec.onerror=e=>{live('Écoute interrompue ('+e.error+')');if(e.error==='not-allowed'||e.error==='service-not-allowed'){OKD=false;try{localStorage.setItem('okduch','0')}catch(_){}okdUI();
+ wrec.onerror=e=>{live('Écoute interrompue ('+e.error+')');
+  if((e.error==='not-allowed'||e.error==='service-not-allowed')&&wOk){needTap=true;live('Touche l\'écran pour relancer l\'écoute « Ok Duch »');return}
+  if(e.error==='not-allowed'||e.error==='service-not-allowed'){OKD=false;try{localStorage.setItem('okduch','0')}catch(_){}okdUI();
   voOpen();$('#vo-heard').textContent='Micro refusé';say('Autorise le micro pour utiliser Ok Duch : touche le cadenas à gauche de l\'adresse, puis Autorisations, Micro.')}};
- wrec.onend=()=>{wOn=false;okdUI();if(!OKD||OKDpause||listening||document.hidden)return;
-  wFails=Date.now()-wLast<2000?wFails+1:0;setTimeout(wakeStart,Math.min(30000,300*2**wFails))};
- try{wrec.start()}catch(e){}}
+ wrec.onend=()=>{wOn=false;okdUI();if(!OKD||OKDpause||listening||document.hidden||needTap)return;
+  wFails=Date.now()-wLast<1500?wFails+1:0;setTimeout(wakeStart,ANDROID&&wFails<3?150:Math.min(30000,300*2**wFails))};
+ try{wrec.start()}catch(e){needTap=true;live('Touche l\'écran pour relancer l\'écoute « Ok Duch »')}}
+document.addEventListener('pointerdown',()=>{if(OKD&&!wOn&&!listening&&(needTap||!wrec)){needTap=false;wFails=0;wakeStart()}},true);
 $('#okd').addEventListener('click',()=>{if(!SR){voOpen();$('#vo-heard').textContent='Micro non disponible ici';say('La commande vocale n\'est pas disponible sur ce navigateur. Ouvre le site avec Chrome.');return}
  OKD=!OKD;try{localStorage.setItem('okduch',OKD?'1':'0')}catch(e){}okdUI();
  if(OKD){wakeStart();voOpen();$('#orb').classList.remove('on');$('#vo-heard').textContent='« Ok Duch » est activé';say('C\'est activé. Dis Ok Duch, puis ta demande.');setTimeout(voClose,3500)}else wakeStop()});
