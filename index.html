@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=36">
+<link rel="stylesheet" href="style.css?v=37">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -70,7 +70,31 @@
 <div class="pager" id="pager">
   <section class="page home-pg" id="v-home" data-page="home"><div class="pg">
     <header class="top">
-    <div class="lock"><div class="lock-top"><button class="gear" id="gear" type="button" aria-label="Paramètres"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6a.5.5 0 0 0 .1-.6l-1.9-3.3a.5.5 0 0 0-.6-.2l-2.4 1a7.3 7.3 0 0 0-1.7-1l-.4-2.6a.5.5 0 0 0-.5-.4h-3.8a.5.5 0 0 0-.5.4l-.4 2.6a7.3 7.3 0 0 0-1.7 1l-2.4-1a.5.5 0 0 0-.6.2L2.5 8.8a.5.5 0 0 0 .1.6l2 1.6a7.6 7.6 0 0 0 0 2l-2 1.6a.5.5 0 0 0-.1.6l1.9 3.3c.1.2.4.3.6.2l2.4-1c.5.4 1.1.7 1.7 1l.4 2.6c0 .2.3.4.5.4h3.8c.2 0 .5-.2.5-.4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.4 1c.2.1.5 0 .6-.2l1.9-3.3a.5.5 0 0 0-.1-.6zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button><div class="greet" id="greet"></div></div><div class="date" id="date"></div><div class="clock" id="clock" aria-live="off">--:--</div></div>
+    <div class="lock"><div class="lock-top"><button class="gear" id="gear" type="button" aria-label="Paramètres"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6a.5.5 0 0 0 .1-.6l-1.9-3.3a.5.5 0 0 0-.6-.2l-2.4 1a7.3 7.3 0 0 0-1.7-1l-.4-2.6a.5.5 0 0 0-.5-.4h-3.8a.5.5 0 0 0-.5.4l-.4 2.6a7.3 7.3 0 0 0-1.7 1l-2.4-1a.5.5 0 0 0-.6.2L2.5 8.8a.5.5 0 0 0 .1.6l2 1.6a7.6 7.6 0 0 0 0 2l-2 1.6a.5.5 0 0 0-.1.6l1.9 3.3c.1.2.4.3.6.2l2.4-1c.5.4 1.1.7 1.7 1l.4 2.6c0 .2.3.4.5.4h3.8c.2 0 .5-.2.5-.4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.4 1c.2.1.5 0 .6-.2l1.9-3.3a.5.5 0 0 0-.1-.6zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button><div class="greet" id="greet"></div></div><div class="lock-main"><div class="dial" id="dial" aria-hidden="true">
+  <svg viewBox="0 0 200 200">
+   <defs>
+    <radialGradient id="dl-face" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#2a2f63"/><stop offset=".65" stop-color="#121533"/><stop offset="1" stop-color="#0a0c22"/></radialGradient>
+    <linearGradient id="dl-ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ecbff"/><stop offset=".5" stop-color="#8b7bff"/><stop offset="1" stop-color="#ff4f8b"/></linearGradient>
+    <linearGradient id="dl-bezel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity=".3"/></linearGradient>
+    <linearGradient id="dl-hand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#c9d3ff"/></linearGradient>
+    <filter id="dl-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="dl-sh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2.5" stdDeviation="2" flood-color="#000" flood-opacity=".5"/></filter>
+   </defs>
+   <circle cx="100" cy="100" r="99" fill="url(#dl-face)"/>
+   <circle cx="100" cy="100" r="97" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+   <circle id="dl-sec" cx="100" cy="100" r="97" fill="none" stroke="url(#dl-ring)" stroke-width="5" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="609.5" stroke-dashoffset="609.5" filter="url(#dl-glow)"/>
+   <g class="ticks"><line x1="100.00" y1="14.00" x2="100.00" y2="6.00" class="tk tk5"/><line x1="109.30" y1="11.49" x2="109.83" y2="6.51" class="tk"/><line x1="118.50" y1="12.94" x2="119.54" y2="8.05" class="tk"/><line x1="127.50" y1="15.36" x2="129.05" y2="10.60" class="tk"/><line x1="136.20" y1="18.69" x2="138.23" y2="14.13" class="tk"/><line x1="143.00" y1="25.52" x2="147.00" y2="18.59" class="tk tk5"/><line x1="152.31" y1="28.00" x2="155.25" y2="23.95" class="tk"/><line x1="159.55" y1="33.86" x2="162.90" y2="30.14" class="tk"/><line x1="166.14" y1="40.45" x2="169.86" y2="37.10" class="tk"/><line x1="172.00" y1="47.69" x2="176.05" y2="44.75" class="tk"/><line x1="174.48" y1="57.00" x2="181.41" y2="53.00" class="tk tk5"/><line x1="181.31" y1="63.80" x2="185.87" y2="61.77" class="tk"/><line x1="184.64" y1="72.50" x2="189.40" y2="70.95" class="tk"/><line x1="187.06" y1="81.50" x2="191.95" y2="80.46" class="tk"/><line x1="188.51" y1="90.70" x2="193.49" y2="90.17" class="tk"/><line x1="186.00" y1="100.00" x2="194.00" y2="100.00" class="tk tk5"/><line x1="188.51" y1="109.30" x2="193.49" y2="109.83" class="tk"/><line x1="187.06" y1="118.50" x2="191.95" y2="119.54" class="tk"/><line x1="184.64" y1="127.50" x2="189.40" y2="129.05" class="tk"/><line x1="181.31" y1="136.20" x2="185.87" y2="138.23" class="tk"/><line x1="174.48" y1="143.00" x2="181.41" y2="147.00" class="tk tk5"/><line x1="172.00" y1="152.31" x2="176.05" y2="155.25" class="tk"/><line x1="166.14" y1="159.55" x2="169.86" y2="162.90" class="tk"/><line x1="159.55" y1="166.14" x2="162.90" y2="169.86" class="tk"/><line x1="152.31" y1="172.00" x2="155.25" y2="176.05" class="tk"/><line x1="143.00" y1="174.48" x2="147.00" y2="181.41" class="tk tk5"/><line x1="136.20" y1="181.31" x2="138.23" y2="185.87" class="tk"/><line x1="127.50" y1="184.64" x2="129.05" y2="189.40" class="tk"/><line x1="118.50" y1="187.06" x2="119.54" y2="191.95" class="tk"/><line x1="109.30" y1="188.51" x2="109.83" y2="193.49" class="tk"/><line x1="100.00" y1="186.00" x2="100.00" y2="194.00" class="tk tk5"/><line x1="90.70" y1="188.51" x2="90.17" y2="193.49" class="tk"/><line x1="81.50" y1="187.06" x2="80.46" y2="191.95" class="tk"/><line x1="72.50" y1="184.64" x2="70.95" y2="189.40" class="tk"/><line x1="63.80" y1="181.31" x2="61.77" y2="185.87" class="tk"/><line x1="57.00" y1="174.48" x2="53.00" y2="181.41" class="tk tk5"/><line x1="47.69" y1="172.00" x2="44.75" y2="176.05" class="tk"/><line x1="40.45" y1="166.14" x2="37.10" y2="169.86" class="tk"/><line x1="33.86" y1="159.55" x2="30.14" y2="162.90" class="tk"/><line x1="28.00" y1="152.31" x2="23.95" y2="155.25" class="tk"/><line x1="25.52" y1="143.00" x2="18.59" y2="147.00" class="tk tk5"/><line x1="18.69" y1="136.20" x2="14.13" y2="138.23" class="tk"/><line x1="15.36" y1="127.50" x2="10.60" y2="129.05" class="tk"/><line x1="12.94" y1="118.50" x2="8.05" y2="119.54" class="tk"/><line x1="11.49" y1="109.30" x2="6.51" y2="109.83" class="tk"/><line x1="14.00" y1="100.00" x2="6.00" y2="100.00" class="tk tk5"/><line x1="11.49" y1="90.70" x2="6.51" y2="90.17" class="tk"/><line x1="12.94" y1="81.50" x2="8.05" y2="80.46" class="tk"/><line x1="15.36" y1="72.50" x2="10.60" y2="70.95" class="tk"/><line x1="18.69" y1="63.80" x2="14.13" y2="61.77" class="tk"/><line x1="25.52" y1="57.00" x2="18.59" y2="53.00" class="tk tk5"/><line x1="28.00" y1="47.69" x2="23.95" y2="44.75" class="tk"/><line x1="33.86" y1="40.45" x2="30.14" y2="37.10" class="tk"/><line x1="40.45" y1="33.86" x2="37.10" y2="30.14" class="tk"/><line x1="47.69" y1="28.00" x2="44.75" y2="23.95" class="tk"/><line x1="57.00" y1="25.52" x2="53.00" y2="18.59" class="tk tk5"/><line x1="63.80" y1="18.69" x2="61.77" y2="14.13" class="tk"/><line x1="72.50" y1="15.36" x2="70.95" y2="10.60" class="tk"/><line x1="81.50" y1="12.94" x2="80.46" y2="8.05" class="tk"/><line x1="90.70" y1="11.49" x2="90.17" y2="6.51" class="tk"/></g>
+   <g class="nums"><text x="100.0" y="32.0" class="dn">12</text><text x="173.0" y="105.0" class="dn">3</text><text x="27.0" y="105.0" class="dn">9</text></g>
+   <g filter="url(#dl-sh)">
+    <path id="dl-h" d="M97.2 104 L98.4 52 Q100 48 101.6 52 L102.8 104 Z" fill="url(#dl-hand)"/>
+    <path id="dl-m" d="M98.2 106 L99 24 Q100 20 101 24 L101.8 106 Z" fill="url(#dl-hand)"/>
+    <g id="dl-s"><line x1="100" y1="118" x2="100" y2="16" stroke="#ff4f8b" stroke-width="1.6" stroke-linecap="round"/><circle cx="100" cy="16" r="3" fill="#ff4f8b" filter="url(#dl-glow)"/></g>
+   </g>
+   <circle cx="100" cy="100" r="5.5" fill="#fff"/><circle cx="100" cy="100" r="2.6" fill="#ff4f8b"/>
+   <circle cx="100" cy="100" r="99" fill="none" stroke="url(#dl-bezel)" stroke-width="1.6"/>
+  </svg>
+  <div class="dl-dig"><div class="clock" id="clock" aria-live="off">--:--</div><div class="dl-sec" id="dl-secnum">00</div></div>
+ </div><div class="lock-txt"><div class="dl-day" id="dl-day"></div><div class="date" id="date"></div></div></div></div>
     </header>
     <nav class="launcher" data-sort="apps" aria-label="Applications">
       <a class="app-ic" href="#meteo" data-v="meteo"><svg><use href="#i-meteo"/></svg><span>Météo</span></a>
@@ -179,6 +203,7 @@
 </div></div>
 <nav class="dots glass" id="dots" aria-label="Pages"></nav>
 <div class="dotlabel glass" id="dotlabel" hidden></div>
+<div class="pullhome glass" id="pullhome" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v13m0 0-5.5-5.5M12 17l5.5-5.5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Accueil</span></div>
 <div class="settings" id="settings" hidden>
   <div class="set-card glass" role="dialog" aria-label="Paramètres">
     <div class="set-head"><h2>Paramètres</h2><button class="ghost" id="set-x" type="button">Fermer</button></div>
@@ -218,6 +243,6 @@
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=36"></script>
+<script type="module" src="app.js?v=37"></script>
 </body>
 </html>

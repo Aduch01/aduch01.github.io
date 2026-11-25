@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=36';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=37';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -58,7 +58,8 @@ if(FB_OK)onAuthStateChanged(auth,u=>{
 /* ---------- horloge ---------- */
 const fD=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 let clk='';
-function tick(){const d=new Date(),t=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),C=$('#clock');$('#date').textContent=fD.format(d);
+const fDay=new Intl.DateTimeFormat('fr-FR',{weekday:'long'}),fDm=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+function tick(){const d=new Date(),t=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),C=$('#clock');$('#date').textContent=fDm.format(d);const dd=$('#dl-day');if(dd)dd.textContent=fDay.format(d);
  if(t===clk)return;const first=!clk||C.children.length!==t.length;
  if(first){C.innerHTML=[...t].map(ch=>ch===':'?'<span class="col">:</span>':`<span class="sl"><span>${ch}</span></span>`).join('')}
  else{[...t].forEach((ch,i)=>{if(ch!==clk[i]&&ch!==':'){const sl=C.children[i],sp=sl.firstChild;sp.textContent=ch;
@@ -364,10 +365,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 36 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 36 · chargement des animations…');
+fxBadge(RM?'Version 37 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 37 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 36 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 36 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 36 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 37 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 37 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 37 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -632,8 +633,26 @@ function syncPages(){const order=['home',...[...document.querySelectorAll('.laun
 document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select')||!$('#viewer').hidden&&$('#viewer').classList.contains('on')||!$('#v-recette').hidden)return;
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
+/* ---------- cadran à aiguilles (balayage fluide des secondes) ---------- */
+{const H=$('#dl-h'),M=$('#dl-m'),Sx=$('#dl-s'),R=$('#dl-sec'),SN=$('#dl-secnum'),RMd=matchMedia('(prefers-reduced-motion: reduce)').matches;let raf=0,last=-1;
+ function draw(){raf=0;const n=new Date(),ms=n.getMilliseconds(),s=n.getSeconds()+(RMd?0:ms/1000),m=n.getMinutes()+s/60,h=(n.getHours()%12)+m/60;
+  H.setAttribute('transform',`rotate(${h*30} 100 100)`);M.setAttribute('transform',`rotate(${m*6} 100 100)`);Sx.setAttribute('transform',`rotate(${s*6} 100 100)`);
+  R.setAttribute('stroke-dashoffset',(609.5*(1-s/60)).toFixed(1));const si=n.getSeconds();if(si!==last){last=si;SN.textContent=String(si).padStart(2,'0')}
+  if(!document.hidden&&curPage==='home')raf=RMd?setTimeout(()=>{raf=0;draw()},1000):requestAnimationFrame(draw)}
+ const kick=()=>{if(!raf)draw()};draw();setInterval(kick,1000);document.addEventListener('visibilitychange',kick)}
+/* ---------- glisser vers le bas en haut d'une page = retour à l'accueil ---------- */
+{const PH=$('#pullhome');let y0=0,x0=0,pg=null,tr=false,dy=0;
+ const reset=()=>{tr=false;pg=null;PH.style.transition='translate .3s,opacity .3s';PH.style.translate='-50% -140%';PH.style.opacity='0';PH.classList.remove('ready')};
+ PG.addEventListener('touchstart',e=>{if(curPage==='home'||editing||!$('#v-recette').hidden||e.touches.length>1)return;const p=document.getElementById('v-'+curPage);if(!p||p.scrollTop>2)return;
+  pg=p;y0=e.touches[0].clientY;x0=e.touches[0].clientX;tr=true;dy=0},{passive:true});
+ PG.addEventListener('touchmove',e=>{if(!tr)return;const t=e.touches[0];dy=t.clientY-y0;const dx=Math.abs(t.clientX-x0);
+  if(dy<=0||dx>dy*.8||pg.scrollTop>2){if(dx>24&&dx>dy)reset();return}
+  e.preventDefault();const k=Math.min(1,dy/110);PH.style.transition='none';PH.style.translate=`-50% ${-140+k*170}%`;PH.style.opacity=String(Math.min(1,k*1.4));PH.classList.toggle('ready',dy>110)},{passive:false});
+ PG.addEventListener('touchend',()=>{if(!tr)return;const go=dy>110;reset();if(go){if(navigator.vibrate)navigator.vibrate(12);location.hash=''}},{passive:true});
+ PG.addEventListener('touchcancel',reset,{passive:true})}
+
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'36'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'37'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -665,7 +684,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='36';
+{const APPV='37';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
