@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=41';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=42';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -402,10 +402,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 41 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 41 · chargement des animations…');
+fxBadge(RM?'Version 42 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 42 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 41 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 41 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 41 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 42 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 42 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 42 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -698,14 +698,15 @@ function renderKB(){const q=slug($('#kb-q').value||''),vis=t=>(kFilter==='all'||
   return `<section class="kcol" data-kcol="${k}" style="--cc:${c}"><header><i></i><b>${esc(n)}</b><span class="kcount">${L.length}</span>${k==='doing'&&L.length>3?'<span class="kwip">Beaucoup en cours</span>':''}</header>
   <div class="kcards">${L.map(kCard).join('')||`<div class="kempty">${k==='done'?'Les tâches terminées arrivent ici':'Glisse une tâche ici'}</div>`}</div>
   ${S.canW&&k!=='done'?`<button type="button" class="kadd" data-kadd="${k}">+ Ajouter</button>`:''}</section>`}).join('');
- $('#kb-new').hidden=!S.canW;$('#kb-hint').textContent=S.canW?'Astuce : maintiens une carte puis fais-la glisser vers une autre colonne. Touche une carte pour la modifier.':'Lecture seule : connecte-toi dans les paramètres pour modifier.'}
+ $('#kb-new').classList.toggle('locked',!S.canW);$('#kb-hint').textContent=S.canW?'Astuce : maintiens une carte puis fais-la glisser vers une autre colonne. Touche une carte pour la modifier.':'Lecture seule : connecte-toi dans les paramètres pour modifier.'}
 /* formulaire */
 $('#kb-prio').innerHTML=Object.entries(KPRIO).map(([k,[n,c]])=>`<button type="button" data-kp="${k}" style="--pc:${c}">${kIco(k)}${esc(n)}</button>`).join('');
 $('#kb-col').innerHTML=KCOLS.map(([k,n])=>`<button type="button" data-kc="${k}">${esc(n)}</button>`).join('');
 function kSel(){$('#kb-prio').querySelectorAll('[data-kp]').forEach(b=>b.classList.toggle('on',b.dataset.kp===kPrio));$('#kb-col').querySelectorAll('[data-kc]').forEach(b=>b.classList.toggle('on',b.dataset.kc===kCol))}
 $('#kb-prio').addEventListener('click',e=>{const b=e.target.closest('[data-kp]');if(b){kPrio=b.dataset.kp;kSel()}});
 $('#kb-col').addEventListener('click',e=>{const b=e.target.closest('[data-kc]');if(b){kCol=b.dataset.kc;kSel()}});
-function kOpen(t,col){if(!S.canW)return;kEdit=t?t.id:null;kPrio=t?.prio||'prevoir';kCol=t?.status||col||'todo';
+function kNeedLogin(){toastTop('Connecte-toi avec ton compte pour modifier tes tâches');openSettings()}
+function kOpen(t,col){if(!S.canW)return kNeedLogin();kEdit=t?t.id:null;kPrio=t?.prio||'prevoir';kCol=t?.status||col||'todo';
  $('#kb-mtitle').textContent=t?'Modifier la tâche':'Nouvelle tâche';$('#kb-save').textContent=t?'Enregistrer':'Ajouter';$('#kb-del').hidden=!t;
  $('#kb-t').value=t?.title||'';$('#kb-due').value=t?.due||'';$('#kb-est').value=t?.est||'';$('#kb-client').value=t?.client||'';$('#kb-notes').value=t?.notes||'';kSel();
  $('#kb-modal').hidden=false;fx($('#kb-form'),{opacity:[0,1],y:[30,0],scale:[.96,1]},{stiffness:340,damping:26});setTimeout(()=>$('#kb-t').focus(),120)}
@@ -772,7 +773,7 @@ $('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)re
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'41'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'42'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -804,7 +805,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='41';
+{const APPV='42';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
