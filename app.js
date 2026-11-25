@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=28';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=29';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -348,16 +348,19 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 /* ---------- animations Motion (facultatives : l'appli marche sans) ---------- */
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let MO=null;
+function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
+fxBadge(RM?'Version 29 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 29 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxView(document.querySelector('.view.on'))}};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 29 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 29 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.querySelector('.view.on'))}else fxBadge('Version 29 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 const fx=(el,kf,o)=>{if(!MO||!el)return null;try{return MO.animate(el,kf,{...SPR,...o})}catch(e){return null}};
 function fxView(v){if(!MO||!v)return;
- if(v.id==='v-home'){fx([...v.children],{opacity:[0,1],y:[22,0],scale:[.97,1]},{delay:MO.stagger(.06),stiffness:260,damping:24})}
- else{fx(v,{opacity:[0,1],y:[18,0]},{stiffness:300,damping:30});
-  const kids=v.querySelectorAll('.note,.tile,.rcard,.item,.thumb');if(kids.length&&kids.length<60)fx([...kids],{opacity:[0,1],y:[14,0],scale:[.96,1]},{delay:MO.stagger(.03,{startDelay:.05}),stiffness:300,damping:26})}}
-document.addEventListener('click',e=>{const a=e.target.closest('.dock a');if(a&&!editing)fx(a.querySelector('svg'),{scale:[.78,1]},{stiffness:600,damping:12})},true);
-document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn,.chip,.mic,.tile,.sw,.check,.ck');if(b&&!editing)fx(b,{scale:[.92,1]},{stiffness:700,damping:15})},true);
+ if(v.id==='v-home'){fx([...v.children],{opacity:[0,1],y:[60,0],scale:[.88,1]},{delay:MO.stagger(.09),stiffness:170,damping:16})}
+ else{fx(v,{opacity:[0,1],y:[40,0]},{stiffness:200,damping:22});
+  const kids=v.querySelectorAll('.note,.tile,.rcard,.item,.thumb');if(kids.length&&kids.length<60)fx([...kids],{opacity:[0,1],y:[36,0],scale:[.9,1]},{delay:MO.stagger(.05,{startDelay:.08}),stiffness:200,damping:17})}}
+document.addEventListener('click',e=>{const a=e.target.closest('.dock a');if(a&&!editing)fx(a.querySelector('svg'),{scale:[.6,1],rotate:[-8,0]},{stiffness:500,damping:9})},true);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn,.chip,.mic,.tile,.sw,.check,.ck');if(b&&!editing)fx(b,{scale:[.85,1]},{stiffness:600,damping:10})},true);
 let wxPrev=null;
 function fxTemp(){const el=document.querySelector('#h-wx .big');if(!el||!D.wx)return;const cur=+D.wx.actuelle,from=wxPrev==null?cur-6:wxPrev;wxPrev=cur;
  if(!MO||from===cur)return;try{MO.animate(from,cur,{duration:.9,ease:[.2,.8,.2,1],onUpdate:v=>{el.textContent=Math.round(v)+'°'}})}catch(e){}}
@@ -560,7 +563,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='28';
+{const APPV='29';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

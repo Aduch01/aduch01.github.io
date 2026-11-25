@@ -318,3 +318,6 @@ body.editing .editbar{translate:-50% 0}
 /* Motion prend le relais des animations d'entrée quand il est chargé */
 .mo .view.on{animation:none}
 .mo .pic img.fg{animation:none}
+
+.fxinfo{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));translate:-50% 0;z-index:45;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;background:rgba(60,30,40,.75);transition:opacity 1s;max-width:calc(100vw - 20px);text-align:center}
+.fxinfo.ok{background:rgba(20,80,70,.75)}.fxinfo.fade{opacity:0;pointer-events:none}
