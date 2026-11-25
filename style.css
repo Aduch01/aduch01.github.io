@@ -295,3 +295,10 @@ body.editing .editbar{translate:-50% 0}
 .vo-help ul{margin:8px 0 0;padding-left:18px;color:rgba(235,240,255,.85);font-size:15px}.vo-help li{margin:4px 0}
 @media(max-width:600px){.mic{width:54px;height:54px;bottom:auto;top:max(14px,env(safe-area-inset-top));right:12px}.vo{padding-bottom:100px}.vo-card{gap:12px;padding:12px 12px 12px 14px}.orb{width:44px;height:44px}.vo-heard{font-size:17px}#vo-x{padding:0 12px}}
 @media(prefers-reduced-motion:reduce){.orb i,.orb.on{animation:none}}
+
+/* « Ok Duch » à l'écoute : halo qui respire autour du micro */
+.mic.wake::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(126,224,255,.7);animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.25;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+#okd.on{background:linear-gradient(135deg,#14e0c8,#3b82f6);border-color:transparent;color:#fff}
+@media(max-width:600px){.tools{flex-wrap:wrap;border-radius:24px}.tools .chip{flex:1 1 40%}}
+@media(prefers-reduced-motion:reduce){.mic.wake::after{animation:none;opacity:.8}}

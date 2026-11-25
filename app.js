@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=22';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=23';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -385,20 +385,49 @@ let rec=null,listening=false;
 function say(t){$('#vo-res').textContent=t;try{if(!speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=1.05;
  const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
 function voOpen(){$('#vo').hidden=false;$('#vo-help').hidden=true;$('#vo-heard').textContent='Je t\'écoute…';$('#vo-res').textContent='';}
-function voClose(){$('#vo').hidden=true;try{rec&&rec.abort()}catch(e){}listening=false;$('#orb').classList.remove('on')}
+function voClose(){$('#vo').hidden=true;try{rec&&rec.abort()}catch(e){}listening=false;armed=0;$('#orb').classList.remove('on')}
 $('#vo-x').addEventListener('click',voClose);
 $('#vo').addEventListener('click',e=>{if(e.target.id==='vo')voClose()});
 $('#mic').addEventListener('click',()=>{
  if(!SR){voOpen();$('#orb').classList.remove('on');$('#vo-heard').textContent='Micro non disponible ici';say('La commande vocale n\'est pas disponible sur ce navigateur. Ouvre le site avec Chrome.');return}
  if(listening){try{rec.stop()}catch(e){}return}
- voOpen();rec=new SR();rec.lang='fr-FR';rec.interimResults=true;rec.maxAlternatives=1;rec.continuous=false;
+ wakeStop();voOpen();rec=new SR();rec.lang='fr-FR';rec.interimResults=true;rec.maxAlternatives=1;rec.continuous=false;
  rec.onstart=()=>{listening=true;$('#orb').classList.add('on')};
  rec.onresult=e=>{let t='';for(const r of e.results)t+=r[0].transcript;$('#vo-heard').textContent='« '+t+' »';if(e.results[e.results.length-1].isFinal)handle(t)};
  rec.onerror=e=>{listening=false;$('#orb').classList.remove('on');
   const m={'not-allowed':'Autorise le micro : touche le cadenas à gauche de l\'adresse, puis Autorisations, Micro.','no-speech':'Je n\'ai rien entendu. Touche le micro et parle.','network':'Connexion nécessaire pour la reconnaissance vocale.'}[e.error];
   if(m){$('#vo-heard').textContent='Oups';say(m)}};
- rec.onend=()=>{listening=false;$('#orb').classList.remove('on')};
+ rec.onend=()=>{listening=false;$('#orb').classList.remove('on');setTimeout(wakeStart,600)};
  try{rec.start()}catch(e){}});
+
+/* « Ok Duch » : écoute en continu du mot d'activation (réglage propre à chaque appareil) */
+const WAKE=/\b(?:ok|okay|o k|oke|hey|he|eh)\s*,?\s*(?:duch|duche|duches|douche|douches|dutch|duc|duck|dush|doush|deutsch|douch|dutsch|touche)\b/;
+let OKD=false;try{OKD=localStorage.getItem('okduch')==='1'}catch(e){}
+let wrec=null,wOn=false,armed=0,wFails=0,wLast=0;
+function okdUI(){const b=$('#okd');b.classList.toggle('on',OKD);b.textContent=OKD?'« Ok Duch » activé':'« Ok Duch »';$('#mic').classList.toggle('wake',OKD&&wOn)}
+function wakeStop(){OKDpause=true;try{wrec&&wrec.abort()}catch(e){}wOn=false;okdUI()}
+let OKDpause=false;
+function wakeStart(){OKDpause=false;if(!SR||!OKD||wOn||listening||document.hidden)return;
+ wrec=new SR();wrec.lang='fr-FR';wrec.continuous=true;wrec.interimResults=true;wrec.maxAlternatives=3;
+ wrec.onstart=()=>{wOn=true;wLast=Date.now();okdUI()};
+ wrec.onresult=e=>{if(window.speechSynthesis&&speechSynthesis.speaking)return;
+  for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];let txt=r[0].transcript,hit=null;
+   for(let a=0;a<r.length;a++){const n=N(r[a].transcript),m=n.match(WAKE);if(m){hit={n,m};txt=r[a].transcript;break}}
+   if(armed&&Date.now()<armed){if($('#vo').hidden)voOpen();$('#orb').classList.add('on');$('#vo-heard').textContent='« '+txt+' »';
+    if(r.isFinal){armed=0;const n=N(txt);if(n.replace(WAKE,'').trim())handle(hit?n.slice(hit.m.index+hit.m[0].length):txt);else{armed=Date.now()+8000}}continue}
+   if(hit){const rest=hit.n.slice(hit.m.index+hit.m[0].length).replace(/^[\s,]+/,'');
+    if($('#vo').hidden){voOpen();if(navigator.vibrate)navigator.vibrate(20)}$('#orb').classList.add('on');$('#vo-heard').textContent=rest?'« '+rest+' »':'Je t\'écoute…';
+    if(r.isFinal){if(rest.length>1){handle(rest)}else{armed=Date.now()+8000;say('Oui ?')}}}}};
+ wrec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){OKD=false;try{localStorage.setItem('okduch','0')}catch(_){}okdUI();
+  voOpen();$('#vo-heard').textContent='Micro refusé';say('Autorise le micro pour utiliser Ok Duch : touche le cadenas à gauche de l\'adresse, puis Autorisations, Micro.')}};
+ wrec.onend=()=>{wOn=false;okdUI();if(!OKD||OKDpause||listening||document.hidden)return;
+  wFails=Date.now()-wLast<2000?wFails+1:0;setTimeout(wakeStart,Math.min(30000,300*2**wFails))};
+ try{wrec.start()}catch(e){}}
+$('#okd').addEventListener('click',()=>{if(!SR){voOpen();$('#vo-heard').textContent='Micro non disponible ici';say('La commande vocale n\'est pas disponible sur ce navigateur. Ouvre le site avec Chrome.');return}
+ OKD=!OKD;try{localStorage.setItem('okduch',OKD?'1':'0')}catch(e){}okdUI();
+ if(OKD){wakeStart();voOpen();$('#orb').classList.remove('on');$('#vo-heard').textContent='« Ok Duch » est activé';say('C\'est activé. Dis Ok Duch, puis ta demande.');setTimeout(voClose,3500)}else wakeStop()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){try{wrec&&wrec.abort()}catch(e){}}else setTimeout(wakeStart,500)});
+okdUI();if(OKD)setTimeout(wakeStart,1500);
 const go=(h,msg)=>{location.hash=h;say(msg);setTimeout(voClose,1800)};
 const NUM={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,douze:12};
 function csAddVoice(list){const done=[];
@@ -428,6 +457,7 @@ const cap=x=>{x=x.replace(/\s+/g,' ').trim();return x.charAt(0).toUpperCase()+x.
 const accents=(norm,raw)=>{const W=raw.split(/\s+/);return norm.split(' ').map(w=>{const f=W.find(r=>N(r)===w);return f?f.replace(/[.,;:!?«»"]/g,''):w}).join(' ')};
 const owner=()=>{if(S.canW)return true;say('Seul le propriétaire connecté peut faire ça.');return false};
 function handle(raw){const t=N(raw);let m;
+ if(/\b(desactive|coupe|arrete|eteins)\b.*\b(ok|okay)\s*(duch|douche|dutch)/.test(t)){OKD=false;try{localStorage.setItem('okduch','0')}catch(e){}wakeStop();say('Ok Duch est désactivé. Le bouton micro reste disponible.');setTimeout(voClose,2500);return}
  if(/^(aide|help|que sais-tu faire|qu'est-ce que tu sais faire|commandes?)\b/.test(t)){$('#vo-help').hidden=false;say('Voici ce que tu peux me demander.');return}
  if(/^(ferme|stop|annule|merci|rien)\b/.test(t)){say('D\'accord.');setTimeout(voClose,900);return}
  // note
