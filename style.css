@@ -426,3 +426,9 @@ body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
 .gear{width:34px;height:34px;min-height:34px;flex:none;border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.55);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);transition:color .2s,background .2s,rotate .6s cubic-bezier(.3,1.4,.5,1)}
 .gear svg{width:19px;height:19px}
 .gear:hover,.gear:active{color:#fff;background:rgba(255,255,255,.16);rotate:60deg}
+
+/* widget photo de l'accueil : la photo seule, bord à bord */
+.photo-only{padding:0;overflow:hidden;border:0;background:none;box-shadow:0 24px 50px -22px rgba(0,0,0,.8);-webkit-backdrop-filter:none;backdrop-filter:none}
+.photo-only::before{display:none}
+.photo-only .pic{aspect-ratio:auto;height:100%;min-height:420px;border-radius:var(--r);box-shadow:none;cursor:pointer}
+@media(max-width:600px){.photo-only .pic{min-height:0;aspect-ratio:4/5}}

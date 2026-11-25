@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=33';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=34';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -168,7 +168,7 @@ function renderPhotos(){
  $('#strip').innerHTML=L.map(p=>`<figure><img src="${p.img}" alt="${esc(p.cap||'Photo')}"><figcaption>${esc(p.cap||'')}</figcaption></figure>`).join('');
  slide(true)}
 function slide(keep){const L=ph(),P=$('#h-pic');
- if(!L.length){P.innerHTML='<div class="empty">Pas encore de photo.</div>';$('#h-cap').textContent='';return}
+ if(!L.length){P.innerHTML='<div class="empty">Pas encore de photo</div>';$('#h-cap').textContent='';return}
  if(!keep)S.pi=(S.pi+1)%L.length;S.pi%=L.length;const p=L[S.pi];
  P.innerHTML=`<img class="bg" src="${p.img}" alt="" aria-hidden="true"><img class="fg" src="${p.img}" alt="${esc(p.cap||'Photo')}">`;$('#h-cap').textContent=p.cap||'';
  if(typeof fx==='function'&&!keep){fx(P.querySelector('.fg'),{opacity:[0,1],scale:[1.08,1]},{type:'tween',duration:1.1,ease:[.2,.8,.2,1]});fx(P.querySelector('.bg'),{opacity:[0,1]},{type:'tween',duration:1.1})}}
@@ -184,7 +184,8 @@ $('#p-sec').addEventListener('input',e=>{$('#p-secv').textContent=spLbl(+e.targe
 $('#p-sec').addEventListener('change',e=>spSet(+e.target.value));
 spShow();spRun();
 $('#p-grid').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)openV(+b.dataset.p)});
-$('#h-pic').addEventListener('click',()=>{if(ph().length)openV(S.pi)});
+$('#h-pic').addEventListener('click',()=>{location.hash='photos'});
+$('#h-pic').addEventListener('keydown',e=>{if(e.key==='Enter')location.hash='photos'});
 const curV=()=>Math.round($('#strip').scrollLeft/Math.max(1,$('#strip').clientWidth));
 function openV(i){$('#viewer').classList.add('on');$('#vdel').hidden=!S.canW;requestAnimationFrame(()=>$('#strip').children[i]?.scrollIntoView({inline:'center'}))}
 function goV(d){const n=$('#strip').children.length;if(!n)return;$('#strip').children[Math.max(0,Math.min(n-1,curV()+d))].scrollIntoView({behavior:'smooth',inline:'center'})}
@@ -363,10 +364,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 33 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 33 · chargement des animations…');
+fxBadge(RM?'Version 34 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 34 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 33 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 33 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 33 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 34 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 34 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 34 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -632,7 +633,7 @@ document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,sele
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'33'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'34'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -664,7 +665,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='33';
+{const APPV='34';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
