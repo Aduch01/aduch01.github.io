@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=29';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=30';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -55,7 +55,19 @@ if(FB_OK)onAuthStateChanged(auth,u=>{
 
 /* ---------- horloge ---------- */
 const fD=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-function tick(){const d=new Date();$('#clock').textContent=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});$('#date').textContent=fD.format(d)}
+let clk='';
+function tick(){const d=new Date(),t=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),C=$('#clock');$('#date').textContent=fD.format(d);
+ if(t===clk)return;const first=!clk||C.children.length!==t.length;
+ if(first){C.innerHTML=[...t].map(ch=>ch===':'?'<span class="col">:</span>':`<span class="sl"><span>${ch}</span></span>`).join('')}
+ else{[...t].forEach((ch,i)=>{if(ch!==clk[i]&&ch!==':'){const sl=C.children[i],sp=sl.firstChild;sp.textContent=ch;
+  if(window.Motion){try{Motion.animate(sp,{y:['-100%','0%'],opacity:[0,1],filter:['blur(6px)','blur(0px)']},{type:'spring',stiffness:260,damping:22})}catch(e){}}}})}
+ clk=t;greet(d)}
+function greet(d){const h=d.getHours(),g=h<5?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':h<23?'Bonsoir':'Bonne nuit';
+ const w=D.wx?.jours?.[0];$('#greet').innerHTML=esc(g)+(w&&D.wx.actuelle!=null?` · <b>${esc(D.wx.actuelle)}°</b> ${esc((D.wx.condNow||w.cond||'').toLowerCase())} à ${esc(D.wx.ville)}`:'');
+ setSky(h)}
+const SKY={aube:['#ff7a59','#ffb86b','#c04dff','#4f7bff','#3a1440'],jour:['#3b82f6','#0ea5e9','#8b5cf6','#14e0c8','#0f2a5c'],soir:['#7c3aed','#f97316','#ec4899','#6366f1','#2a0f3d'],nuit:['#4c1d95','#1e3a8a','#831843','#0e7490','#14082e']};
+let skyCur='';function setSky(h){const k=h>=5&&h<8?'aube':h>=8&&h<17?'jour':h>=17&&h<21?'soir':'nuit';if(k===skyCur)return;skyCur=k;const v=SKY[k],r=document.documentElement.style;
+ ['--a1','--a2','--a3','--a4','--abase'].forEach((p,i)=>r.setProperty(p,v[i]))}
 tick();setInterval(tick,1000);
 
 /* ---------- météo (Open-Meteo, mise à jour automatique) ---------- */
@@ -100,7 +112,7 @@ function renderWx(){
  const days=J.map((d,i)=>`<button type="button" class="day${i===S.day?' sel':''}" data-day="${i}"><small>${i?esc(jour(d.date)):'Auj.'}</small>${ico(d.cond)}<b>${esc(d.max)}°</b><small>${esc(d.min)}°</small></button>`).join('');
  const nt=isNight(t);$('#wxcard').dataset.sky=sky(w.condNow||t.cond,nt);
  H.innerHTML=`<div class="wx-now">${ico(w.condNow||t.cond,nt)}<div><div class="big">${esc(w.actuelle)}°</div><div class="cond">${esc(w.condNow||t.cond)} · ${esc(w.ville)}</div><div class="wx-more">Ressenti ${esc(w.ressenti)}° · humidité ${esc(w.hum)} %</div></div></div><div class="days">${days}</div><div class="maj">Mise à jour automatique · ${esc(fmtMaj(w.maj))}</div>`;
- if(typeof fxTemp==='function')fxTemp();
+ if(typeof fxTemp==='function')fxTemp();greet(new Date());if(typeof wxFxSet==='function')wxFxSet($('#wxcard').dataset.sky);
  const d=J[S.day]||t;
  $('#m-title').textContent='Météo à '+w.ville;
  $('#m-day').dataset.sky=sky(d.cond,S.day===0&&nt);
@@ -349,10 +361,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 29 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 29 · chargement des animations…');
+fxBadge(RM?'Version 30 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 30 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 29 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 29 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.querySelector('.view.on'))}else fxBadge('Version 29 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 30 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 30 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.querySelector('.view.on'))}else fxBadge('Version 30 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 const fx=(el,kf,o)=>{if(!MO||!el)return null;try{return MO.animate(el,kf,{...SPR,...o})}catch(e){return null}};
 function fxView(v){if(!MO||!v)return;
@@ -364,6 +376,54 @@ document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn,.chip
 let wxPrev=null;
 function fxTemp(){const el=document.querySelector('#h-wx .big');if(!el||!D.wx)return;const cur=+D.wx.actuelle,from=wxPrev==null?cur-6:wxPrev;wxPrev=cur;
  if(!MO||from===cur)return;try{MO.animate(from,cur,{duration:.9,ease:[.2,.8,.2,1],onUpdate:v=>{el.textContent=Math.round(v)+'°'}})}catch(e){}}
+
+
+/* ---------- effets visuels : météo animée, reflets, loupe du dock, confettis ---------- */
+const RMX=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* météo animée dans le widget */
+const WC=$('#wxfx'),wctx=WC.getContext('2d');let wxKind='',wxP=[],wxRaf=0,wxVis=true,flash=0;
+function wxFxSet(k){if(RMX)return;wxKind=k||'cloud';const W=WC.clientWidth,H=WC.clientHeight,dpr=Math.min(2,devicePixelRatio||1);WC.width=W*dpr;WC.height=H*dpr;wctx.setTransform(dpr,0,0,dpr,0,0);
+ const n={rain:70,storm:90,snow:55,night:60,sun:28,cloud:6,fog:8}[wxKind]||20;wxP=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,v:.4+Math.random(),s:Math.random(),p:Math.random()*6.28}));
+ if(!wxRaf)wxRaf=requestAnimationFrame(wxDraw)}
+function wxDraw(t){wxRaf=0;if(!wxVis||document.hidden){return}
+ const W=WC.clientWidth,H=WC.clientHeight;wctx.clearRect(0,0,W,H);
+ for(const p of wxP){
+  if(wxKind==='rain'||wxKind==='storm'){p.y+=7+p.v*7;p.x-=1.5;if(p.y>H){p.y=-20;p.x=Math.random()*W*1.1}wctx.strokeStyle=`rgba(180,220,255,${.25+p.s*.35})`;wctx.lineWidth=1+p.s;wctx.beginPath();wctx.moveTo(p.x,p.y);wctx.lineTo(p.x-2.5,p.y+12+p.v*6);wctx.stroke()}
+  else if(wxKind==='snow'){p.y+=.5+p.v*.9;p.x+=Math.sin(t/1200+p.p)*.5;if(p.y>H){p.y=-6;p.x=Math.random()*W}wctx.fillStyle=`rgba(255,255,255,${.5+p.s*.4})`;wctx.beginPath();wctx.arc(p.x,p.y,1.2+p.s*2.4,0,7);wctx.fill()}
+  else if(wxKind==='night'){const a=.25+.75*Math.abs(Math.sin(t/900*p.v+p.p));wctx.fillStyle=`rgba(255,255,255,${a*.8})`;wctx.beginPath();wctx.arc(p.x,p.y*.7,.6+p.s*1.4,0,7);wctx.fill()}
+  else if(wxKind==='sun'){p.y-=.25*p.v;p.x+=Math.sin(t/2000+p.p)*.3;if(p.y<-10){p.y=H+10;p.x=Math.random()*W}const g=wctx.createRadialGradient(p.x,p.y,0,p.x,p.y,6+p.s*10);g.addColorStop(0,'rgba(255,240,180,.55)');g.addColorStop(1,'rgba(255,240,180,0)');wctx.fillStyle=g;wctx.beginPath();wctx.arc(p.x,p.y,6+p.s*10,0,7);wctx.fill()}
+  else{p.x+=.15*p.v;if(p.x>W+120)p.x=-120;const g=wctx.createRadialGradient(p.x,p.y,0,p.x,p.y,90+p.s*60);g.addColorStop(0,'rgba(255,255,255,.07)');g.addColorStop(1,'rgba(255,255,255,0)');wctx.fillStyle=g;wctx.beginPath();wctx.arc(p.x,p.y,90+p.s*60,0,7);wctx.fill()}}
+ if(wxKind==='sun'){const r=Math.max(W,H)*.9,g=wctx.createRadialGradient(W*.15,H*.1,0,W*.15,H*.1,r);g.addColorStop(0,`rgba(255,220,120,${.18+.06*Math.sin(t/1500)})`);g.addColorStop(1,'rgba(255,220,120,0)');wctx.fillStyle=g;wctx.fillRect(0,0,W,H)}
+ if(wxKind==='storm'){if(Math.random()<.004)flash=1;if(flash>0){wctx.fillStyle=`rgba(230,230,255,${flash*.5})`;wctx.fillRect(0,0,W,H);flash-=.06}}
+ wxRaf=requestAnimationFrame(wxDraw)}
+new IntersectionObserver(es=>{wxVis=es[0].isIntersecting;if(wxVis&&!wxRaf&&wxKind)wxRaf=requestAnimationFrame(wxDraw)}).observe($('#wxcard'));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!wxRaf&&wxKind)wxRaf=requestAnimationFrame(wxDraw)});
+new ResizeObserver(()=>{if(wxKind)wxFxSet(wxKind)}).observe($('#wxcard'));
+/* reflet lumineux qui suit le doigt */
+let glareEl=null;
+document.addEventListener('pointermove',e=>{const p=e.target.closest&&e.target.closest('.plate');if(glareEl&&glareEl!==p){glareEl.classList.remove('glare');glareEl=null}
+ if(!p||editing)return;const r=p.getBoundingClientRect();p.style.setProperty('--mx',(e.clientX-r.left)+'px');p.style.setProperty('--my',(e.clientY-r.top)+'px');if(!glareEl){p.classList.add('glare');glareEl=p}},{passive:true});
+document.addEventListener('pointerdown',e=>{const p=e.target.closest('.plate');if(!p||editing)return;const r=p.getBoundingClientRect();p.style.setProperty('--mx',(e.clientX-r.left)+'px');p.style.setProperty('--my',(e.clientY-r.top)+'px');p.classList.add('glare');glareEl=p},{passive:true});
+document.addEventListener('pointerup',e=>{if(glareEl&&e.pointerType!=='mouse'){const g=glareEl;setTimeout(()=>g.classList.remove('glare'),350);glareEl=null}});
+/* loupe du dock (comme sur Mac) */
+const DK=$('#dock');
+function dockMag(x){for(const a of DK.children){const r=a.getBoundingClientRect(),c=r.left+r.width/2,d=Math.abs(x-c),k=Math.max(0,1-d/130);
+ a.style.transform=`translateY(${-k*12}px) scale(${1+k*.32})`;a.style.transition='transform .12s'}}
+function dockReset(){for(const a of DK.children){a.style.transition='transform .35s cubic-bezier(.3,1.6,.5,1)';a.style.transform=''}}
+DK.addEventListener('pointermove',e=>{if(!editing&&!RMX&&(e.pointerType==='mouse'||e.buttons))dockMag(e.clientX)});
+DK.addEventListener('pointerdown',e=>{if(!editing&&!RMX)dockMag(e.clientX)});
+DK.addEventListener('pointerleave',dockReset);DK.addEventListener('pointerup',()=>setTimeout(dockReset,120));DK.addEventListener('pointercancel',dockReset);
+/* confettis quand on termine quelque chose */
+function confetti(x,y){if(RMX)return;const c=document.createElement('canvas');c.className='confetti';document.body.appendChild(c);const dpr=Math.min(2,devicePixelRatio||1);c.width=innerWidth*dpr;c.height=innerHeight*dpr;
+ const g=c.getContext('2d');g.scale(dpr,dpr);const cols=['#ff4f8b','#ffd84d','#5ecbff','#7ee0a0','#b67bff','#ff8a3c'];
+ const P=Array.from({length:70},()=>{const a=Math.random()*Math.PI*2,v=4+Math.random()*8;return{x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-6,r:Math.random()*6.28,vr:(Math.random()-.5)*.4,w:5+Math.random()*6,h:3+Math.random()*4,c:cols[Math.random()*cols.length|0]}});
+ const t0=performance.now();(function f(t){const el=(t-t0)/1000;g.clearRect(0,0,innerWidth,innerHeight);
+  for(const p of P){p.vy+=.32;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;g.save();g.globalAlpha=Math.max(0,1-el/1.6);g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.w/2,-p.h/2,p.w,p.h);g.restore()}
+  if(el<1.7)requestAnimationFrame(f);else c.remove()})(t0)}
+document.addEventListener('click',e=>{if(editing)return;const t=e.target;
+ const a=t.closest('[data-a="done"]'),g=t.closest('[data-got]'),n=t.closest('[data-n="done"]');
+ const wasDone=a?a.classList.contains('on'):g?g.closest('li')?.classList.contains('got'):n?n.closest('.note')?.classList.contains('done'):true;
+ if(!wasDone)confetti(e.clientX,e.clientY)},true);
 
 /* ---------- organiser par appui long (disposition propre à chaque appareil) ---------- */
 const keyOf=el=>el.dataset.k||el.dataset.v||el.getAttribute('href')||'';
@@ -563,7 +623,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='29';
+{const APPV='30';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
