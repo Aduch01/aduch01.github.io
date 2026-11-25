@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=40';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=41';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -53,7 +53,7 @@ if(FB_OK)onAuthStateChanged(auth,u=>{
  const box=$('#uid');
  if(u&&!S.canW){box.hidden=false;box.textContent='Connecté, mais pas propriétaire. Identifiant à envoyer à Claude : '+u.uid}else box.hidden=true;
  status('');
- lockUI();rerender();if(typeof csApply==='function')csApply()});
+ lockUI();rerender();if(typeof csApply==='function')csApply();if(typeof renderKB==='function')renderKB()});
 
 /* ---------- horloge ---------- */
 const fD=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -402,10 +402,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 40 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 40 · chargement des animations…');
+fxBadge(RM?'Version 41 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 41 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 40 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 40 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 40 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 41 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 41 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 41 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -670,15 +670,89 @@ function syncPages(){const order=['home',...[...document.querySelectorAll('.laun
 document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select')||!$('#viewer').hidden&&$('#viewer').classList.contains('on')||!$('#v-recette').hidden)return;
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
+
+/* ---------- tableau de tâches (Kanban + priorités) dans la page cachée ---------- */
+const KCOLS=[['todo','À faire','#5ecbff'],['doing','En cours','#8b7bff'],['wait','En attente','#ffb020'],['done','Terminé','#30d158']];
+const KPRIO={urgent:['Urgent','#ff3b5c','<path d="M12 2c1 3.5-1.5 5-1.5 7.5A2.5 2.5 0 0 0 13 12c0-1.5 1-2.5 1-2.5 2.2 2 3.5 4 3.5 6.5a5.5 5.5 0 0 1-11 0C6.5 10.5 11 8 12 2z"/>'],
+ prevoir:['À prévoir','#ff9f0a','<path d="M7 2v3M17 2v3M3.5 9h17M5 4.5h14A1.5 1.5 0 0 1 20.5 6v13a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V6A1.5 1.5 0 0 1 5 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="14.5" r="2"/>'],
+ attendre:['Peut attendre','#5ac8fa','<path d="M7 3h10M7 21h10M8 3c0 4 8 5 8 9s-8 5-8 9M16 3c0 4-8 5-8 9s8 5 8 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>']};
+const kIco=p=>`<svg viewBox="0 0 24 24" class="kico" fill="currentColor" aria-hidden="true">${KPRIO[p][2]}</svg>`;
+let KT=[],kFilter='all',kEdit=null,kPrio='prevoir',kCol='todo',kSaveT=null,kLocalT=0,kDrag=null;
+const kToday=()=>iso(new Date());
+function kSave(){kLocalT=Date.now();renderKB();if(!S.canW||!FB_OK)return;clearTimeout(kSaveT);kSaveT=setTimeout(()=>setDoc(doc(db,'masques','taches'),{items:KT,t:kLocalT}).then(()=>status('Publié')).catch(e=>status('Échec : '+(e.code||'erreur'))),600)}
+if(FB_OK)onSnapshot(doc(db,'masques','taches'),sn=>{if(!sn.exists())return;const d=sn.data();if((kDrag&&kDrag.g)||(d.t||0)<kLocalT)return;KT=Array.isArray(d.items)?d.items:[];renderKB()},()=>{});
+function kDue(t){if(!t.due||t.status==='done')return '';const td=kToday(),cls=t.due<td?'late':t.due===td?'today':'';const d=new Date(t.due+'T12:00');
+ const txt=t.due<td?'En retard · '+d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):t.due===td?'Aujourd\'hui':d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});return `<span class="kchip due ${cls}">${esc(txt)}</span>`}
+function kCard(t){const P=KPRIO[t.prio]||KPRIO.prevoir;return `<article class="kcard p-${esc(t.prio)}${t.status==='done'?' done':''}" data-kid="${esc(t.id)}" style="--pc:${P[1]}">
+ <div class="kc-top"><span class="kbadge">${kIco(t.prio in KPRIO?t.prio:'prevoir')}${esc(P[0])}</span>${kDue(t)}</div>
+ <h3>${esc(t.title)}</h3>${t.notes?`<p>${esc(t.notes)}</p>`:''}
+ <div class="kc-foot">${t.client?`<span class="kchip">${esc(t.client)}</span>`:''}${t.est?`<span class="kchip">⏱ ${esc(t.est)}</span>`:''}
+ ${S.canW?`<span class="kmove"><button type="button" data-kmv="-1" aria-label="Colonne précédente">‹</button><button type="button" data-kmv="1" aria-label="Colonne suivante">›</button></span>`:''}</div></article>`}
+function renderKB(){const q=slug($('#kb-q').value||''),vis=t=>(kFilter==='all'||t.prio===kFilter)&&(!q||slug(t.title+' '+(t.client||'')+' '+(t.notes||'')).includes(q));
+ const td=kToday(),open=KT.filter(t=>t.status!=='done');
+ $('#kb-stats').innerHTML=[['À faire',KT.filter(t=>t.status==='todo').length,'#5ecbff'],['En cours',KT.filter(t=>t.status==='doing').length,'#8b7bff'],['Urgentes',open.filter(t=>t.prio==='urgent').length,'#ff3b5c'],['En retard',open.filter(t=>t.due&&t.due<td).length,'#ff6b3d'],['Faites (7 j)',KT.filter(t=>t.status==='done'&&t.doneAt&&Date.now()-t.doneAt<7*864e5).length,'#30d158']]
+  .map(([k,v,c])=>`<div class="kstat" style="--sc:${c}"><b>${v}</b><span>${esc(k)}</span></div>`).join('');
+ $('#kb-sub').textContent=open.length?open.length+' tâche'+(open.length>1?'s':'')+' en cours de route':'Rien en attente, bravo !';
+ const order=(a,b)=>({urgent:0,prevoir:1,attendre:2}[a.prio]??1)-({urgent:0,prevoir:1,attendre:2}[b.prio]??1)||(a.order??0)-(b.order??0);
+ $('#kb-board').innerHTML=KCOLS.map(([k,n,c])=>{const L=KT.filter(t=>t.status===k&&vis(t)).sort(k==='done'?(a,b)=>(b.doneAt||0)-(a.doneAt||0):order);
+  return `<section class="kcol" data-kcol="${k}" style="--cc:${c}"><header><i></i><b>${esc(n)}</b><span class="kcount">${L.length}</span>${k==='doing'&&L.length>3?'<span class="kwip">Beaucoup en cours</span>':''}</header>
+  <div class="kcards">${L.map(kCard).join('')||`<div class="kempty">${k==='done'?'Les tâches terminées arrivent ici':'Glisse une tâche ici'}</div>`}</div>
+  ${S.canW&&k!=='done'?`<button type="button" class="kadd" data-kadd="${k}">+ Ajouter</button>`:''}</section>`}).join('');
+ $('#kb-new').hidden=!S.canW;$('#kb-hint').textContent=S.canW?'Astuce : maintiens une carte puis fais-la glisser vers une autre colonne. Touche une carte pour la modifier.':'Lecture seule : connecte-toi dans les paramètres pour modifier.'}
+/* formulaire */
+$('#kb-prio').innerHTML=Object.entries(KPRIO).map(([k,[n,c]])=>`<button type="button" data-kp="${k}" style="--pc:${c}">${kIco(k)}${esc(n)}</button>`).join('');
+$('#kb-col').innerHTML=KCOLS.map(([k,n])=>`<button type="button" data-kc="${k}">${esc(n)}</button>`).join('');
+function kSel(){$('#kb-prio').querySelectorAll('[data-kp]').forEach(b=>b.classList.toggle('on',b.dataset.kp===kPrio));$('#kb-col').querySelectorAll('[data-kc]').forEach(b=>b.classList.toggle('on',b.dataset.kc===kCol))}
+$('#kb-prio').addEventListener('click',e=>{const b=e.target.closest('[data-kp]');if(b){kPrio=b.dataset.kp;kSel()}});
+$('#kb-col').addEventListener('click',e=>{const b=e.target.closest('[data-kc]');if(b){kCol=b.dataset.kc;kSel()}});
+function kOpen(t,col){if(!S.canW)return;kEdit=t?t.id:null;kPrio=t?.prio||'prevoir';kCol=t?.status||col||'todo';
+ $('#kb-mtitle').textContent=t?'Modifier la tâche':'Nouvelle tâche';$('#kb-save').textContent=t?'Enregistrer':'Ajouter';$('#kb-del').hidden=!t;
+ $('#kb-t').value=t?.title||'';$('#kb-due').value=t?.due||'';$('#kb-est').value=t?.est||'';$('#kb-client').value=t?.client||'';$('#kb-notes').value=t?.notes||'';kSel();
+ $('#kb-modal').hidden=false;fx($('#kb-form'),{opacity:[0,1],y:[30,0],scale:[.96,1]},{stiffness:340,damping:26});setTimeout(()=>$('#kb-t').focus(),120)}
+const kClose=()=>{$('#kb-modal').hidden=true};
+$('#kb-cancel').addEventListener('click',kClose);$('#kb-modal').addEventListener('click',e=>{if(e.target.id==='kb-modal')kClose()});
+$('#kb-new').addEventListener('click',()=>kOpen(null,'todo'));
+$('#kb-form').addEventListener('submit',e=>{e.preventDefault();const title=$('#kb-t').value.trim();if(!title)return;
+ const base=kEdit?KT.find(x=>x.id===kEdit):null,was=base?.status;
+ const t={...(base||{id:'k'+Date.now().toString(36),created:Date.now(),order:Date.now()}),title,prio:kPrio,status:kCol,due:$('#kb-due').value,est:$('#kb-est').value.trim(),client:$('#kb-client').value.trim(),notes:$('#kb-notes').value.trim()};
+ if(t.status==='done'&&was!=='done')t.doneAt=Date.now();KT=base?KT.map(x=>x.id===t.id?t:x):[...KT,t];kClose();kSave();
+ const el=document.querySelector(`[data-kid="${CSS.escape(t.id)}"]`);fx(el,{opacity:[0,1],scale:[.85,1]},{stiffness:400,damping:18})});
+$('#kb-del').addEventListener('click',()=>{const o=KT.find(x=>x.id===kEdit);if(!o)return;KT=KT.filter(x=>x.id!==kEdit);kClose();kSave();undo('Tâche supprimée',()=>{KT=[...KT,o];kSave()})});
+$('#kb-q').addEventListener('input',renderKB);
+$('#kb-filter').addEventListener('click',e=>{const b=e.target.closest('[data-kf]');if(!b)return;kFilter=b.dataset.kf;$('#kb-filter').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));renderKB()});
+function kMove(id,status,beforeId){const t=KT.find(x=>x.id===id);if(!t)return;const was=t.status;t.status=status;if(status==='done'&&was!=='done')t.doneAt=Date.now();if(status!=='done')delete t.doneAt;
+ const sib=KT.filter(x=>x.status===status&&x.id!==id).sort((a,b)=>(a.order??0)-(b.order??0)),bi=beforeId?sib.findIndex(x=>x.id===beforeId):-1;
+ t.order=bi<0?(sib.length?(sib[sib.length-1].order??0)+1000:Date.now()):((bi>0?sib[bi-1].order??0:(sib[0].order??0)-2000)+(sib[bi].order??0))/2;kSave();return was}
+$('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)return;const add=e.target.closest('[data-kadd]');if(add)return kOpen(null,add.dataset.kadd);
+ const mv=e.target.closest('[data-kmv]'),card=e.target.closest('[data-kid]');if(!card)return;const t=KT.find(x=>x.id===card.dataset.kid);if(!t)return;
+ if(mv){e.stopPropagation();const i=KCOLS.findIndex(c=>c[0]===t.status),j=Math.max(0,Math.min(KCOLS.length-1,i+ +mv.dataset.kmv));if(j===i)return;const r=mv.getBoundingClientRect();kMove(t.id,KCOLS[j][0]);if(KCOLS[j][0]==='done')confetti(r.left,r.top);return}
+ kOpen(t)});
+/* glisser-déposer (maintien court sur tactile) */
+{let pre=null;const B=$('#kb-board');
+ B.addEventListener('pointerdown',e=>{if(!S.canW||e.button>0||e.target.closest('button'))return;const c=e.target.closest('.kcard');if(!c)return;
+  pre={c,x:e.clientX,y:e.clientY,id:e.pointerId,t:setTimeout(()=>{if(pre)kStart(pre,e.clientX,e.clientY)},e.pointerType==='mouse'?9999:260)}});
+ function kStart(p,x,y){const r=p.c.getBoundingClientRect(),g=p.c.cloneNode(true);g.classList.add('kghost');g.style.width=r.width+'px';document.body.appendChild(g);
+  p.c.classList.add('kph');kDrag={c:p.c,g,ox:x-r.left,oy:y-r.top,id:p.c.dataset.kid};pre=null;if(navigator.vibrate)navigator.vibrate(12);kFollow(x,y)}
+ function kFollow(x,y){const d=kDrag;d.g.style.transform=`translate(${x-d.ox}px,${y-d.oy}px) rotate(2.5deg)`;
+  document.querySelectorAll('.kcol.over').forEach(c=>c.classList.remove('over'));d.g.style.display='none';const el=document.elementFromPoint(x,y);d.g.style.display='';
+  const col=el&&el.closest('.kcol');if(col)col.classList.add('over');d.col=col;d.before=el&&el.closest('.kcard:not(.kph)')?.dataset.kid||null;
+  const sc=el&&el.closest('.kb-board');if(sc){const r=sc.getBoundingClientRect();if(x>r.right-50)sc.scrollLeft+=14;if(x<r.left+50)sc.scrollLeft-=14}}
+ document.addEventListener('pointermove',e=>{if(pre){const dd=Math.hypot(e.clientX-pre.x,e.clientY-pre.y);if(e.pointerType==='mouse'&&dd>6){clearTimeout(pre.t);kStart(pre,e.clientX,e.clientY)}else if(dd>10){clearTimeout(pre.t);pre=null}}
+  if(kDrag&&kDrag.g){e.preventDefault();kFollow(e.clientX,e.clientY)}},{passive:false});
+ B.addEventListener('touchmove',e=>{if(kDrag&&kDrag.g)e.preventDefault()},{passive:false});
+ const end=e=>{if(pre){clearTimeout(pre.t);pre=null}if(!kDrag||!kDrag.g)return;const d=kDrag;d.g.remove();d.c.classList.remove('kph');document.querySelectorAll('.kcol.over').forEach(c=>c.classList.remove('over'));
+  kDrag={end:Date.now()};if(d.col){const st=d.col.dataset.kcol,was=kMove(d.id,st,d.before);if(st==='done'&&was!=='done'&&e)confetti(e.clientX,e.clientY)}};
+ document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
+
 /* ---------- page cachée : 5 touches rapides sur le cadran de l'horloge ---------- */
 {const SE=$('#secret');let taps=[];
- function openSecret(){if(!SE.hidden)return;SE.hidden=false;SE.scrollTop=0;if(navigator.vibrate)navigator.vibrate([15,40,15]);fx(SE,{opacity:[0,1],scale:[1.06,1]},{stiffness:220,damping:24})}
+ function openSecret(){if(!SE.hidden)return;SE.hidden=false;renderKB();SE.scrollTop=0;if(navigator.vibrate)navigator.vibrate([15,40,15]);fx(SE,{opacity:[0,1],scale:[1.06,1]},{stiffness:220,damping:24})}
  function closeSecret(){SE.hidden=true}
  $('#dial').addEventListener('pointerup',()=>{const n=Date.now();taps=taps.filter(t=>n-t<2000);taps.push(n);if(taps.length>=5){taps=[];openSecret()}});
  $('#secret-x').addEventListener('click',closeSecret);
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!SE.hidden)closeSecret()});
+ document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('#kb-modal').hidden){$('#kb-modal').hidden=true;return}if(!SE.hidden)closeSecret()});
  {let y0=null;SE.addEventListener('touchstart',e=>{y0=SE.scrollTop<=2?e.touches[0].clientY:null},{passive:true});
-  SE.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>120)closeSecret();y0=null},{passive:true})}}
+  SE.addEventListener('touchend',e=>{if(y0!=null&&!(kDrag&&kDrag.g)&&$('#kb-modal').hidden&&!e.target.closest('.kcard')&&e.changedTouches[0].clientY-y0>120)closeSecret();y0=null},{passive:true})}}
 /* ---------- cadran à aiguilles (balayage fluide des secondes) ---------- */
 {const H=$('#dl-h'),M=$('#dl-m'),Sx=$('#dl-s'),R=$('#dl-sec'),SN=$('#dl-secnum'),RMd=matchMedia('(prefers-reduced-motion: reduce)').matches;let raf=0,last=-1;
  function draw(){raf=0;const n=new Date(),ms=n.getMilliseconds(),s=n.getSeconds()+(RMd?0:ms/1000),m=n.getMinutes()+s/60,h=(n.getHours()%12)+m/60;
@@ -698,7 +772,7 @@ addEventListener('hashchange',route);syncPages();route();
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'40'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'41'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -730,7 +804,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='40';
+{const APPV='41';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

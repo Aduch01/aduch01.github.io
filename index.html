@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=40">
+<link rel="stylesheet" href="style.css?v=41">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -199,7 +199,30 @@
 </div>
 <div class="secret" id="secret" hidden>
   <button class="secret-x" id="secret-x" type="button" aria-label="Fermer">✕</button>
-  <div class="pg" id="secret-body"></div>
+  <div class="pg kb-wrap" id="secret-body">
+    <div class="kb-head">
+      <div><h1 class="kb-title">Mes tâches</h1><div class="kb-sub" id="kb-sub"></div></div>
+      <button class="btn kb-new" id="kb-new" type="button">+ Nouvelle tâche</button>
+    </div>
+    <div class="kb-stats" id="kb-stats"></div>
+    <div class="kb-tools"><input type="search" id="kb-q" placeholder="Rechercher une tâche, un client…" autocomplete="off"><div class="seg" id="kb-filter"><button type="button" data-kf="all" class="on">Toutes</button><button type="button" data-kf="urgent">Urgent</button><button type="button" data-kf="prevoir">À prévoir</button><button type="button" data-kf="attendre">Peut attendre</button></div></div>
+    <div class="kb-board" id="kb-board"></div>
+    <div class="hint kb-hint" id="kb-hint"></div>
+  </div>
+  <div class="kb-modal" id="kb-modal" hidden>
+    <form class="kb-form glass" id="kb-form">
+      <div class="set-head"><h2 id="kb-mtitle">Nouvelle tâche</h2><button class="ghost" type="button" id="kb-cancel">Fermer</button></div>
+      <input type="text" id="kb-t" placeholder="Titre de la tâche (ex. Remplacer embrayage Clio)" required>
+      <div class="kb-lab">Priorité</div>
+      <div class="kb-prio" id="kb-prio"></div>
+      <div class="kb-lab">Colonne</div>
+      <div class="seg wrap" id="kb-col"></div>
+      <div class="kb-grid"><label>Échéance<input type="date" id="kb-due"></label><label>Temps estimé<input type="text" id="kb-est" placeholder="ex. 2 h"></label></div>
+      <input type="text" id="kb-client" placeholder="Client / lieu (facultatif)">
+      <textarea id="kb-notes" rows="3" placeholder="Détails, pièces, remarques…"></textarea>
+      <div class="row kb-actions"><button class="btn" type="submit" id="kb-save">Ajouter</button><button class="ghost kb-del" type="button" id="kb-del" hidden>Supprimer</button></div>
+    </form>
+  </div>
 </div>
 <div class="sheet" id="v-recette" hidden><div class="pg">
     <a class="back" href="#recettes" id="sheet-x">‹ Recettes</a>
@@ -247,6 +270,6 @@
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=40"></script>
+<script type="module" src="app.js?v=41"></script>
 </body>
 </html>
