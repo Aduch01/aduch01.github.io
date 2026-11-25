@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -79,14 +79,12 @@
       <a class="app-ic" href="#agenda" data-v="agenda"><svg><use href="#i-agenda"/></svg><span>Agenda</span></a>
       <a class="app-ic" href="#notes" data-v="notes"><svg><use href="#i-notes"/></svg><span>Notes</span></a>
       <a class="app-ic" href="#photos" data-v="photos"><svg><use href="#i-photos"/></svg><span>Photos</span></a>
-      <a class="app-ic" href="#annonces" data-v="annonces"><svg><use href="#i-ann"/></svg><span>Annonces</span></a>
     </nav>
     <div class="widgets home" data-sort="home">
       <section class="plate wx wbig" id="wxcard" data-k="meteo"><canvas class="wxfx" id="wxfx" aria-hidden="true"></canvas><h2><svg class="ic"><use href="#i-meteo"/></svg>Météo<a href="#meteo">Détails ›</a></h2><div id="h-wx"></div></section>
       <section class="plate frame wbig photo-only" data-k="photo"><div class="pic" id="h-pic" role="link" tabindex="0" aria-label="Ouvrir les photos"></div><div class="cap" id="h-cap" hidden></div></section>
       <section class="plate" data-k="agenda"><h2><svg class="ic"><use href="#i-agenda"/></svg>Agenda<a href="#agenda">Ouvrir ›</a></h2><ul class="wl" id="h-rdv"></ul></section>
       <section class="plate" data-k="notes"><h2><svg class="ic"><use href="#i-notes"/></svg>Notes<a href="#notes">Ouvrir ›</a></h2><ul class="wl" id="h-notes"></ul></section>
-      <section class="plate" data-k="annonces"><h2><svg class="ic"><use href="#i-ann"/></svg>Annonces<a href="#annonces">Ouvrir ›</a></h2><ul class="wl" id="h-ann"></ul></section>
     </div>
   </div></section>
   <section class="page" id="v-meteo" data-page="meteo"><div class="pg">
@@ -160,7 +158,9 @@
     </section>
     <div class="grid" id="p-grid"></div>
   </div></section>
-  <section class="page" id="v-annonces" data-page="annonces"><div class="pg">
+</div>
+<div class="parked" hidden>
+  <section class="parked-page" id="v-annonces" data-page="annonces"><div class="pg">
     <h1 class="v"><svg class="ic-l"><use href="#i-ann"/></svg>Tâches et nouvelles</h1>
     <section class="plate compose" id="a-compose">
       <div class="seg" id="a-kind"><button type="button" data-k="tache" class="on">Tâche</button><button type="button" data-k="nouvelle">Nouvelle</button></div>
@@ -209,7 +209,7 @@
       <li>« Ajoute du lait, des œufs et 2 baguettes » · « Enlève le beurre de la liste » · « Vide la liste »</li>
       <li>« Quel temps fera-t-il demain ? » · « Météo samedi »</li>
       <li>« Ouvre la recette de la brioche » · « Photo suivante »</li>
-      <li>« Ajoute une note : appeler le garage » · « Ajoute une tâche : vidange samedi »</li>
+      <li>« Ajoute une note : appeler le garage »</li>
       <li>« Rendez-vous demain à 14 h 30 contrôle technique » · « Rendez-vous le 28 à 9 h dentiste »</li>
       <li>Mains libres : active « Ok Duch » en haut, puis dis « Ok Duch, ouvre la météo » · « Désactive Ok Duch »</li>
       <li>« Aide » pour revoir cette liste</li>
@@ -218,6 +218,6 @@
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=34"></script>
+<script type="module" src="app.js?v=36"></script>
 </body>
 </html>

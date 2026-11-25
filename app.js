@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=34';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=36';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -151,7 +151,7 @@ $('#a-filter').addEventListener('click',e=>{const b=e.target.closest('[data-f]')
 function renderAnn(){
  const L=[...all('ann')].filter(a=>a.k!=='rdv').sort((x,y)=>(x.done|0)-(y.done|0)||y.t-x.t),F=L.filter(a=>S.filt==='all'||a.k===S.filt);
  $('#a-list').innerHTML=F.length?F.map(a=>`<li class="item${a.done?' done':''}">${a.k==='tache'?`<button type="button" class="check${a.done?' on':''}" data-a="done" data-id="${esc(a.id)}" ${S.canW?'':'disabled'} aria-label="Fait">${a.done?'✓':''}</button>`:'<span class="tag n">Nouvelle</span>'}<div><h3>${esc(a.title)}</h3>${a.body?`<p>${esc(a.body)}</p>`:''}<div class="hint">${esc(new Date(a.t).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))}${a.k==='tache'?' · tâche':''}</div></div>${S.canW?`<button type="button" class="ghost" data-a="del" data-id="${esc(a.id)}" aria-label="Supprimer">✕</button>`:'<span></span>'}</li>`).join(''):'<li class="empty plate">Rien de publié ici.</li>';
- $('#h-ann').innerHTML=L.filter(a=>!a.done).slice(0,3).map(a=>`<li class="mline"><span class="tag ${a.k==='tache'?'t':'n'}">${a.k==='tache'?'Tâche':'Nouvelle'}</span><span>${esc(a.title)}</span></li>`).join('')||'<li class="empty">Aucune tâche en cours.</li>';
+ $('#h-ann')&&($('#h-ann').innerHTML=L.filter(a=>!a.done).slice(0,3).map(a=>`<li class="mline"><span class="tag ${a.k==='tache'?'t':'n'}">${a.k==='tache'?'Tâche':'Nouvelle'}</span><span>${esc(a.title)}</span></li>`).join('')||'<li class="empty">Aucune tâche en cours.</li>');
 }
 $('#a-add').addEventListener('click',()=>{const title=$('#a-title').value.trim();if(!title||!S.canW)return;
  put('ann',{id:'a'+Date.now().toString(36),k:S.kind,title,body:$('#a-body').value.trim(),done:false,t:Date.now()});$('#a-title').value='';$('#a-body').value=''});
@@ -364,10 +364,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 34 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 34 · chargement des animations…');
+fxBadge(RM?'Version 36 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 36 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 34 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 34 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 34 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 36 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 36 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 36 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -560,7 +560,7 @@ function handle(raw){const t=N(raw);let m;
   put('notes',{id:'n'+Date.now().toString(36),text:cap(raw.replace(/^.*?note\s*(qui dit|que)?\s*:?\s*/i,'')),c:COLORS[0],done:false,pin:false,t:Date.now()});go('notes','Note ajoutée.');return}
  // tâche / annonce
  if(m=t.match(/^(?:ajoute|cree|publie|nouvelle)\s+(?:une\s+)?(tache|annonce|nouvelle)\s*:?\s*(.+)$/)){if(!owner())return;
-  put('ann',{id:'a'+Date.now().toString(36),k:m[1]==='tache'?'tache':'nouvelle',title:cap(raw.replace(/^.*?(tâche|tache|annonce|nouvelle)\s*:?\s*/i,'')),body:'',done:false,t:Date.now()});go('annonces',m[1]==='tache'?'Tâche ajoutée.':'Annonce publiée.');return}
+  put('ann',{id:'a'+Date.now().toString(36),k:m[1]==='tache'?'tache':'nouvelle',title:cap(raw.replace(/^.*?(tâche|tache|annonce|nouvelle)\s*:?\s*/i,'')),body:'',done:false,t:Date.now()});go('',m[1]==='tache'?'Tâche ajoutée.':'Annonce publiée.');return}
  // rendez-vous
  if(/\b(rendez[- ]vous|rdv)\b/.test(t)&&!/^(ouvre|affiche|montre|va)/.test(t)){if(!owner())return;
   let r=t.replace(/^(ajoute|cree|note|mets|programme|nouveau|j'ai)\s*(un\s+)?/,'').replace(/\b(rendez[- ]vous|rdv)\b/,' ');
@@ -592,7 +592,7 @@ function handle(raw){const t=N(raw);let m;
   go('recettes','Voici les recettes.');return}
  // navigation
  const NAV=[[/\b(accueil|maison|debut|ecran principal)\b/,'','Accueil.'],[/\b(liste de courses?|courses?|caddie)\b/,'courses','Voici la liste de courses.'],[/\b(meteo|temps)\b/,'meteo','Voici la météo.'],[/\b(agenda|calendrier|rendez-vous|planning)\b/,'agenda','Voici l\'agenda.'],
-  [/\bnotes?\b/,'notes','Voici les notes.'],[/\b(photos?|galerie|images?)\b/,'photos','Voici les photos.'],[/\b(annonces?|taches?|nouvelles)\b/,'annonces','Voici les annonces.'],[/\butiles?\b/,'utile','Voici la page Utile.']];
+  [/\bnotes?\b/,'notes','Voici les notes.'],[/\b(photos?|galerie|images?)\b/,'photos','Voici les photos.'],[/\butiles?\b/,'utile','Voici la page Utile.']];
  for(const [re,h,msg] of NAV)if(re.test(t)){go(h,msg);return}
  $('#vo-help').hidden=false;say('Je n\'ai pas compris. Voici des exemples de commandes.')}
 window.tableauVoix=handle;
@@ -605,7 +605,7 @@ function lockUI(){for(const s of ['#n-compose','#a-compose','#p-up','#r-compose'
 const PG=$('#pager');
 const pagesEl=()=>[...PG.children];
 let curPage='',firstGo=true;
-const TITLES={home:'Accueil',meteo:'Météo',recettes:'Recettes',courses:'Courses',agenda:'Agenda',notes:'Notes',photos:'Photos',annonces:'Annonces'};
+const TITLES={home:'Accueil',meteo:'Météo',recettes:'Recettes',courses:'Courses',agenda:'Agenda',notes:'Notes',photos:'Photos'};
 function renderDots(){$('#dots').innerHTML=pagesEl().map(p=>`<button type="button" data-dot="${p.dataset.page}" aria-label="${esc(TITLES[p.dataset.page]||p.dataset.page)}" class="${p.dataset.page===curPage?'on':''}"></button>`).join('')}
 $('#dots').addEventListener('click',e=>{const b=e.target.closest('[data-dot]');if(b)goPage(b.dataset.dot)});
 function setActive(k){if(k===curPage)return;curPage=k;renderDots();if(k==='courses')renderCS();if(k==='agenda')renderCal();
@@ -633,7 +633,7 @@ document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,sele
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'34'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'36'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -665,7 +665,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='34';
+{const APPV='36';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
