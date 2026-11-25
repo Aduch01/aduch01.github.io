@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=27';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=28';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -558,3 +558,9 @@ document.addEventListener('visibilitychange',()=>{let w=null;try{w=localStorage.
 $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch(e){$('#fs').textContent='Plein écran indisponible'}});
 
 lockUI();rerender();renderWx();
+
+/* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
+{const APPV='28';
+ async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+  if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
+ setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
