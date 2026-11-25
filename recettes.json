@@ -88,7 +88,11 @@
       "Pour la garder chaude : couvre et pose la casserole au bain-marie, ajoute un trait de lait chaud avant de servir.",
       "Version gratinée : mets la purée dans un plat, parsème de gruyère râpé et passe 10 min sous le gril.",
       "Reste de purée : fais-en des galettes poêlées au beurre le lendemain."
-    ]
+    ],
+    "chef": {
+      "nom": "Olivier",
+      "photo": "photos/chef-olivier.jpg"
+    }
   },
   {
     "id": "brioche-1kg",
@@ -203,7 +207,11 @@
       "Sans robot : pétris à la main 15 à 20 min en étirant et repliant la pâte sur le plan de travail, elle collera au début, c'est normal.",
       "Version gourmande : ajoute 150 g de pépites de chocolat ou de pralines roses concassées à la fin du pétrissage.",
       "Conservation : 3 jours dans un sac fermé, ou en tranches au congélateur ; elle est parfaite toastée."
-    ]
+    ],
+    "chef": {
+      "nom": "Olivier",
+      "photo": "photos/chef-olivier.jpg"
+    }
   },
   {
     "id": "chevreuil-bourguignon",
