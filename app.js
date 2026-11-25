@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=32';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=33';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -363,10 +363,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 32 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 32 · chargement des animations…');
+fxBadge(RM?'Version 33 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 33 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 32 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 32 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 32 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 33 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 33 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 33 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -632,19 +632,14 @@ document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,sele
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'32'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'33'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
 $('#settings').addEventListener('click',e=>{if(e.target.id==='settings'&&Date.now()-setAt>600)closeSettings()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#settings').hidden)closeSettings()});
 $('#set-org').addEventListener('click',()=>{closeSettings();goPage('home');setTimeout(()=>setEdit(true),350)});
-{let lt=null,lx=0,ly=0;const L=document.querySelector('.lock');
- L.addEventListener('pointerdown',e=>{lx=e.clientX;ly=e.clientY;L.classList.add('press');lt=setTimeout(()=>{lt=null;L.classList.remove('press');if(navigator.vibrate)navigator.vibrate(20);openSettings()},700)});
- const stop=()=>{if(lt){clearTimeout(lt);lt=null}L.classList.remove('press')};
- L.addEventListener('pointermove',e=>{if(lt&&Math.hypot(e.clientX-lx,e.clientY-ly)>10)stop()});
- ['pointerup','pointercancel'].forEach(t=>L.addEventListener(t,stop));
- L.addEventListener('contextmenu',e=>e.preventDefault())}
+$('#gear').addEventListener('click',openSettings);
 /* plein écran : API sur tablette/ordinateur, écran d'accueil sur iPhone */
 {const standalone=matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches||navigator.standalone;
  if(standalone){$('#fs-help').textContent='Déjà en plein écran (ouvert depuis l\'icône).';$('#fs').hidden=true}
@@ -669,7 +664,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='32';
+{const APPV='33';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

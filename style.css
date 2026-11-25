@@ -419,3 +419,10 @@ body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
 .set-foot{margin-top:10px;font-size:12px;color:var(--mut);text-align:center}
 .lock{cursor:default;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .lock.press .clock{opacity:.75;transition:opacity .5s}
+
+/* petit bouton Paramètres en haut à gauche de l'accueil */
+.lock-top{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.lock-top .greet{margin:0}
+.gear{width:34px;height:34px;min-height:34px;flex:none;border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.55);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);transition:color .2s,background .2s,rotate .6s cubic-bezier(.3,1.4,.5,1)}
+.gear svg{width:19px;height:19px}
+.gear:hover,.gear:active{color:#fff;background:rgba(255,255,255,.16);rotate:60deg}
