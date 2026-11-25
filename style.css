@@ -476,3 +476,50 @@ body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
 .pullhome{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));z-index:40;display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-weight:600;translate:-50% -140%;opacity:0;pointer-events:none;background:rgba(20,22,48,.8)}
 .pullhome svg{width:20px;height:20px;transition:rotate .2s}
 .pullhome.ready{background:linear-gradient(135deg,#8b7bff,#3b82f6)}.pullhome.ready svg{rotate:180deg}
+
+/* ====== Widget météo de l'accueil : grand rapport du jour, scène animée ====== */
+#wxcard{container-type:size;display:flex;flex-direction:column}
+#wxcard>h2{display:none}
+#h-wx{display:flex;flex-direction:column;gap:clamp(8px,2cqh,16px);height:100%;min-height:0}
+.wxh-top{display:flex;align-items:center;gap:10px}
+.wxh-day{flex:1;text-align:center;line-height:1.15}.wxh-day b{display:block;font-size:clamp(17px,4.4cqh,22px);text-transform:capitalize}.wxh-day small{color:rgba(255,255,255,.75);font-size:13px;text-transform:capitalize}
+.wxnav{width:40px;height:40px;min-height:40px;border-radius:50%;font-size:24px;line-height:1;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff}
+.wxnav:disabled{opacity:.25}
+.wxh-main{flex:1;min-height:0;display:flex;align-items:center;gap:clamp(6px,3cqw,20px)}
+.scene{height:100%;max-height:min(46cqh,240px);aspect-ratio:1.2;flex:none;overflow:visible}
+.wxh-t{min-width:0}
+.wxh-t .big{font-size:clamp(54px,20cqh,112px)!important;font-weight:200;line-height:.9;letter-spacing:-.05em}
+.wxh-t .cond{font-size:clamp(15px,4cqh,20px);font-weight:600;margin-top:4px}
+.wxh-mm{display:flex;gap:12px;margin-top:6px;font-weight:600;color:rgba(255,255,255,.85)}
+.wxh-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.wxh-stats div{padding:6px 10px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16)}
+.wxh-stats span{display:block;font-size:11px;color:rgba(255,255,255,.7)}.wxh-stats b{font-size:clamp(13px,3.4cqh,16px);white-space:nowrap}
+.wxh-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.wxh-strip button{display:flex;flex-direction:column;align-items:center;padding:4px 0;border-radius:14px;min-height:0;background:rgba(255,255,255,.08);border:1px solid transparent;color:#fff}
+.wxh-strip button.sel{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.55)}
+.wxh-strip svg{width:26px;height:26px}.wxh-strip small{font-size:11px;color:rgba(255,255,255,.8)}.wxh-strip b{font-size:13px}
+@container (max-height:430px){.wxh-stats div:nth-child(n+4){display:none}}
+@container (max-height:360px){.wxh-stats{display:none}}
+/* animations de la scène */
+.sc-rays,.sc-glow,.sc-cloud,.sc-cloud2,.sc-drop,.sc-flake,.sc-bolt,.sc-fog,.sc-star,.sc-moon{transform-box:fill-box;transform-origin:center}
+.sc-rays{animation:sc-spin 16s linear infinite}
+.sc-glow{animation:sc-pulse 3s ease-in-out infinite alternate}
+.sc-cloud{animation:sc-drift 6s ease-in-out infinite alternate}
+.sc-cloud2{animation:sc-drift 8s ease-in-out infinite alternate-reverse;opacity:.9}
+.sc-drop{animation:sc-fall .9s linear infinite;animation-delay:var(--d)}
+.sc-flake{animation:sc-snow 3.2s linear infinite;animation-delay:var(--d)}
+.sc-bolt{animation:sc-flash 3.5s steps(1) infinite}
+.sc-fog{animation:sc-fogm 5s ease-in-out infinite alternate;animation-delay:var(--d)}
+.sc-star{animation:sc-twinkle 2.4s ease-in-out infinite;animation-delay:var(--d)}
+.sc-moon{animation:sc-float 6s ease-in-out infinite alternate}
+@keyframes sc-spin{to{rotate:360deg}}
+@keyframes sc-pulse{from{opacity:.55;scale:.92}to{opacity:1;scale:1.08}}
+@keyframes sc-drift{from{translate:-5px 0}to{translate:6px 0}}
+@keyframes sc-fall{0%{translate:0 -6px;opacity:0}15%{opacity:1}100%{translate:-6px 26px;opacity:0}}
+@keyframes sc-snow{0%{translate:0 -6px;opacity:0}15%{opacity:1}50%{translate:4px 12px}100%{translate:-3px 28px;opacity:0}}
+@keyframes sc-flash{0%,62%,70%,100%{opacity:0}63%,66%{opacity:1}}
+@keyframes sc-fogm{from{translate:-6px 0}to{translate:8px 0}}
+@keyframes sc-twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes sc-float{from{translate:0 -2px}to{translate:0 3px}}
+@media(prefers-reduced-motion:reduce){.scene *{animation:none!important}}
+@media(max-width:600px){#wxcard{container-type:inline-size}.scene{height:150px}}

@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=37';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=38';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -113,8 +113,7 @@ function renderWx(){
  if(!w||!w.jours?.length){H.innerHTML='<div class="empty">Météo indisponible pour le moment.</div>';$('#m-day').innerHTML=H.innerHTML;$('#m-week').innerHTML='';return}
  const J=w.jours,t=J[0];
  const days=J.map((d,i)=>`<button type="button" class="day${i===S.day?' sel':''}" data-day="${i}"><small>${i?esc(jour(d.date)):'Auj.'}</small>${ico(d.cond)}<b>${esc(d.max)}°</b><small>${esc(d.min)}°</small></button>`).join('');
- const nt=isNight(t);$('#wxcard').dataset.sky=sky(w.condNow||t.cond,nt);
- H.innerHTML=`<div class="wx-now">${ico(w.condNow||t.cond,nt)}<div><div class="big">${esc(w.actuelle)}°</div><div class="cond">${esc(w.condNow||t.cond)} · ${esc(w.ville)}</div><div class="wx-more">Ressenti ${esc(w.ressenti)}° · humidité ${esc(w.hum)} %</div></div></div><div class="days">${days}</div><div class="maj">Mise à jour automatique · ${esc(fmtMaj(w.maj))}</div>`;
+ const nt=isNight(t);renderWxHome();
  if(typeof fxTemp==='function')fxTemp();greet(new Date());if(typeof wxFxSet==='function')wxFxSet($('#wxcard').dataset.sky);
  const d=J[S.day]||t;
  $('#m-title').textContent='Météo à '+w.ville;
@@ -124,6 +123,38 @@ function renderWx(){
  $('#m-week').innerHTML=J.map((x,i)=>`<button type="button" class="range" data-day="${i}" style="width:100%;text-align:left;border-radius:0"><span>${i?esc(jour(x.date)):'Auj.'} <b>${esc(x.min)}°</b></span><span><span class="track"><i style="left:${(x.min-lo)/sp*100}%;right:${100-(x.max-lo)/sp*100}%"></i></span><span class="rain" style="display:block;width:${Math.max(2,+x.pluie||0)}%"></span></span><span style="text-align:right"><b>${esc(x.max)}°</b> · ${esc(x.pluie)}%</span></button>`).join('');
  $('#m-maj').textContent='Barre colorée : écart min–max · trait bleu : risque de pluie. Source Open-Meteo, mise à jour toutes les 30 min (dernière à '+fmtMaj(w.maj)+').';
 }
+
+/* ---------- widget météo de l'accueil : grand rapport du jour + navigation dans la semaine ---------- */
+S.hday=0;
+function scene(c,night){c=(c||'').toLowerCase();
+ const sunG=(x,y,r)=>`<g class="sc-sun" transform="translate(${x} ${y})"><circle r="${r*2}" fill="url(#w-glow)" class="sc-glow"/><g class="sc-rays"><circle r="${r*1.8}" fill="none"/>${Array.from({length:12},(_,i)=>`<rect x="-1.6" y="${-r*1.75}" width="3.2" height="${r*.5}" rx="1.6" fill="#ffd23f" transform="rotate(${i*30})" style="transform-origin:0 0;transform-box:view-box"/>`).join('')}</g><circle r="${r}" fill="url(#w-sun)" filter="url(#w-sh)"/></g>`;
+ const moonG=(x,y)=>`<g class="sc-moon" transform="translate(${x} ${y})"><circle r="26" fill="url(#w-glow)" opacity=".35" class="sc-glow"/><path d="M6 -16a17 17 0 1 0 11 27 14 14 0 0 1-11-27z" fill="url(#w-cloud)" filter="url(#w-sh)"/></g>`+[[20,18],[96,14],[104,40],[30,52],[88,64]].map(([x,y],i)=>`<circle class="sc-star" style="--d:${i*.5}s" cx="${x}" cy="${y}" r="1.4" fill="#fff"/>`).join('');
+ const cloud=(x,y,k,f,cls)=>`<g class="${cls}"><path transform="translate(${x} ${y}) scale(${k})" d="M14 40h40a13 13 0 0 0 1.6-25.9A19 19 0 0 0 19.6 17 14 14 0 0 0 14 40z" fill="url(#${f})" filter="url(#w-sh)"/></g>`;
+ const drops=n=>Array.from({length:n},(_,i)=>`<path class="sc-drop" style="--d:${(i*.13).toFixed(2)}s" d="M${34+i*8} 70c-2.2 3.6-3.2 5.4-3.2 6.8a3.2 3.2 0 0 0 6.4 0c0-1.4-1-3.2-3.2-6.8z" fill="url(#w-drop)"/>`).join('');
+ const flakes=Array.from({length:7},(_,i)=>`<circle class="sc-flake" style="--d:${(i*.45).toFixed(2)}s" cx="${32+i*9}" cy="70" r="${2.4+(i%3)*.6}" fill="#fff"/>`).join('');
+ let s;
+ if(/neige|grain/.test(c))s=cloud(18,4,1.1,'w-cloud','sc-cloud')+flakes;
+ else if(/orage/.test(c))s=cloud(14,0,1.15,'w-cloud2','sc-cloud')+drops(5)+'<path class="sc-bolt" d="M62 58l-9 15h8l-4 13 14-18h-8l4-10z" fill="url(#w-bolt)" filter="url(#w-sh)"/>';
+ else if(/pluie|averse|bruine/.test(c))s=cloud(30,-6,.75,'w-cloud2','sc-cloud2')+cloud(14,2,1.1,/forte|violent/.test(c)?'w-cloud2':'w-cloud','sc-cloud')+drops(/bruine|faible/.test(c)?5:7);
+ else if(/brume|brouillard/.test(c))s=cloud(16,0,1.05,'w-cloud2','sc-cloud')+[62,72,82].map((y,i)=>`<rect class="sc-fog" style="--d:${i*.6}s" x="${18+i*6}" y="${y}" width="${70-i*8}" height="4.5" rx="2.2" fill="#e2e8f2" opacity=".8"/>`).join('');
+ else if(/clair|soleil/.test(c))s=night?moonG(60,46):sunG(60,48,22);
+ else if(/éclairc|partiel/.test(c))s=(night?moonG(44,32):sunG(42,34,16))+cloud(26,22,1,'w-cloud','sc-cloud');
+ else s=cloud(34,-2,.85,'w-cloud2','sc-cloud2')+cloud(10,12,1.15,'w-cloud','sc-cloud');
+ return `<svg class="scene" viewBox="0 0 120 100" aria-hidden="true">${s}</svg>`}
+function renderWxHome(){const w=D.wx,H=$('#h-wx');if(!w?.jours?.length)return;const J=w.jours,i=Math.min(S.hday,J.length-1),d=J[i],today=i===0,nt=today&&isNight(J[0]);
+ const cond=today?(w.condNow||d.cond):d.cond,sk=sky(cond,nt);$('#wxcard').dataset.sky=sk;
+ const label=today?'Aujourd\'hui':i===1?'Demain':jourL(d.date);
+ const stats=today?[['Ressenti',w.ressenti+'°'],['Humidité',w.hum+' %'],['Pluie',d.pluie+' %'],['Vent',d.vent+' km/h '+d.dir],['Lever',d.lever],['Coucher',d.coucher]]
+  :[['Pluie',d.pluie+' %'],['Cumul',d.mm+' mm'],['Vent',d.vent+' km/h '+d.dir],['Lever',d.lever],['Coucher',d.coucher],['Écart',(d.max-d.min)+'°']];
+ H.innerHTML=`<div class="wxh-top"><button type="button" class="wxnav" data-wxd="-1" ${i===0?'disabled':''} aria-label="Jour précédent">‹</button><div class="wxh-day"><b>${esc(label)}</b><small>${esc(w.ville)}</small></div><button type="button" class="wxnav" data-wxd="1" ${i>=J.length-1?'disabled':''} aria-label="Jour suivant">›</button></div>
+ <div class="wxh-main">${scene(cond,nt)}<div class="wxh-t"><div class="big">${esc(today?w.actuelle:d.max)}°</div><div class="cond">${esc(cond)}</div><div class="wxh-mm"><span>↑ ${esc(d.max)}°</span><span>↓ ${esc(d.min)}°</span></div></div></div>
+ <div class="wxh-stats">${stats.map(([k,v])=>`<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>
+ <div class="wxh-strip">${J.map((x,j)=>`<button type="button" data-wxh="${j}" class="${j===i?'sel':''}"><small>${j?esc(jour(x.date)):'Auj.'}</small>${ico(x.cond)}<b>${esc(x.max)}°</b></button>`).join('')}</div>`;
+ if(typeof wxFxSet==='function')wxFxSet(sk);
+ if(typeof fx==='function'&&renderWxHome._last!==undefined&&renderWxHome._last!==i)fx(H.querySelector('.wxh-main'),{opacity:[0,1],x:[renderWxHome._last<i?40:-40,0]},{stiffness:300,damping:26});renderWxHome._last=i}
+$('#h-wx').addEventListener('click',e=>{const n=e.target.closest('[data-wxd]'),c=e.target.closest('[data-wxh]');if(!n&&!c)return;e.stopPropagation();
+ const L=D.wx?.jours?.length||1;S.hday=c?+c.dataset.wxh:Math.max(0,Math.min(L-1,S.hday+ +n.dataset.wxd));renderWxHome();if(typeof fxTemp==='function'&&S.hday===0)fxTemp()});
+
 document.addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(!b)return;S.day=+b.dataset.day;if(location.hash!=='#meteo')location.hash='meteo';renderWx()});
 
 /* ---------- notes ---------- */
@@ -365,10 +396,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 37 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 37 · chargement des animations…');
+fxBadge(RM?'Version 38 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 38 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 37 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 37 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 37 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 38 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 38 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 38 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -652,7 +683,7 @@ addEventListener('hashchange',route);syncPages();route();
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'37'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'38'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -684,7 +715,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='37';
+{const APPV='38';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
