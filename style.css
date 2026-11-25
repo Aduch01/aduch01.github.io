@@ -314,3 +314,7 @@ body.editing .editbar{translate:-50% 0}
 .chef{display:flex;align-items:center;gap:18px;background:linear-gradient(160deg,rgba(255,140,60,.25),rgba(255,255,255,.05) 70%)}
 .chef img{width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:50% 30%;border:3px solid rgba(255,255,255,.7);box-shadow:0 14px 30px -10px rgba(0,0,0,.6)}
 .chef small{display:block;color:var(--mut);font-size:14px}.chef b{font-size:26px;font-weight:700}
+
+/* Motion prend le relais des animations d'entrée quand il est chargé */
+.mo .view.on{animation:none}
+.mo .pic img.fg{animation:none}

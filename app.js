@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=26';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=27';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -100,6 +100,7 @@ function renderWx(){
  const days=J.map((d,i)=>`<button type="button" class="day${i===S.day?' sel':''}" data-day="${i}"><small>${i?esc(jour(d.date)):'Auj.'}</small>${ico(d.cond)}<b>${esc(d.max)}°</b><small>${esc(d.min)}°</small></button>`).join('');
  const nt=isNight(t);$('#wxcard').dataset.sky=sky(w.condNow||t.cond,nt);
  H.innerHTML=`<div class="wx-now">${ico(w.condNow||t.cond,nt)}<div><div class="big">${esc(w.actuelle)}°</div><div class="cond">${esc(w.condNow||t.cond)} · ${esc(w.ville)}</div><div class="wx-more">Ressenti ${esc(w.ressenti)}° · humidité ${esc(w.hum)} %</div></div></div><div class="days">${days}</div><div class="maj">Mise à jour automatique · ${esc(fmtMaj(w.maj))}</div>`;
+ if(typeof fxTemp==='function')fxTemp();
  const d=J[S.day]||t;
  $('#m-title').textContent='Météo à '+w.ville;
  $('#m-day').dataset.sky=sky(d.cond,S.day===0&&nt);
@@ -155,7 +156,8 @@ function renderPhotos(){
 function slide(keep){const L=ph(),P=$('#h-pic');
  if(!L.length){P.innerHTML='<div class="empty">Pas encore de photo.</div>';$('#h-cap').textContent='';return}
  if(!keep)S.pi=(S.pi+1)%L.length;S.pi%=L.length;const p=L[S.pi];
- P.innerHTML=`<img class="bg" src="${p.img}" alt="" aria-hidden="true"><img class="fg" src="${p.img}" alt="${esc(p.cap||'Photo')}">`;$('#h-cap').textContent=p.cap||''}
+ P.innerHTML=`<img class="bg" src="${p.img}" alt="" aria-hidden="true"><img class="fg" src="${p.img}" alt="${esc(p.cap||'Photo')}">`;$('#h-cap').textContent=p.cap||'';
+ if(typeof fx==='function'&&!keep){fx(P.querySelector('.fg'),{opacity:[0,1],scale:[1.08,1]},{type:'tween',duration:1.1,ease:[.2,.8,.2,1]});fx(P.querySelector('.bg'),{opacity:[0,1]},{type:'tween',duration:1.1})}}
 let SPD=9;try{const v=localStorage.getItem('diapo');if(v!==null&&!isNaN(+v))SPD=+v}catch(e){}
 let spT=null;
 function spRun(){clearInterval(spT);spT=null;if(SPD>0)spT=setInterval(()=>{if(!document.hidden)slide(false)},SPD*1000)}
@@ -313,8 +315,10 @@ function renderCS(){
   return `<div class="rg"><h4>${esc(name)}</h4><ul class="rl">${g.map(x=>`<li class="${CS.got.includes(x.id)?'got':''}"><button type="button" class="ck" data-got="${esc(x.id)}" aria-label="Dans le caddie">${CS.got.includes(x.id)?'✓':''}</button><span>${esc(x.n)}</span><span class="qty"><button type="button" data-qt="-1" data-id="${esc(x.id)}" aria-label="Moins">−</button><b>${CS.sel[x.id]}</b><button type="button" data-qt="1" data-id="${esc(x.id)}" aria-label="Plus">+</button></span></li>`).join('')}</ul></div>`}).join(''):'<div class="empty">Coche les articles dont tu as besoin : ils apparaissent ici, rangés par rayon.</div>';
 }
 function csText(){const all=csItems().filter(x=>CS.sel[x.id]);return 'Liste de courses\n'+CAT.map(([k,name])=>{const g=all.filter(x=>x.cat===k);return g.length?'\n'+name+'\n'+g.map(x=>'- '+x.n+(CS.sel[x.id]>1?' ×'+CS.sel[x.id]:'')).join('\n'):''}).join('\n')}
-$('#cs-cats').addEventListener('change',e=>{const c=e.target.closest('[data-cs]');if(!c)return;const id=c.dataset.cs;
- if(c.checked)CS.sel[id]=CS.sel[id]||1;else{delete CS.sel[id];CS.got=CS.got.filter(x=>x!==id)}csSave();renderCS()});
+$('#cs-cats').addEventListener('change',e=>{const c=e.target.closest('[data-cs]');if(!c)return;const id=c.dataset.cs,on=c.checked;
+ if(on)CS.sel[id]=CS.sel[id]||1;else{delete CS.sel[id];CS.got=CS.got.filter(x=>x!==id)}csSave();renderCS();
+ if(on){const q=CSS.escape(id);fx(document.querySelector(`[data-cs="${q}"]~.bx`),{scale:[.5,1.25,1]},{type:'tween',duration:.35});
+  fx(document.querySelector(`#cs-sum [data-got="${q}"]`)?.closest('li'),{opacity:[0,1],x:[24,0]},{stiffness:380,damping:26});fx($('#cs-count'),{scale:[1.35,1]},{stiffness:600,damping:12})}});
 $('#cs-sum').addEventListener('click',e=>{const g=e.target.closest('[data-got]'),qb=e.target.closest('[data-qt]');
  if(g){const id=g.dataset.got;CS.got=CS.got.includes(id)?CS.got.filter(x=>x!==id):[...CS.got,id]}
  else if(qb){const id=qb.dataset.id,v=(CS.sel[id]||1)+ +qb.dataset.qt;if(v<1){delete CS.sel[id];CS.got=CS.got.filter(x=>x!==id)}else CS.sel[id]=Math.min(99,v)}else return;
@@ -340,6 +344,24 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
  csSave();renderCS();b.textContent='✓ '+n+' ingrédients ajoutés à la liste de courses'});
 
 
+
+/* ---------- animations Motion (facultatives : l'appli marche sans) ---------- */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let MO=null;
+if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxView(document.querySelector('.view.on'))}};document.head.appendChild(sc)}
+const SPR={type:'spring',stiffness:420,damping:28};
+const fx=(el,kf,o)=>{if(!MO||!el)return null;try{return MO.animate(el,kf,{...SPR,...o})}catch(e){return null}};
+function fxView(v){if(!MO||!v)return;
+ if(v.id==='v-home'){fx([...v.children],{opacity:[0,1],y:[22,0],scale:[.97,1]},{delay:MO.stagger(.06),stiffness:260,damping:24})}
+ else{fx(v,{opacity:[0,1],y:[18,0]},{stiffness:300,damping:30});
+  const kids=v.querySelectorAll('.note,.tile,.rcard,.item,.thumb');if(kids.length&&kids.length<60)fx([...kids],{opacity:[0,1],y:[14,0],scale:[.96,1]},{delay:MO.stagger(.03,{startDelay:.05}),stiffness:300,damping:26})}}
+document.addEventListener('click',e=>{const a=e.target.closest('.dock a');if(a&&!editing)fx(a.querySelector('svg'),{scale:[.78,1]},{stiffness:600,damping:12})},true);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn,.chip,.mic,.tile,.sw,.check,.ck');if(b&&!editing)fx(b,{scale:[.92,1]},{stiffness:700,damping:15})},true);
+let wxPrev=null;
+function fxTemp(){const el=document.querySelector('#h-wx .big');if(!el||!D.wx)return;const cur=+D.wx.actuelle,from=wxPrev==null?cur-6:wxPrev;wxPrev=cur;
+ if(!MO||from===cur)return;try{MO.animate(from,cur,{duration:.9,ease:[.2,.8,.2,1],onUpdate:v=>{el.textContent=Math.round(v)+'°'}})}catch(e){}}
+
 /* ---------- organiser par appui long (disposition propre à chaque appareil) ---------- */
 const keyOf=el=>el.dataset.k||el.dataset.v||el.getAttribute('href')||'';
 const ORDK='ordre-v1';
@@ -362,6 +384,7 @@ function swapCheck(){raf=0;if(!drag)return;paint();if(performance.now()-lastSwap
  ia<ib?t.after(drag.el):t.before(drag.el);lastSwap=performance.now();
  const nb=base(drag.el);drag.bx=nb.left;drag.by=nb.top;paint();
  for(const k of others){const p=before.get(k),q=k.getBoundingClientRect(),dx=p.left-q.left,dy=p.top-q.top;if(!dx&&!dy)continue;
+  if(MO){try{MO.animate(k,{translate:[`${dx}px ${dy}px`,'0px 0px']},{type:'spring',stiffness:500,damping:34})}catch(e){}continue}
   k.style.transition='none';k.style.translate=`${dx}px ${dy}px`;k.getBoundingClientRect();k.style.transition='translate .22s cubic-bezier(.2,.8,.2,1)';k.style.translate='0px 0px';
   setTimeout(()=>{k.style.transition='';k.style.translate=''},260)}}
 document.addEventListener('pointerdown',e=>{if(e.button>0)return;const it=e.target.closest('[data-sort]>*');
@@ -372,6 +395,8 @@ document.addEventListener('pointermove',e=>{
  if(cand&&!drag&&cand.it&&Math.hypot(e.clientX-cand.x,e.clientY-cand.y)>6){startDrag(cand.it,cand.x,cand.y);cand=null}
  if(!drag)return;e.preventDefault();drag.x=e.clientX;drag.y=e.clientY;if(!raf)raf=requestAnimationFrame(swapCheck)},{passive:false});
 function endDrag(e){if(press){clearTimeout(press.t);press=null}
+ if(drag&&MO){const d=drag,el=d.el,dx=d.x-d.ox-d.bx,dy=d.y-d.oy-d.by;drag=null;cancelAnimationFrame(raf);raf=0;cand=null;el.style.transform='';el.classList.remove('drag');el.style.pointerEvents='';el.style.willChange='';
+  try{MO.animate(el,{translate:[`${dx}px ${dy}px`,'0px 0px']},{type:'spring',stiffness:420,damping:26})}catch(_){}saveOrd(d.c);justDragged=Date.now();return}
  if(cand&&!drag){cand=null;if(e&&e.type==='pointerup'){setEdit(false);justDragged=Date.now()}return}cand=null;
  if(!drag)return;const {el,c}=drag;drag=null;cancelAnimationFrame(raf);raf=0;
  el.style.transition='transform .2s cubic-bezier(.2,.8,.2,1)';el.style.transform='';el.classList.remove('drag');el.style.pointerEvents='';
@@ -388,7 +413,7 @@ const N=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[’
 let rec=null,listening=false;
 function say(t){$('#vo-res').textContent=t;try{if(!speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=1.05;
  const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
-function voOpen(){$('#vo').hidden=false;$('#vo-help').hidden=true;$('#vo-heard').textContent='Je t\'écoute…';$('#vo-res').textContent='';}
+function voOpen(){const was=$('#vo').hidden;$('#vo').hidden=false;if(was&&typeof fx==='function'){fx($('.vo-card'),{opacity:[0,1],y:[40,0],scale:[.96,1]},{stiffness:380,damping:26})}$('#vo-help').hidden=true;$('#vo-heard').textContent='Je t\'écoute…';$('#vo-res').textContent='';}
 function voClose(){$('#vo').hidden=true;try{rec&&rec.abort()}catch(e){}listening=false;armed=0;$('#orb').classList.remove('on')}
 $('#vo-x').addEventListener('click',voClose);
 $('#vo').addEventListener('click',e=>{if(e.target.id==='vo')voClose()});
@@ -522,7 +547,8 @@ function route(){const v=location.hash.slice(1)||'home';let ok=['home','meteo','
  if(/^recette-[a-z0-9-]+$/.test(v)){ok='recette';renderOne(v.slice(8))}
  const tab={recettes:'utile',recette:'utile',courses:'utile'}[ok]||ok;if(ok==='courses')renderCS();
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+ok));
- document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===tab));window.scrollTo(0,0)}
+ document.querySelectorAll('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===tab));
+ if(typeof fxView==='function'&&route._last!==ok)fxView(document.getElementById('v-'+ok));route._last=ok;window.scrollTo(0,0)}
 addEventListener('hashchange',route);route();
 
 let lock=null;
