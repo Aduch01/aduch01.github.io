@@ -317,7 +317,7 @@ body.editing .editbar{translate:-50% 0}
 
 /* Motion prend le relais des animations d'entrée quand il est chargé */
 .mo .view.on{animation:none}
-.mo .pic img.fg{animation:none}
+
 
 .fxinfo{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));translate:-50% 0;z-index:45;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;background:rgba(60,30,40,.75);transition:opacity 1s;max-width:calc(100vw - 20px);text-align:center}
 .fxinfo.ok{background:rgba(20,80,70,.75)}.fxinfo.fade{opacity:0;pointer-events:none}
@@ -529,3 +529,11 @@ body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
 .secret[hidden]{display:none}
 .secret-x{position:fixed;top:max(14px,env(safe-area-inset-top));right:16px;z-index:2;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6);font-size:18px}
 #dial{cursor:default;-webkit-tap-highlight-color:transparent}
+
+/* diaporama de l'accueil : fondu enchaîné lent + léger zoom continu */
+.pic .pl{position:absolute;inset:0;opacity:0;transition:opacity 2.2s cubic-bezier(.4,0,.2,1)}
+.pic .pl.in{opacity:1}.pic .pl.now{transition:none}
+.pic .pl img.fg{animation:kb var(--kb,16s) linear both}
+.pic .pl img.bg{animation:kb var(--kb,16s) linear both}
+@keyframes kb{from{scale:1}to{scale:1.06}}
+@media(prefers-reduced-motion:reduce){.pic .pl{transition:none}.pic .pl img{animation:none}}
