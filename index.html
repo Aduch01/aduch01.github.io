@@ -6,11 +6,15 @@
 <title>Le Tableau</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#070816">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tableau">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=31">
+<link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -67,13 +71,6 @@
   <section class="page home-pg" id="v-home" data-page="home"><div class="pg">
     <header class="top">
     <div class="lock"><div class="greet" id="greet"></div><div class="date" id="date"></div><div class="clock" id="clock" aria-live="off">--:--</div></div>
-    <div class="tools glass">
-      <span class="status" id="status"></span>
-      <button class="chip" id="login" type="button">Connexion</button>
-      <button class="chip" id="okd" type="button">« Ok Duch »</button>
-      <button class="chip" id="wake" type="button" title="Écran toujours allumé">Écran allumé</button>
-      <button class="chip" id="fs" type="button">Plein écran</button>
-    </div>
     </header>
     <nav class="launcher" data-sort="apps" aria-label="Applications">
       <a class="app-ic" href="#meteo" data-v="meteo"><svg><use href="#i-meteo"/></svg><span>Météo</span></a>
@@ -181,6 +178,18 @@
     <div id="rc-one"></div>
 </div></div>
 <nav class="dots glass" id="dots" aria-label="Pages"></nav>
+<div class="dotlabel glass" id="dotlabel" hidden></div>
+<div class="settings" id="settings" hidden>
+  <div class="set-card glass" role="dialog" aria-label="Paramètres">
+    <div class="set-head"><h2>Paramètres</h2><button class="ghost" id="set-x" type="button">Fermer</button></div>
+    <div class="set-row"><div><b>Compte</b><small id="status">Lecture seule</small></div><button class="chip" id="login" type="button">Connexion</button></div>
+    <div class="set-row"><div><b>« Ok Duch »</b><small>Commande vocale mains libres sur cet appareil</small></div><button class="chip" id="okd" type="button">« Ok Duch »</button></div>
+    <div class="set-row"><div><b>Écran toujours allumé</b><small>Empêche la mise en veille tant que la page est ouverte</small></div><button class="chip" id="wake" type="button">Écran allumé</button></div>
+    <div class="set-row"><div><b>Plein écran</b><small id="fs-help">Cache les barres du navigateur</small></div><button class="chip" id="fs" type="button">Plein écran</button></div>
+    <div class="set-row"><div><b>Organiser les icônes</b><small>Ou reste appuyé sur une icône de l'accueil</small></div><button class="chip" id="set-org" type="button">Organiser</button></div>
+    <div class="set-foot" id="set-ver"></div>
+  </div>
+</div>
 
 
 <div class="viewer" id="viewer"><div class="strip" id="strip"></div><div class="vbar"><button id="vp" type="button">‹ Précédente</button><button id="vdel" type="button">Supprimer</button><button id="vx" type="button">Fermer</button><button id="vn" type="button">Suivante ›</button></div></div>
@@ -209,6 +218,6 @@
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=31"></script>
+<script type="module" src="app.js?v=32"></script>
 </body>
 </html>

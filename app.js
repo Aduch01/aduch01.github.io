@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=31';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=32';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -20,7 +20,9 @@ const fb=FB_OK?initializeApp(firebaseConfig):null;
 const db=FB_OK?getFirestore(fb):null,auth=FB_OK?getAuth(fb):null;
 if(!FB_OK){document.getElementById('login').hidden=true}
 const COL={notes:'notes',ann:'annonces',photos:'photos'};
-function status(t){$('#status').textContent=t}
+let flT;function toastTop(t,ok){const b=$('#fxinfo');if(!b)return;b.textContent=t;b.classList.toggle('ok',!!ok);b.classList.remove('fade');clearTimeout(flT);flT=setTimeout(()=>b.classList.add('fade'),2600)}
+function status(t){const el=$('#status');if(el)el.textContent=t||(S.canW?'Connecté : toi seul peux publier':'Lecture seule (touche Connexion si tu es le propriétaire)');
+ if(t&&/Publié|Supprimé|Échec|interrompue|injoignables|Publication/.test(t))toastTop(t,/Publié|Supprimé/.test(t))}
 let firstData=false;
 setTimeout(()=>{if(!firstData)status(FB_OK?'Données injoignables pour l\'instant':'Base de données pas encore branchée')},FB_OK?10000:0);
 if(FB_OK)for(const k of Object.keys(COL)){
@@ -50,7 +52,7 @@ if(FB_OK)onAuthStateChanged(auth,u=>{
  $('#login').textContent=u?'Déconnexion':'Connexion';
  const box=$('#uid');
  if(u&&!S.canW){box.hidden=false;box.textContent='Connecté, mais pas propriétaire. Identifiant à envoyer à Claude : '+u.uid}else box.hidden=true;
- status(S.canW?'Mode publication : toi seul peux modifier':'');
+ status('');
  lockUI();rerender();if(typeof csApply==='function')csApply()});
 
 /* ---------- horloge ---------- */
@@ -361,10 +363,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 31 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 31 · chargement des animations…');
+fxBadge(RM?'Version 32 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 32 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 31 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 31 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 31 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 32 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 32 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 32 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -551,6 +553,7 @@ function handle(raw){const t=N(raw);let m;
  if(/\b(desactive|coupe|arrete|eteins)\b.*\b(ok|okay)\s*(duch|douche|dutch)/.test(t)){OKD=false;try{localStorage.setItem('okduch','0')}catch(e){}wakeStop();say('Ok Duch est désactivé. Le bouton micro reste disponible.');setTimeout(voClose,2500);return}
  if(/^(aide|help|que sais-tu faire|qu'est-ce que tu sais faire|commandes?)\b/.test(t)){$('#vo-help').hidden=false;say('Voici ce que tu peux me demander.');return}
  if(/^(ferme|stop|annule|merci|rien)\b/.test(t)){say('D\'accord.');setTimeout(voClose,900);return}
+ if(/\b(parametres?|reglages?)\b/.test(t)){openSettings();say('Voici les paramètres.');setTimeout(voClose,1200);return}
  // note
  if(m=t.match(/^(?:ajoute|cree|ecris|nouvelle|prends?)\s+(?:une\s+)?note\s*(?:qui dit|que)?\s*:?\s*(.+)$/)){if(!owner())return;
   put('notes',{id:'n'+Date.now().toString(36),text:cap(raw.replace(/^.*?note\s*(qui dit|que)?\s*:?\s*/i,'')),c:COLORS[0],done:false,pin:false,t:Date.now()});go('notes','Note ajoutée.');return}
@@ -628,6 +631,34 @@ function syncPages(){const order=['home',...[...document.querySelectorAll('.laun
 document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select')||!$('#viewer').hidden&&$('#viewer').classList.contains('on')||!$('#v-recette').hidden)return;
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
+/* ---------- paramètres cachés (appui long sur l'heure) ---------- */
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'32'+' · '+location.host;status(S.canW?'':'');
+ fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
+function closeSettings(){$('#settings').hidden=true}
+$('#set-x').addEventListener('click',closeSettings);
+$('#settings').addEventListener('click',e=>{if(e.target.id==='settings'&&Date.now()-setAt>600)closeSettings()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#settings').hidden)closeSettings()});
+$('#set-org').addEventListener('click',()=>{closeSettings();goPage('home');setTimeout(()=>setEdit(true),350)});
+{let lt=null,lx=0,ly=0;const L=document.querySelector('.lock');
+ L.addEventListener('pointerdown',e=>{lx=e.clientX;ly=e.clientY;L.classList.add('press');lt=setTimeout(()=>{lt=null;L.classList.remove('press');if(navigator.vibrate)navigator.vibrate(20);openSettings()},700)});
+ const stop=()=>{if(lt){clearTimeout(lt);lt=null}L.classList.remove('press')};
+ L.addEventListener('pointermove',e=>{if(lt&&Math.hypot(e.clientX-lx,e.clientY-ly)>10)stop()});
+ ['pointerup','pointercancel'].forEach(t=>L.addEventListener(t,stop));
+ L.addEventListener('contextmenu',e=>e.preventDefault())}
+/* plein écran : API sur tablette/ordinateur, écran d'accueil sur iPhone */
+{const standalone=matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches||navigator.standalone;
+ if(standalone){$('#fs-help').textContent='Déjà en plein écran (ouvert depuis l\'icône).';$('#fs').hidden=true}
+ else if(!document.fullscreenEnabled&&!document.webkitFullscreenEnabled){$('#fs').textContent='Comment faire';
+  $('#fs-help').textContent='Sur iPhone : dans Safari, touche Partager (carré avec flèche), puis « Sur l\'écran d\'accueil ». Ouvre ensuite Le Tableau depuis cette icône : il s\'affiche en plein écran.'}}
+/* points : balayer pour changer de page */
+{const DT=$('#dots'),LB=$('#dotlabel');let on=false;
+ function pick(x){const bs=[...DT.querySelectorAll('[data-dot]')];let best=null,bd=1e9;for(const b of bs){const r=b.getBoundingClientRect(),d=Math.abs(x-(r.left+r.width/2));if(d<bd){bd=d;best=b}}return best}
+ function show(k){LB.textContent=TITLES[k]||k;LB.hidden=false}
+ DT.addEventListener('pointerdown',e=>{on=true;DT.classList.add('scrub');try{DT.setPointerCapture(e.pointerId)}catch(_){}const b=pick(e.clientX);if(b){show(b.dataset.dot);if(b.dataset.dot!==curPage)goPage(b.dataset.dot,true)}e.preventDefault()});
+ DT.addEventListener('pointermove',e=>{if(!on)return;const b=pick(e.clientX);if(b&&b.dataset.dot!==curPage){goPage(b.dataset.dot,true);show(b.dataset.dot);if(navigator.vibrate)navigator.vibrate(8)}});
+ const end=()=>{on=false;DT.classList.remove('scrub');setTimeout(()=>{if(!on)LB.hidden=true},500)};DT.addEventListener('pointerup',end);DT.addEventListener('pointercancel',end);
+ DT.addEventListener('click',e=>e.stopImmediatePropagation(),true)}
+
 
 let lock=null;
 async function wake(){try{lock=await navigator.wakeLock.request('screen');$('#wake').classList.add('on');lock.addEventListener('release',()=>{lock=null;$('#wake').classList.remove('on')})}catch(e){$('#wake').textContent='Réglages › Affichage › Mise en veille';setTimeout(()=>$('#wake').textContent='Écran toujours allumé',6000)}}
@@ -638,7 +669,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='31';
+{const APPV='32';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}
