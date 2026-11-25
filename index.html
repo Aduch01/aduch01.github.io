@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -18,39 +18,30 @@
 <!-- Icônes d'app en relief (réutilisées partout) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
  <defs>
-  <linearGradient id="lq-base" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".55" stop-color="#fff" stop-opacity=".10"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></linearGradient>
-  <radialGradient id="lq-sheen" cx=".25" cy=".1" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-  <linearGradient id="lq-rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#fff" stop-opacity=".15"/><stop offset=".7" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity=".6"/></linearGradient>
-  <linearGradient id="lq-white" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#e9edff"/></linearGradient>
-  <filter id="lq-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5.5"/></filter>
-  <filter id="lq-sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="1.8" stdDeviation="1.6" flood-color="#000" flood-opacity=".32"/></filter>
-  <linearGradient id="lt-home" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a99bff" stop-opacity=".55"/><stop offset="1" stop-color="#5b4bff" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-home" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a99bff"/><stop offset="1" stop-color="#5b4bff"/></linearGradient>
-  <linearGradient id="la-home" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#a99bff"/></linearGradient>
-  <linearGradient id="lt-meteo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6fd3ff" stop-opacity=".55"/><stop offset="1" stop-color="#2f6bff" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-meteo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fd3ff"/><stop offset="1" stop-color="#2f6bff"/></linearGradient>
-  <linearGradient id="la-meteo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3a6"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient>
-  <linearGradient id="lt-agenda" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a9e" stop-opacity=".55"/><stop offset="1" stop-color="#ff2d55" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-agenda" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9e"/><stop offset="1" stop-color="#ff2d55"/></linearGradient>
-  <linearGradient id="la-agenda" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ff8a9e"/></linearGradient>
-  <linearGradient id="lt-notes" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe27a" stop-opacity=".55"/><stop offset="1" stop-color="#ff9f0a" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-notes" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient>
-  <linearGradient id="la-notes" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffe27a"/></linearGradient>
-  <linearGradient id="lt-photos" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9ad5" stop-opacity=".55"/><stop offset="1" stop-color="#bf5af2" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-photos" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9ad5"/><stop offset="1" stop-color="#bf5af2"/></linearGradient>
-  <linearGradient id="la-photos" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd36e"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
-  <linearGradient id="lt-ann" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ff5e8" stop-opacity=".55"/><stop offset="1" stop-color="#0a84ff" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-ann" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ff5e8"/><stop offset="1" stop-color="#0a84ff"/></linearGradient>
-  <linearGradient id="la-ann" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#6ff5e8"/></linearGradient>
-  <linearGradient id="lt-utile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9bfff" stop-opacity=".55"/><stop offset="1" stop-color="#7d5cff" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-utile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9bfff"/><stop offset="1" stop-color="#7d5cff"/></linearGradient>
-  <linearGradient id="la-utile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9bfff"/></linearGradient>
-  <linearGradient id="lt-recette" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc27a" stop-opacity=".55"/><stop offset="1" stop-color="#ff5a1f" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-recette" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc27a"/><stop offset="1" stop-color="#ff5a1f"/></linearGradient>
-  <linearGradient id="la-recette" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffc27a"/></linearGradient>
-  <linearGradient id="lt-courses" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9cf0b8" stop-opacity=".55"/><stop offset="1" stop-color="#30d158" stop-opacity=".35"/></linearGradient>
-  <linearGradient id="lg-courses" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9cf0b8"/><stop offset="1" stop-color="#30d158"/></linearGradient>
-  <linearGradient id="la-courses" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9cf0b8"/></linearGradient>
+  <linearGradient id="r3-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".42" stop-color="#fff" stop-opacity=".06"/><stop offset=".43" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <radialGradient id="r3-hot" cx=".3" cy=".12" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+  <linearGradient id="r3-rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="r3-face" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#f1f3ff"/><stop offset="1" stop-color="#d9def5"/></linearGradient>
+  <linearGradient id="r3-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <filter id="r3-ground" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.6"/></filter>
+  <linearGradient id="r3-bg-home" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#9d8cff"/><stop offset="1" stop-color="#4b3bea"/></linearGradient>
+  <linearGradient id="r3-ac-home" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd36e" stop-opacity="1"/><stop offset="1" stop-color="#feba1d"/></linearGradient>
+  <linearGradient id="r3-bg-meteo" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#5cc8ff"/><stop offset="1" stop-color="#1f5fff"/></linearGradient>
+  <linearGradient id="r3-ac-meteo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd23f" stop-opacity="1"/><stop offset="1" stop-color="#f8bd00"/></linearGradient>
+  <linearGradient id="r3-bg-agenda" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#ff7d93"/><stop offset="1" stop-color="#e0193f"/></linearGradient>
+  <linearGradient id="r3-ac-agenda" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff3b5c" stop-opacity="1"/><stop offset="1" stop-color="#f40029"/></linearGradient>
+  <linearGradient id="r3-bg-notes" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#ffd84d"/><stop offset="1" stop-color="#ff8a00"/></linearGradient>
+  <linearGradient id="r3-ac-notes" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb020" stop-opacity="1"/><stop offset="1" stop-color="#df9000"/></linearGradient>
+  <linearGradient id="r3-bg-photos" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#ff8fd0"/><stop offset="1" stop-color="#a442f5"/></linearGradient>
+  <linearGradient id="r3-ac-photos" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf4d" stop-opacity="1"/><stop offset="1" stop-color="#febb03"/></linearGradient>
+  <linearGradient id="r3-bg-ann" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#4ff0e0"/><stop offset="1" stop-color="#0a6cff"/></linearGradient>
+  <linearGradient id="r3-ac-ann" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b8b" stop-opacity="1"/><stop offset="1" stop-color="#fe1b4c"/></linearGradient>
+  <linearGradient id="r3-bg-recette" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#ffb35c"/><stop offset="1" stop-color="#f0410a"/></linearGradient>
+  <linearGradient id="r3-ac-recette" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a1a" stop-opacity="1"/><stop offset="1" stop-color="#db5b00"/></linearGradient>
+  <linearGradient id="r3-bg-courses" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#7ee8a2"/><stop offset="1" stop-color="#11a84f"/></linearGradient>
+  <linearGradient id="r3-ac-courses" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf4d" stop-opacity="1"/><stop offset="1" stop-color="#febb03"/></linearGradient>
+  <linearGradient id="r3-bg-utile" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#b8a8ff"/><stop offset="1" stop-color="#6a3df0"/></linearGradient>
+  <linearGradient id="r3-ac-utile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd36e" stop-opacity="1"/><stop offset="1" stop-color="#feba1d"/></linearGradient>
   <radialGradient id="w-sun" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fff6b8"/><stop offset=".45" stop-color="#ffcf33"/><stop offset="1" stop-color="#ff8a00"/></radialGradient>
   <radialGradient id="w-glow"><stop offset="0" stop-color="#ffcf33" stop-opacity=".7"/><stop offset="1" stop-color="#ffcf33" stop-opacity="0"/></radialGradient>
   <linearGradient id="w-cloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9c8de"/></linearGradient>
@@ -58,22 +49,23 @@
   <linearGradient id="w-drop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9be7ff"/><stop offset="1" stop-color="#1e6bff"/></linearGradient>
   <linearGradient id="w-bolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff27a"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient>
   <filter id="w-sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#0b1a3a" flood-opacity=".45"/></filter>
-  <symbol id="i-home" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-home)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M30 13.5 12.6 27.4c-1.5 1.2-.7 3.6 1.3 3.6H17v13a2 2 0 0 0 2 2h7.5V36h7v10.5H41a2 2 0 0 0 2-2v-13h3.1c2 0 2.8-2.4 1.3-3.6z" fill="#5b4bff"/></g><g filter="url(#lq-sh)"><path d="M30 13.5 12.6 27.4c-1.5 1.2-.7 3.6 1.3 3.6H17v13a2 2 0 0 0 2 2h7.5V36h7v10.5H41a2 2 0 0 0 2-2v-13h3.1c2 0 2.8-2.4 1.3-3.6z" fill="url(#lg-home)"/><path d="M26.5 46.5V37.5a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5v9z" fill="url(#lq-white)"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-meteo" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-meteo)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M20 46h22a8.5 8.5 0 0 0 1.2-16.9A12 12 0 0 0 20.6 31 7.5 7.5 0 0 0 20 46z" fill="#2f6bff"/></g><g filter="url(#lq-sh)"><path d="M24 14a9 9 0 1 1 0 18 9 9 0 0 1 0-18z" fill="url(#la-meteo)"/><path d="M20 46h22a8.5 8.5 0 0 0 1.2-16.9A12 12 0 0 0 20.6 31 7.5 7.5 0 0 0 20 46z" fill="url(#lg-meteo)"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-agenda" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-agenda)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M17 14h26a5 5 0 0 1 5 5v22a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V19a5 5 0 0 1 5-5z" fill="#ff2d55"/></g><g filter="url(#lq-sh)"><path d="M17 14h26a5 5 0 0 1 5 5v22a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V19a5 5 0 0 1 5-5z" fill="url(#lg-agenda)"/><path d="M12 22h36v3H12z" fill="url(#lq-white)"/><path d="M19 10.5a2 2 0 0 1 4 0v7a2 2 0 0 1-4 0zM37 10.5a2 2 0 0 1 4 0v7a2 2 0 0 1-4 0z" fill="url(#lq-white)"/><path d="M18 30h5v4h-5zM27.5 30h5v4h-5zM37 30h5v4h-5zM18 37.5h5v4h-5zM27.5 37.5h5v4h-5z" fill="#ff2d55"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-notes" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-notes)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M17 12h26a3.5 3.5 0 0 1 3.5 3.5V36L35 47.5H17a3.5 3.5 0 0 1-3.5-3.5V15.5A3.5 3.5 0 0 1 17 12z" fill="#ff9f0a"/></g><g filter="url(#lq-sh)"><path d="M17 12h26a3.5 3.5 0 0 1 3.5 3.5V36L35 47.5H17a3.5 3.5 0 0 1-3.5-3.5V15.5A3.5 3.5 0 0 1 17 12z" fill="url(#lg-notes)"/><path d="M46.5 36H38.5a3.5 3.5 0 0 0-3.5 3.5v8z" fill="url(#lq-white)"/><path d="M20 20h20v3H20zM20 27h15v3H20zM20 34h9v3H20z" fill="#ff9f0a"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-photos" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-photos)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M30 32a7 7 0 0 1 0 14 7 7 0 0 1 0-14z" fill="#bf5af2"/></g><g filter="url(#lq-sh)"><path d="M30 14a7 7 0 0 1 0 14 7 7 0 0 1 0-14z" fill="#ffcf4d" opacity=".9"/><path d="M16 30a7 7 0 0 1 14 0 7 7 0 0 1-14 0z" fill="#ff6b8b" opacity=".9"/><path d="M30 32a7 7 0 0 1 0 14 7 7 0 0 1 0-14z" fill="#b67bff" opacity=".9"/><path d="M30 30a7 7 0 0 1 14 0 7 7 0 0 1-14 0z" fill="#5ad1ff" opacity=".9"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-ann" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-ann)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M40 14v32c0 1.4-1.6 2.2-2.7 1.3L27.5 40H22a8 8 0 0 1 0-16h5.5l9.8-7.3c1.1-.9 2.7-.1 2.7 1.3z" fill="#0a84ff"/><path d="M21.5 40h6.5l2 8a2.2 2.2 0 0 1-2.1 2.6h-2.3a2.2 2.2 0 0 1-2.1-1.7z" fill="#0a84ff"/></g><g filter="url(#lq-sh)"><path d="M40 14v32c0 1.4-1.6 2.2-2.7 1.3L27.5 40H22a8 8 0 0 1 0-16h5.5l9.8-7.3c1.1-.9 2.7-.1 2.7 1.3z" fill="url(#lg-ann)"/><path d="M21.5 40h6.5l2 8a2.2 2.2 0 0 1-2.1 2.6h-2.3a2.2 2.2 0 0 1-2.1-1.7z" fill="url(#lg-ann)"/><path d="M43.5 27.5h4a2 2 0 0 1 0 4h-4z" fill="url(#lq-white)"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-utile" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-utile)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M14 17.5a4 4 0 0 1 4-4h7.5a4 4 0 0 1 4 4V25a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="#7d5cff"/></g><g filter="url(#lq-sh)"><path d="M14 17.5a4 4 0 0 1 4-4h7.5a4 4 0 0 1 4 4V25a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="url(#lg-utile)"/><path d="M31 17.5a4 4 0 0 1 4-4h7.5a4 4 0 0 1 4 4V25a4 4 0 0 1-4 4H35a4 4 0 0 1-4-4z" fill="url(#la-utile)"/><path d="M14 35a4 4 0 0 1 4-4h7.5a4 4 0 0 1 4 4v7.5a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="url(#la-utile)"/><path d="M38.75 31.5a2.2 2.2 0 0 1 2.2 2.2v3.6h3.6a2.2 2.2 0 0 1 0 4.4h-3.6v3.6a2.2 2.2 0 0 1-4.4 0v-3.6h-3.6a2.2 2.2 0 0 1 0-4.4h3.6v-3.6a2.2 2.2 0 0 1 2.2-2.2z" fill="url(#lq-white)"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-recette" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-recette)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M11.5 26h37v3.5a15 15 0 0 1-15 15h-7a15 15 0 0 1-15-15z" fill="#ff5a1f"/></g><g filter="url(#lq-sh)"><path d="M23.5 12.5c-2.2 3 2.2 4 0 7.5M30 10.5c-2.2 3 2.2 4 0 7.5M36.5 12.5c-2.2 3 2.2 4 0 7.5" fill="none" stroke="url(#lq-white)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 26h37v3.5a15 15 0 0 1-15 15h-7a15 15 0 0 1-15-15z" fill="url(#lg-recette)"/><path d="M8.5 23.5h43a2 2 0 0 1 0 4h-43a2 2 0 0 1 0-4z" fill="url(#la-recette)"/><path d="M21 45h18v3.5H21z" fill="#ff5a1f"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
-  <symbol id="i-courses" viewBox="0 0 60 60"><rect width="60" height="60" rx="16" fill="rgba(18,20,44,.55)"/><rect width="60" height="60" rx="16" fill="url(#lt-courses)"/><rect width="60" height="60" rx="16" fill="url(#lq-base)"/><g filter="url(#lq-glow)" opacity=".75"><path d="M19 21h27.5L42 36.5H22.5z" fill="#30d158"/></g><g filter="url(#lq-sh)"><path d="M9.5 14.5h5.5l5 22h21.5l4.5-15.5H17.5" fill="none" stroke="url(#lq-white)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 21h27.5L42 36.5H22.5z" fill="url(#lg-courses)"/><path d="M23 41a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2zM39.5 41a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2z" fill="url(#la-courses)"/></g><rect width="60" height="60" rx="16" fill="url(#lq-sheen)"/><rect x=".8" y=".8" width="58.4" height="58.4" rx="15.3" fill="none" stroke="url(#lq-rim)" stroke-width="1.6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 60 60"><defs><mask id="r3-m-home"><path d="M30 12.5 11.8 27c-1.6 1.3-.7 3.8 1.4 3.8H16.5V45a2.5 2.5 0 0 0 2.5 2.5h7.5V37a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5v10.5H41a2.5 2.5 0 0 0 2.5-2.5V30.8h3.3c2.1 0 3-2.5 1.4-3.8z" fill="#fff"/><path d="M38.5 15h4a1 1 0 0 1 1 1v6.5l-6-4.8V16a1 1 0 0 1 1-1z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-home)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M30 12.5 11.8 27c-1.6 1.3-.7 3.8 1.4 3.8H16.5V45a2.5 2.5 0 0 0 2.5 2.5h7.5V37a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5v10.5H41a2.5 2.5 0 0 0 2.5-2.5V30.8h3.3c2.1 0 3-2.5 1.4-3.8z" transform="translate(0 2.8)" fill="#160b87"/><path d="M38.5 15h4a1 1 0 0 1 1 1v6.5l-6-4.8V16a1 1 0 0 1 1-1z" transform="translate(0 2.8)" fill="#b67f00"/><path d="M30 12.5 11.8 27c-1.6 1.3-.7 3.8 1.4 3.8H16.5V45a2.5 2.5 0 0 0 2.5 2.5h7.5V37a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5v10.5H41a2.5 2.5 0 0 0 2.5-2.5V30.8h3.3c2.1 0 3-2.5 1.4-3.8z" fill="url(#r3-face)"/><path d="M38.5 15h4a1 1 0 0 1 1 1v6.5l-6-4.8V16a1 1 0 0 1 1-1z" fill="url(#r3-ac-home)"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-home)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-meteo" viewBox="0 0 60 60"><defs><mask id="r3-m-meteo"><path d="M24.5 12a10 10 0 1 1 0 20 10 10 0 0 1 0-20z" fill="#fff"/><path d="M19 47.5h23.5a9 9 0 0 0 1.3-17.9A12.8 12.8 0 0 0 19.6 31.6 8 8 0 0 0 19 47.5z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-meteo)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M24.5 12a10 10 0 1 1 0 20 10 10 0 0 1 0-20z" transform="translate(0 2.8)" fill="#9f7900"/><path d="M19 47.5h23.5a9 9 0 0 0 1.3-17.9A12.8 12.8 0 0 0 19.6 31.6 8 8 0 0 0 19 47.5z" transform="translate(0 2.8)" fill="#00288f"/><path d="M24.5 12a10 10 0 1 1 0 20 10 10 0 0 1 0-20z" fill="url(#r3-ac-meteo)"/><path d="M19 47.5h23.5a9 9 0 0 0 1.3-17.9A12.8 12.8 0 0 0 19.6 31.6 8 8 0 0 0 19 47.5z" fill="url(#r3-face)"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-meteo)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-agenda" viewBox="0 0 60 60"><defs><mask id="r3-m-agenda"><path d="M17 15h26a5.5 5.5 0 0 1 5.5 5.5v21A5.5 5.5 0 0 1 43 47H17a5.5 5.5 0 0 1-5.5-5.5v-21A5.5 5.5 0 0 1 17 15z" fill="#fff"/><path d="M11.5 20.5A5.5 5.5 0 0 1 17 15h26a5.5 5.5 0 0 1 5.5 5.5v4h-37z" fill="#fff"/><path d="M19.5 10.5a2.2 2.2 0 0 1 4.4 0v7.5a2.2 2.2 0 0 1-4.4 0zM36.1 10.5a2.2 2.2 0 0 1 4.4 0v7.5a2.2 2.2 0 0 1-4.4 0z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-agenda)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M17 15h26a5.5 5.5 0 0 1 5.5 5.5v21A5.5 5.5 0 0 1 43 47H17a5.5 5.5 0 0 1-5.5-5.5v-21A5.5 5.5 0 0 1 17 15z" transform="translate(0 2.8)" fill="#720a1d"/><path d="M11.5 20.5A5.5 5.5 0 0 1 17 15h26a5.5 5.5 0 0 1 5.5 5.5v4h-37z" transform="translate(0 2.8)" fill="#9d001a"/><path d="M19.5 10.5a2.2 2.2 0 0 1 4.4 0v7.5a2.2 2.2 0 0 1-4.4 0zM36.1 10.5a2.2 2.2 0 0 1 4.4 0v7.5a2.2 2.2 0 0 1-4.4 0z" transform="translate(0 2.8)" fill="#720a1d"/><path d="M17 15h26a5.5 5.5 0 0 1 5.5 5.5v21A5.5 5.5 0 0 1 43 47H17a5.5 5.5 0 0 1-5.5-5.5v-21A5.5 5.5 0 0 1 17 15z" fill="url(#r3-face)"/><path d="M11.5 20.5A5.5 5.5 0 0 1 17 15h26a5.5 5.5 0 0 1 5.5 5.5v4h-37z" fill="url(#r3-ac-agenda)"/><path d="M19.5 10.5a2.2 2.2 0 0 1 4.4 0v7.5a2.2 2.2 0 0 1-4.4 0zM36.1 10.5a2.2 2.2 0 0 1 4.4 0v7.5a2.2 2.2 0 0 1-4.4 0z" fill="url(#r3-face)"/><path d="M18 30h5.5v4.5H18zM27.3 30h5.5v4.5h-5.5zM36.5 30H42v4.5h-5.5zM18 38h5.5v4.5H18zM27.3 38h5.5v4.5h-5.5z" fill="#b7102f"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-agenda)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-notes" viewBox="0 0 60 60"><defs><mask id="r3-m-notes"><path d="M16.5 11.5h27a3.5 3.5 0 0 1 3.5 3.5v21L35.5 48h-19a3.5 3.5 0 0 1-3.5-3.5V15a3.5 3.5 0 0 1 3.5-3.5z" fill="#fff"/><path d="M47 36H39a3.5 3.5 0 0 0-3.5 3.5V48z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-notes)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M16.5 11.5h27a3.5 3.5 0 0 1 3.5 3.5v21L35.5 48h-19a3.5 3.5 0 0 1-3.5-3.5V15a3.5 3.5 0 0 1 3.5-3.5z" transform="translate(0 2.8)" fill="#7f4500"/><path d="M47 36H39a3.5 3.5 0 0 0-3.5 3.5V48z" transform="translate(0 2.8)" fill="#8f5c00"/><path d="M16.5 11.5h27a3.5 3.5 0 0 1 3.5 3.5v21L35.5 48h-19a3.5 3.5 0 0 1-3.5-3.5V15a3.5 3.5 0 0 1 3.5-3.5z" fill="url(#r3-face)"/><path d="M47 36H39a3.5 3.5 0 0 0-3.5 3.5V48z" fill="url(#r3-ac-notes)"/><path d="M19.5 19.5h21v3.2h-21zM19.5 26.5h16v3.2h-16zM19.5 33.5h10v3.2h-10z" fill="#cc6e00"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-notes)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-photos" viewBox="0 0 60 60"><defs><mask id="r3-m-photos"><path d="M30 11.5a8 8 0 0 1 0 16 8 8 0 0 1 0-16z" fill="#fff"/><path d="M46.5 30a8 8 0 0 1-16 0 8 8 0 0 1 16 0z" fill="#fff"/><path d="M30 32.5a8 8 0 0 1 0 16 8 8 0 0 1 0-16z" fill="#fff"/><path d="M13.5 30a8 8 0 0 1 16 0 8 8 0 0 1-16 0z" fill="#fff"/><path d="M30 25a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-photos)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M30 11.5a8 8 0 0 1 0 16 8 8 0 0 1 0-16z" transform="translate(0 2.8)" fill="#c79100"/><path d="M46.5 30a8 8 0 0 1-16 0 8 8 0 0 1 16 0z" transform="translate(0 2.8)" fill="#0095cf"/><path d="M30 32.5a8 8 0 0 1 0 16 8 8 0 0 1 0-16z" transform="translate(0 2.8)" fill="#12c857"/><path d="M13.5 30a8 8 0 0 1 16 0 8 8 0 0 1-16 0z" transform="translate(0 2.8)" fill="#d9002e"/><path d="M30 25a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" transform="translate(0 2.8)" fill="#540497"/><path d="M30 11.5a8 8 0 0 1 0 16 8 8 0 0 1 0-16z" fill="#ffcf4d" opacity=".95"/><path d="M46.5 30a8 8 0 0 1-16 0 8 8 0 0 1 16 0z" fill="#5ad1ff" opacity=".95"/><path d="M30 32.5a8 8 0 0 1 0 16 8 8 0 0 1 0-16z" fill="#7cf0a8" opacity=".95"/><path d="M13.5 30a8 8 0 0 1 16 0 8 8 0 0 1-16 0z" fill="#ff6b8b" opacity=".95"/><path d="M30 25a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" fill="url(#r3-face)"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-photos)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-ann" viewBox="0 0 60 60"><defs><mask id="r3-m-ann"><path d="M40.5 13v34c0 1.5-1.7 2.3-2.9 1.4L27.5 40.5H21.5a8.5 8.5 0 0 1 0-17h6l10.1-7.9c1.2-.9 2.9-.1 2.9 1.4z" fill="#fff"/><path d="M21 40.5h7l2 8.5a2.3 2.3 0 0 1-2.2 2.8h-2.5a2.3 2.3 0 0 1-2.2-1.8z" fill="#fff"/><path d="M44 25.5l4.5-2.6a1.8 1.8 0 0 1 1.8 3.1l-4.5 2.6zM44 34.5l4.5 2.6a1.8 1.8 0 0 0 1.8-3.1L45.8 31.4z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-ann)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M40.5 13v34c0 1.5-1.7 2.3-2.9 1.4L27.5 40.5H21.5a8.5 8.5 0 0 1 0-17h6l10.1-7.9c1.2-.9 2.9-.1 2.9 1.4z" transform="translate(0 2.8)" fill="#003484"/><path d="M21 40.5h7l2 8.5a2.3 2.3 0 0 1-2.2 2.8h-2.5a2.3 2.3 0 0 1-2.2-1.8z" transform="translate(0 2.8)" fill="#003484"/><path d="M44 25.5l4.5-2.6a1.8 1.8 0 0 1 1.8 3.1l-4.5 2.6zM44 34.5l4.5 2.6a1.8 1.8 0 0 0 1.8-3.1L45.8 31.4z" transform="translate(0 2.8)" fill="#b50027"/><path d="M40.5 13v34c0 1.5-1.7 2.3-2.9 1.4L27.5 40.5H21.5a8.5 8.5 0 0 1 0-17h6l10.1-7.9c1.2-.9 2.9-.1 2.9 1.4z" fill="url(#r3-face)"/><path d="M21 40.5h7l2 8.5a2.3 2.3 0 0 1-2.2 2.8h-2.5a2.3 2.3 0 0 1-2.2-1.8z" fill="url(#r3-face)"/><path d="M44 25.5l4.5-2.6a1.8 1.8 0 0 1 1.8 3.1l-4.5 2.6zM44 34.5l4.5 2.6a1.8 1.8 0 0 0 1.8-3.1L45.8 31.4z" fill="url(#r3-ac-ann)"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-ann)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-recette" viewBox="0 0 60 60"><defs><mask id="r3-m-recette"><path d="M11 26h38v3.5A15.5 15.5 0 0 1 33.5 45h-7A15.5 15.5 0 0 1 11 29.5z" fill="#fff"/><path d="M8 22.5h44a2.3 2.3 0 0 1 0 4.6H8a2.3 2.3 0 0 1 0-4.6z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-recette)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M23.5 11c-2.4 3.2 2.4 4.3 0 8M30 9c-2.4 3.2 2.4 4.3 0 8M36.5 11c-2.4 3.2 2.4 4.3 0 8" transform="translate(0 2.6)" fill="none" stroke="#7a1f02" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 26h38v3.5A15.5 15.5 0 0 1 33.5 45h-7A15.5 15.5 0 0 1 11 29.5z" transform="translate(0 2.8)" fill="#7a1f02"/><path d="M8 22.5h44a2.3 2.3 0 0 1 0 4.6H8a2.3 2.3 0 0 1 0-4.6z" transform="translate(0 2.8)" fill="#8c3a00"/><path d="M23.5 11c-2.4 3.2 2.4 4.3 0 8M30 9c-2.4 3.2 2.4 4.3 0 8M36.5 11c-2.4 3.2 2.4 4.3 0 8" fill="none" stroke="url(#r3-face)" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 26h38v3.5A15.5 15.5 0 0 1 33.5 45h-7A15.5 15.5 0 0 1 11 29.5z" fill="url(#r3-face)"/><path d="M8 22.5h44a2.3 2.3 0 0 1 0 4.6H8a2.3 2.3 0 0 1 0-4.6z" fill="url(#r3-ac-recette)"/><path d="M20.5 46h19v3.5h-19z" fill="#c43103"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-recette)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-courses" viewBox="0 0 60 60"><defs><mask id="r3-m-courses"><path d="M18.5 20h28.5L42.3 36H22.3z" fill="#fff"/><path d="M23 40.5a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM40 40.5a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-courses)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M8.5 13.5h6l5.2 22.5h22.5l4.8-16H17.5" transform="translate(0 2.6)" fill="none" stroke="#065527" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 20h28.5L42.3 36H22.3z" transform="translate(0 2.8)" fill="#065527"/><path d="M23 40.5a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM40 40.5a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" transform="translate(0 2.8)" fill="#a67900"/><path d="M8.5 13.5h6l5.2 22.5h22.5l4.8-16H17.5" fill="none" stroke="url(#r3-face)" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 20h28.5L42.3 36H22.3z" fill="url(#r3-face)"/><path d="M23 40.5a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM40 40.5a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" fill="url(#r3-ac-courses)"/><path d="M26 25h3v6h-3zM33 25h3v6h-3z" fill="#0a893e"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-courses)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-utile" viewBox="0 0 60 60"><defs><mask id="r3-m-utile"><path d="M13.5 17a4.5 4.5 0 0 1 4.5-4.5h7.5A4.5 4.5 0 0 1 30 17v7.5a4.5 4.5 0 0 1-4.5 4.5H18a4.5 4.5 0 0 1-4.5-4.5z" fill="#fff"/><path d="M31 17a4.5 4.5 0 0 1 4.5-4.5H43a4.5 4.5 0 0 1 4.5 4.5v7.5A4.5 4.5 0 0 1 43 29h-7.5a4.5 4.5 0 0 1-4.5-4.5z" fill="#fff"/><path d="M13.5 35a4.5 4.5 0 0 1 4.5-4.5h7.5A4.5 4.5 0 0 1 30 35v7.5a4.5 4.5 0 0 1-4.5 4.5H18a4.5 4.5 0 0 1-4.5-4.5z" fill="#fff"/><path d="M39.2 31.5a2.4 2.4 0 0 1 2.4 2.4v3.9h3.9a2.4 2.4 0 0 1 0 4.8h-3.9v3.9a2.4 2.4 0 0 1-4.8 0v-3.9h-3.9a2.4 2.4 0 0 1 0-4.8h3.9v-3.9a2.4 2.4 0 0 1 2.4-2.4z" fill="#fff"/></mask></defs><rect width="60" height="60" rx="15" fill="url(#r3-bg-utile)"/><rect width="60" height="60" rx="15" fill="url(#r3-top)"/><rect width="60" height="60" rx="15" fill="url(#r3-hot)"/><ellipse cx="30" cy="51" rx="18" ry="3.2" fill="#000" opacity=".28" filter="url(#r3-ground)"/><g transform="translate(30 30) scale(1.06) translate(-30 -30)"><path d="M13.5 17a4.5 4.5 0 0 1 4.5-4.5h7.5A4.5 4.5 0 0 1 30 17v7.5a4.5 4.5 0 0 1-4.5 4.5H18a4.5 4.5 0 0 1-4.5-4.5z" transform="translate(0 2.8)" fill="#29078e"/><path d="M31 17a4.5 4.5 0 0 1 4.5-4.5H43a4.5 4.5 0 0 1 4.5 4.5v7.5A4.5 4.5 0 0 1 43 29h-7.5a4.5 4.5 0 0 1-4.5-4.5z" transform="translate(0 2.8)" fill="#b67f00"/><path d="M13.5 35a4.5 4.5 0 0 1 4.5-4.5h7.5A4.5 4.5 0 0 1 30 35v7.5a4.5 4.5 0 0 1-4.5 4.5H18a4.5 4.5 0 0 1-4.5-4.5z" transform="translate(0 2.8)" fill="#29078e"/><path d="M39.2 31.5a2.4 2.4 0 0 1 2.4 2.4v3.9h3.9a2.4 2.4 0 0 1 0 4.8h-3.9v3.9a2.4 2.4 0 0 1-4.8 0v-3.9h-3.9a2.4 2.4 0 0 1 0-4.8h3.9v-3.9a2.4 2.4 0 0 1 2.4-2.4z" transform="translate(0 2.8)" fill="#29078e"/><path d="M13.5 17a4.5 4.5 0 0 1 4.5-4.5h7.5A4.5 4.5 0 0 1 30 17v7.5a4.5 4.5 0 0 1-4.5 4.5H18a4.5 4.5 0 0 1-4.5-4.5z" fill="url(#r3-face)"/><path d="M31 17a4.5 4.5 0 0 1 4.5-4.5H43a4.5 4.5 0 0 1 4.5 4.5v7.5A4.5 4.5 0 0 1 43 29h-7.5a4.5 4.5 0 0 1-4.5-4.5z" fill="url(#r3-ac-utile)"/><path d="M13.5 35a4.5 4.5 0 0 1 4.5-4.5h7.5A4.5 4.5 0 0 1 30 35v7.5a4.5 4.5 0 0 1-4.5 4.5H18a4.5 4.5 0 0 1-4.5-4.5z" fill="url(#r3-face)"/><path d="M39.2 31.5a2.4 2.4 0 0 1 2.4 2.4v3.9h3.9a2.4 2.4 0 0 1 0 4.8h-3.9v3.9a2.4 2.4 0 0 1-4.8 0v-3.9h-3.9a2.4 2.4 0 0 1 0-4.8h3.9v-3.9a2.4 2.4 0 0 1 2.4-2.4z" fill="url(#r3-face)"/><rect x="6" y="6" width="48" height="24" fill="url(#r3-gloss)" mask="url(#r3-m-utile)" opacity=".55"/></g><rect x=".7" y=".7" width="58.6" height="58.6" rx="14.4" fill="none" stroke="url(#r3-rim)" stroke-width="1.4" opacity=".7"/></symbol>
  </defs>
 </svg>
 
 <div class="owner-id" id="uid" hidden></div>
 <div class="fxinfo glass" id="fxinfo"></div>
-<div class="app" id="app">
-  <header class="top">
+<div class="pager" id="pager">
+  <section class="page home-pg" id="v-home" data-page="home"><div class="pg">
+    <header class="top">
     <div class="lock"><div class="greet" id="greet"></div><div class="date" id="date"></div><div class="clock" id="clock" aria-live="off">--:--</div></div>
     <div class="tools glass">
       <span class="status" id="status"></span>
@@ -82,23 +74,51 @@
       <button class="chip" id="wake" type="button" title="Écran toujours allumé">Écran allumé</button>
       <button class="chip" id="fs" type="button">Plein écran</button>
     </div>
-  </header>
-
-  <main class="view home" id="v-home" data-sort="home">
-    <section class="plate wx wbig" id="wxcard" data-k="meteo"><canvas class="wxfx" id="wxfx" aria-hidden="true"></canvas><h2><svg class="ic"><use href="#i-meteo"/></svg>Météo<a href="#meteo">Détails ›</a></h2><div id="h-wx"></div></section>
-    <section class="plate frame wbig" data-k="photo"><h2><svg class="ic"><use href="#i-photos"/></svg>Photo du moment<a href="#photos">Toutes ›</a></h2><div class="pic" id="h-pic"></div><div class="cap" id="h-cap"></div></section>
-    <section class="plate" data-k="agenda"><h2><svg class="ic"><use href="#i-agenda"/></svg>Agenda<a href="#agenda">Ouvrir ›</a></h2><ul class="wl" id="h-rdv"></ul></section>
-    <section class="plate" data-k="notes"><h2><svg class="ic"><use href="#i-notes"/></svg>Notes<a href="#notes">Ouvrir ›</a></h2><ul class="wl" id="h-notes"></ul></section>
-    <section class="plate" data-k="annonces"><h2><svg class="ic"><use href="#i-ann"/></svg>Annonces<a href="#annonces">Ouvrir ›</a></h2><ul class="wl" id="h-ann"></ul></section>
-  </main>
-
-  <main class="view" id="v-meteo">
+    </header>
+    <nav class="launcher" data-sort="apps" aria-label="Applications">
+      <a class="app-ic" href="#meteo" data-v="meteo"><svg><use href="#i-meteo"/></svg><span>Météo</span></a>
+      <a class="app-ic" href="#recettes" data-v="recettes"><svg><use href="#i-recette"/></svg><span>Recettes</span></a>
+      <a class="app-ic" href="#courses" data-v="courses"><svg><use href="#i-courses"/></svg><span>Courses</span></a>
+      <a class="app-ic" href="#agenda" data-v="agenda"><svg><use href="#i-agenda"/></svg><span>Agenda</span></a>
+      <a class="app-ic" href="#notes" data-v="notes"><svg><use href="#i-notes"/></svg><span>Notes</span></a>
+      <a class="app-ic" href="#photos" data-v="photos"><svg><use href="#i-photos"/></svg><span>Photos</span></a>
+      <a class="app-ic" href="#annonces" data-v="annonces"><svg><use href="#i-ann"/></svg><span>Annonces</span></a>
+    </nav>
+    <div class="widgets home" data-sort="home">
+      <section class="plate wx wbig" id="wxcard" data-k="meteo"><canvas class="wxfx" id="wxfx" aria-hidden="true"></canvas><h2><svg class="ic"><use href="#i-meteo"/></svg>Météo<a href="#meteo">Détails ›</a></h2><div id="h-wx"></div></section>
+      <section class="plate frame wbig" data-k="photo"><h2><svg class="ic"><use href="#i-photos"/></svg>Photo du moment<a href="#photos">Toutes ›</a></h2><div class="pic" id="h-pic"></div><div class="cap" id="h-cap"></div></section>
+      <section class="plate" data-k="agenda"><h2><svg class="ic"><use href="#i-agenda"/></svg>Agenda<a href="#agenda">Ouvrir ›</a></h2><ul class="wl" id="h-rdv"></ul></section>
+      <section class="plate" data-k="notes"><h2><svg class="ic"><use href="#i-notes"/></svg>Notes<a href="#notes">Ouvrir ›</a></h2><ul class="wl" id="h-notes"></ul></section>
+      <section class="plate" data-k="annonces"><h2><svg class="ic"><use href="#i-ann"/></svg>Annonces<a href="#annonces">Ouvrir ›</a></h2><ul class="wl" id="h-ann"></ul></section>
+    </div>
+  </div></section>
+  <section class="page" id="v-meteo" data-page="meteo"><div class="pg">
     <h1 class="v"><svg class="ic-l"><use href="#i-meteo"/></svg><span id="m-title">Météo</span></h1>
     <section class="plate wx" id="m-day"></section>
     <section class="plate"><h2>La semaine</h2><div id="m-week"></div><div class="maj" id="m-maj"></div></section>
-  </main>
-
-  <main class="view" id="v-agenda">
+  </div></section>
+  <section class="page" id="v-recettes" data-page="recettes"><div class="pg">
+    <h1 class="v"><svg class="ic-l"><use href="#i-recette"/></svg>Recettes</h1>
+    <div class="rcards" id="rc-list"></div>
+  </div></section>
+  <section class="page" id="v-courses" data-page="courses"><div class="pg">
+    <h1 class="v"><svg class="ic-l"><use href="#i-courses"/></svg>Liste de courses</h1>
+    <div class="shop">
+      <section class="plate">
+        <div class="row"><input type="text" id="cs-find" placeholder="Chercher un article…" autocomplete="off"></div>
+        <div class="row cs-add"><input type="text" id="cs-new" placeholder="Article qui manque (ex. piles AA)"><select id="cs-cat"></select><button class="btn" id="cs-addb" type="button">Ajouter</button></div>
+        <div id="cs-cats"></div>
+      </section>
+      <section class="plate recap" id="cs-recap">
+        <h2>Récapitulatif <span class="count" id="cs-count">0</span></h2>
+        <div id="cs-sum"></div>
+        <div class="row cs-act"><button class="ghost" id="cs-copy" type="button">Copier la liste</button><button class="ghost" id="cs-share" type="button">Envoyer</button><button class="ghost" id="cs-clear" type="button">Tout vider</button></div>
+        <div class="hint" id="cs-msg"></div>
+      </section>
+    </div>
+    <a class="fab" id="cs-fab" href="#courses" hidden>Récap · <b id="cs-fabn">0</b></a>
+  </div></section>
+  <section class="page" id="v-agenda" data-page="agenda"><div class="pg">
     <h1 class="v"><svg class="ic-l"><use href="#i-agenda"/></svg>Agenda</h1>
     <div class="agenda">
       <section class="plate">
@@ -119,48 +139,8 @@
         </div>
       </section>
     </div>
-  </main>
-
-  <main class="view" id="v-utile">
-    <h1 class="v"><svg class="ic-l"><use href="#i-utile"/></svg>Utile</h1>
-    <div class="tiles" data-sort="utile">
-      <a class="tile glass" href="#recettes"><svg><use href="#i-recette"/></svg><b>Recettes</b><small id="u-rc">—</small></a>
-      <a class="tile glass" href="#courses"><svg><use href="#i-courses"/></svg><b>Liste de courses</b><small id="u-cs">—</small></a>
-    </div>
-    <div class="hint">D'autres catégories arriveront ici : demande-les à Claude.</div>
-  </main>
-
-  <main class="view" id="v-recettes">
-    <a class="back" href="#utile">‹ Utile</a>
-    <h1 class="v"><svg class="ic-l"><use href="#i-recette"/></svg>Recettes</h1>
-    <div class="rcards" id="rc-list"></div>
-  </main>
-
-  <main class="view" id="v-courses">
-    <a class="back" href="#utile">‹ Utile</a>
-    <h1 class="v"><svg class="ic-l"><use href="#i-courses"/></svg>Liste de courses</h1>
-    <div class="shop">
-      <section class="plate">
-        <div class="row"><input type="text" id="cs-find" placeholder="Chercher un article…" autocomplete="off"></div>
-        <div class="row cs-add"><input type="text" id="cs-new" placeholder="Article qui manque (ex. piles AA)"><select id="cs-cat"></select><button class="btn" id="cs-addb" type="button">Ajouter</button></div>
-        <div id="cs-cats"></div>
-      </section>
-      <section class="plate recap" id="cs-recap">
-        <h2>Récapitulatif <span class="count" id="cs-count">0</span></h2>
-        <div id="cs-sum"></div>
-        <div class="row cs-act"><button class="ghost" id="cs-copy" type="button">Copier la liste</button><button class="ghost" id="cs-share" type="button">Envoyer</button><button class="ghost" id="cs-clear" type="button">Tout vider</button></div>
-        <div class="hint" id="cs-msg"></div>
-      </section>
-    </div>
-    <a class="fab" id="cs-fab" href="#courses" hidden>Récap · <b id="cs-fabn">0</b></a>
-  </main>
-
-  <main class="view" id="v-recette">
-    <a class="back" href="#recettes">‹ Recettes</a>
-    <div id="rc-one"></div>
-  </main>
-
-  <main class="view" id="v-notes">
+  </div></section>
+  <section class="page" id="v-notes" data-page="notes"><div class="pg">
     <h1 class="v"><svg class="ic-l"><use href="#i-notes"/></svg>Notes</h1>
     <section class="plate compose" id="n-compose">
       <textarea id="n-text" rows="3" placeholder="Écris une note… (pièce à commander, rappel, idée)"></textarea>
@@ -168,9 +148,8 @@
       <div class="row"><button class="btn" id="n-add" type="button">Ajouter la note</button><button class="ghost" id="n-cancel" type="button" hidden>Annuler</button></div>
     </section>
     <div class="notes" id="n-list"></div>
-  </main>
-
-  <main class="view" id="v-photos">
+  </div></section>
+  <section class="page" id="v-photos" data-page="photos"><div class="pg">
     <h1 class="v"><svg class="ic-l"><use href="#i-photos"/></svg>Photos</h1>
     <section class="plate speed">
       <h2>Défilement sur l'accueil <span class="sp-now" id="p-now"></span></h2>
@@ -183,9 +162,8 @@
       <div class="hint" id="p-msg">Les photos sont réduites automatiquement pour rester légères, puis défilent sur l'accueil.</div>
     </section>
     <div class="grid" id="p-grid"></div>
-  </main>
-
-  <main class="view" id="v-annonces">
+  </div></section>
+  <section class="page" id="v-annonces" data-page="annonces"><div class="pg">
     <h1 class="v"><svg class="ic-l"><use href="#i-ann"/></svg>Tâches et nouvelles</h1>
     <section class="plate compose" id="a-compose">
       <div class="seg" id="a-kind"><button type="button" data-k="tache" class="on">Tâche</button><button type="button" data-k="nouvelle">Nouvelle</button></div>
@@ -196,18 +174,14 @@
     </section>
     <div class="seg" id="a-filter"><button type="button" data-f="all" class="on">Tout</button><button type="button" data-f="tache">Tâches</button><button type="button" data-f="nouvelle">Nouvelles</button></div>
     <ul class="ann" id="a-list"></ul>
-  </main>
+  </div></section>
 </div>
+<div class="sheet" id="v-recette" hidden><div class="pg">
+    <a class="back" href="#recettes" id="sheet-x">‹ Recettes</a>
+    <div id="rc-one"></div>
+</div></div>
+<nav class="dots glass" id="dots" aria-label="Pages"></nav>
 
-<nav class="dock glass" id="dock" data-sort="dock">
-  <a href="#" data-v="home"><svg><use href="#i-home"/></svg><span>Accueil</span></a>
-  <a href="#meteo" data-v="meteo"><svg><use href="#i-meteo"/></svg><span>Météo</span></a>
-  <a href="#agenda" data-v="agenda"><svg><use href="#i-agenda"/></svg><span>Agenda</span></a>
-  <a href="#notes" data-v="notes"><svg><use href="#i-notes"/></svg><span>Notes</span></a>
-  <a href="#photos" data-v="photos"><svg><use href="#i-photos"/></svg><span>Photos</span></a>
-  <a href="#annonces" data-v="annonces"><svg><use href="#i-ann"/></svg><span>Annonces</span></a>
-  <a href="#utile" data-v="utile"><svg><use href="#i-utile"/></svg><span>Utile</span></a>
-</nav>
 
 <div class="viewer" id="viewer"><div class="strip" id="strip"></div><div class="vbar"><button id="vp" type="button">‹ Précédente</button><button id="vdel" type="button">Supprimer</button><button id="vx" type="button">Fermer</button><button id="vn" type="button">Suivante ›</button></div></div>
 <div class="editbar glass" id="editbar"><span>Fais glisser · touche ailleurs pour terminer</span><button class="ghost" id="ed-reset" type="button">Réinitialiser</button><button class="btn" id="ed-done" type="button">Terminé</button></div>
@@ -235,6 +209,6 @@
 </div>
 <div class="toast glass" id="toast"><span id="toast-t"></span><button id="toast-b" type="button">Annuler</button></div>
 
-<script type="module" src="app.js?v=30"></script>
+<script type="module" src="app.js?v=31"></script>
 </body>
 </html>

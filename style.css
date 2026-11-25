@@ -366,3 +366,38 @@ h1.v .ic-l{filter:drop-shadow(0 10px 22px rgba(124,139,255,.45))}
 /* confettis */
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:80}
 @media(max-width:600px){.lock{padding-right:64px}.greet{font-size:14px}}
+
+/* ====== Écran façon téléphone : pages qu'on fait glisser ====== */
+html,body{height:100%;overflow:hidden}
+.pager{position:fixed;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pager::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;width:100%;height:100%;overflow-y:auto;overflow-x:hidden;scroll-snap-align:start;scroll-snap-stop:always;overscroll-behavior-y:contain}
+.pg{max-width:1440px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) max(3vw,14px) calc(96px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;min-height:100%}
+body.editing .page{scroll-snap-type:none}
+
+/* écran d'accueil : grandes icônes d'applis */
+.launcher{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:26px 12px;padding:22px 6px 10px}
+.app-ic{display:flex;flex-direction:column;align-items:center;gap:9px;text-decoration:none;color:#fff;font-size:15px;font-weight:500;text-shadow:0 1px 6px rgba(0,0,0,.5);-webkit-tap-highlight-color:transparent}
+.app-ic svg{width:92px;height:92px;filter:drop-shadow(0 14px 22px rgba(0,0,0,.45))}
+.app-ic:active svg{transform:scale(.9)}
+.widgets{margin-top:6px}
+@media(max-width:600px){.launcher{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 6px;padding:18px 0 6px}.app-ic svg{width:64px;height:64px}.app-ic{font-size:12px;gap:6px}}
+
+/* points de pagination */
+.dots{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));translate:-50% 0;z-index:11;display:flex;gap:4px;padding:8px 10px;border-radius:999px}
+.dots button{width:10px;height:10px;min-height:10px;padding:0;border-radius:999px;background:rgba(255,255,255,.35);transition:width .3s cubic-bezier(.3,1.4,.5,1),background .3s}
+.dots button.on{width:28px;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.7)}
+.dots button::before{content:"";position:absolute;inset:-12px -4px}
+.dots button{position:relative}
+
+/* recette ouverte : feuille qui monte par-dessus */
+.sheet{position:fixed;inset:0;z-index:30;overflow-y:auto;background:rgba(7,8,22,.72);-webkit-backdrop-filter:blur(30px) saturate(150%);backdrop-filter:blur(30px) saturate(150%)}
+.sheet[hidden]{display:none}
+
+/* l'organisation par appui long s'applique aux icônes de l'accueil */
+body.editing .app-ic{animation:jiggle .3s ease-in-out infinite alternate}
+body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
+.page h1.v{margin-top:8px}
+/* icônes en relief : ombre portée plus marquée */
+.app-ic svg{filter:drop-shadow(0 10px 14px rgba(0,0,0,.45)) drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.page{content-visibility:auto;contain-intrinsic-size:100vw 100vh}
