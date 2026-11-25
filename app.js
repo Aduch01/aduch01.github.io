@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=38';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=39';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -396,10 +396,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 38 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 38 · chargement des animations…');
+fxBadge(RM?'Version 39 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 39 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 38 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 38 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 38 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 39 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 39 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 39 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -664,6 +664,15 @@ function syncPages(){const order=['home',...[...document.querySelectorAll('.laun
 document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select')||!$('#viewer').hidden&&$('#viewer').classList.contains('on')||!$('#v-recette').hidden)return;
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
+/* ---------- page cachée : 5 touches rapides sur le cadran de l'horloge ---------- */
+{const SE=$('#secret');let taps=[];
+ function openSecret(){if(!SE.hidden)return;SE.hidden=false;SE.scrollTop=0;if(navigator.vibrate)navigator.vibrate([15,40,15]);fx(SE,{opacity:[0,1],scale:[1.06,1]},{stiffness:220,damping:24})}
+ function closeSecret(){SE.hidden=true}
+ $('#dial').addEventListener('pointerup',()=>{const n=Date.now();taps=taps.filter(t=>n-t<2000);taps.push(n);if(taps.length>=5){taps=[];openSecret()}});
+ $('#secret-x').addEventListener('click',closeSecret);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!SE.hidden)closeSecret()});
+ {let y0=null;SE.addEventListener('touchstart',e=>{y0=SE.scrollTop<=2?e.touches[0].clientY:null},{passive:true});
+  SE.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>120)closeSecret();y0=null},{passive:true})}}
 /* ---------- cadran à aiguilles (balayage fluide des secondes) ---------- */
 {const H=$('#dl-h'),M=$('#dl-m'),Sx=$('#dl-s'),R=$('#dl-sec'),SN=$('#dl-secnum'),RMd=matchMedia('(prefers-reduced-motion: reduce)').matches;let raf=0,last=-1;
  function draw(){raf=0;const n=new Date(),ms=n.getMilliseconds(),s=n.getSeconds()+(RMd?0:ms/1000),m=n.getMinutes()+s/60,h=(n.getHours()%12)+m/60;
@@ -683,7 +692,7 @@ addEventListener('hashchange',route);syncPages();route();
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'38'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'39'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -715,7 +724,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='38';
+{const APPV='39';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

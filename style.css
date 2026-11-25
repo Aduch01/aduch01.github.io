@@ -523,3 +523,9 @@ body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
 @keyframes sc-float{from{translate:0 -2px}to{translate:0 3px}}
 @media(prefers-reduced-motion:reduce){.scene *{animation:none!important}}
 @media(max-width:600px){#wxcard{container-type:inline-size}.scene{height:150px}}
+
+/* page cachée */
+.secret{position:fixed;inset:0;z-index:72;overflow-y:auto;background:radial-gradient(120% 90% at 50% 0%,#1b1440,#05060f 70%)}
+.secret[hidden]{display:none}
+.secret-x{position:fixed;top:max(14px,env(safe-area-inset-top));right:16px;z-index:2;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6);font-size:18px}
+#dial{cursor:default;-webkit-tap-highlight-color:transparent}
