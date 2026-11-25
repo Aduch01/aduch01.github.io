@@ -302,3 +302,7 @@ body.editing .editbar{translate:-50% 0}
 #okd.on{background:linear-gradient(135deg,#14e0c8,#3b82f6);border-color:transparent;color:#fff}
 @media(max-width:600px){.tools{flex-wrap:wrap;border-radius:24px}.tools .chip{flex:1 1 40%}}
 @media(prefers-reduced-motion:reduce){.mic.wake::after{animation:none;opacity:.8}}
+
+.okd-live{position:fixed;right:max(90px,calc(env(safe-area-inset-right) + 90px));bottom:max(34px,env(safe-area-inset-bottom));z-index:12;max-width:min(360px,calc(100vw - 120px));padding:8px 14px;border-radius:16px;font-size:13px;color:rgba(235,240,255,.9);background:rgba(20,22,48,.7);overflow-wrap:anywhere}
+.okd-live[hidden]{display:none}
+@media(max-width:1000px){.okd-live{bottom:112px;right:12px}}
