@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=43';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=44';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -402,10 +402,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 43 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 43 · chargement des animations…');
+fxBadge(RM?'Version 44 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 44 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 43 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 43 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 43 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 44 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 44 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 44 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -423,13 +423,13 @@ var RMX=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* météo animée dans le widget */
 const WC=$('#wxfx'),wctx=WC.getContext('2d');let wxKind='',wxP=[],wxRaf=0,wxVis=true,flash=0;
 function wxFxSet(k){if(RMX)return;wxKind=k||'cloud';const W=WC.clientWidth,H=WC.clientHeight,dpr=Math.min(2,devicePixelRatio||1);WC.width=W*dpr;WC.height=H*dpr;wctx.setTransform(dpr,0,0,dpr,0,0);
- const n={rain:70,storm:90,snow:55,night:60,sun:28,cloud:6,fog:8}[wxKind]||20;wxP=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,v:.4+Math.random(),s:Math.random(),p:Math.random()*6.28}));
+ const n={rain:45,storm:60,snow:40,night:45,sun:18,cloud:5,fog:6}[wxKind]||16;wxP=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,v:.4+Math.random(),s:Math.random(),p:Math.random()*6.28}));
  if(!wxRaf)wxRaf=requestAnimationFrame(wxDraw)}
-function wxDraw(t){wxRaf=0;if(!wxVis||document.hidden){return}
+let wxLast=0;function wxDraw(t){wxRaf=0;if(!wxVis||document.hidden||curPage!=='home'){return}if(t-wxLast<32){wxRaf=requestAnimationFrame(wxDraw);return}wxLast=t;
  const W=WC.clientWidth,H=WC.clientHeight;wctx.clearRect(0,0,W,H);
  for(const p of wxP){
-  if(wxKind==='rain'||wxKind==='storm'){p.y+=7+p.v*7;p.x-=1.5;if(p.y>H){p.y=-20;p.x=Math.random()*W*1.1}wctx.strokeStyle=`rgba(180,220,255,${.25+p.s*.35})`;wctx.lineWidth=1+p.s;wctx.beginPath();wctx.moveTo(p.x,p.y);wctx.lineTo(p.x-2.5,p.y+12+p.v*6);wctx.stroke()}
-  else if(wxKind==='snow'){p.y+=.5+p.v*.9;p.x+=Math.sin(t/1200+p.p)*.5;if(p.y>H){p.y=-6;p.x=Math.random()*W}wctx.fillStyle=`rgba(255,255,255,${.5+p.s*.4})`;wctx.beginPath();wctx.arc(p.x,p.y,1.2+p.s*2.4,0,7);wctx.fill()}
+  if(wxKind==='rain'||wxKind==='storm'){p.y+=12+p.v*12;p.x-=2.5;if(p.y>H){p.y=-20;p.x=Math.random()*W*1.1}wctx.strokeStyle=`rgba(180,220,255,${.25+p.s*.35})`;wctx.lineWidth=1+p.s;wctx.beginPath();wctx.moveTo(p.x,p.y);wctx.lineTo(p.x-2.5,p.y+12+p.v*6);wctx.stroke()}
+  else if(wxKind==='snow'){p.y+=.9+p.v*1.5;p.x+=Math.sin(t/1200+p.p)*.5;if(p.y>H){p.y=-6;p.x=Math.random()*W}wctx.fillStyle=`rgba(255,255,255,${.5+p.s*.4})`;wctx.beginPath();wctx.arc(p.x,p.y,1.2+p.s*2.4,0,7);wctx.fill()}
   else if(wxKind==='night'){const a=.25+.75*Math.abs(Math.sin(t/900*p.v+p.p));wctx.fillStyle=`rgba(255,255,255,${a*.8})`;wctx.beginPath();wctx.arc(p.x,p.y*.7,.6+p.s*1.4,0,7);wctx.fill()}
   else if(wxKind==='sun'){p.y-=.25*p.v;p.x+=Math.sin(t/2000+p.p)*.3;if(p.y<-10){p.y=H+10;p.x=Math.random()*W}const g=wctx.createRadialGradient(p.x,p.y,0,p.x,p.y,6+p.s*10);g.addColorStop(0,'rgba(255,240,180,.55)');g.addColorStop(1,'rgba(255,240,180,0)');wctx.fillStyle=g;wctx.beginPath();wctx.arc(p.x,p.y,6+p.s*10,0,7);wctx.fill()}
   else{p.x+=.15*p.v;if(p.x>W+120)p.x=-120;const g=wctx.createRadialGradient(p.x,p.y,0,p.x,p.y,90+p.s*60);g.addColorStop(0,'rgba(255,255,255,.07)');g.addColorStop(1,'rgba(255,255,255,0)');wctx.fillStyle=g;wctx.beginPath();wctx.arc(p.x,p.y,90+p.s*60,0,7);wctx.fill()}}
@@ -646,7 +646,7 @@ let curPage='',firstGo=true;
 const TITLES={home:'Accueil',meteo:'Météo',recettes:'Recettes',courses:'Courses',agenda:'Agenda',notes:'Notes',photos:'Photos'};
 function renderDots(){$('#dots').innerHTML=pagesEl().map(p=>`<button type="button" data-dot="${p.dataset.page}" aria-label="${esc(TITLES[p.dataset.page]||p.dataset.page)}" class="${p.dataset.page===curPage?'on':''}"></button>`).join('')}
 $('#dots').addEventListener('click',e=>{const b=e.target.closest('[data-dot]');if(b)goPage(b.dataset.dot)});
-function setActive(k){if(k===curPage)return;curPage=k;renderDots();if(k==='courses')renderCS();if(k==='agenda')renderCal();
+function setActive(k){if(k===curPage)return;curPage=k;if(k==='home'&&typeof wxDraw==='function'&&!wxRaf&&wxKind)wxRaf=requestAnimationFrame(wxDraw);renderDots();if(k==='courses')renderCS();if(k==='agenda')renderCal();
  const el=document.getElementById('v-'+k);if(!firstGo&&typeof fxView==='function')fxView(el);
  history.replaceState(null,'',k==='home'?location.pathname+location.search:'#'+k)}
 let navLock=null,navUntil=0;
@@ -745,22 +745,23 @@ $('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)re
   kDrag={end:Date.now()};if(d.col){const st=d.col.dataset.kcol,was=kMove(d.id,st,d.before);if(st==='done'&&was!=='done'&&e)confetti(e.clientX,e.clientY)}};
  document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
 
-/* ---------- page cachée : 5 touches rapides sur le cadran de l'horloge ---------- */
+/* ---------- page cachée : 2 touches sur le cadran de l'horloge ---------- */
 {const SE=$('#secret');let taps=[];
  function openSecret(){if(!SE.hidden)return;SE.hidden=false;renderKB();SE.scrollTop=0;if(navigator.vibrate)navigator.vibrate([15,40,15]);fx(SE,{opacity:[0,1],scale:[1.06,1]},{stiffness:220,damping:24})}
  function closeSecret(){SE.hidden=true}
- $('#dial').addEventListener('pointerup',()=>{const n=Date.now();taps=taps.filter(t=>n-t<2000);taps.push(n);if(taps.length>=5){taps=[];openSecret()}});
+ $('#dial').addEventListener('pointerup',()=>{const n=Date.now();taps=taps.filter(t=>n-t<1500);taps.push(n);if(taps.length>=2){taps=[];openSecret()}});
  $('#secret-x').addEventListener('click',closeSecret);
  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('#kb-modal').hidden){$('#kb-modal').hidden=true;return}if(!SE.hidden)closeSecret()});
  {let y0=null;SE.addEventListener('touchstart',e=>{y0=SE.scrollTop<=2?e.touches[0].clientY:null},{passive:true});
   SE.addEventListener('touchend',e=>{if(y0!=null&&!(kDrag&&kDrag.g)&&$('#kb-modal').hidden&&!e.target.closest('.kcard')&&e.changedTouches[0].clientY-y0>120)closeSecret();y0=null},{passive:true})}}
 /* ---------- cadran à aiguilles (balayage fluide des secondes) ---------- */
-{const H=$('#dl-h'),M=$('#dl-m'),Sx=$('#dl-s'),R=$('#dl-sec'),SN=$('#dl-secnum'),RMd=matchMedia('(prefers-reduced-motion: reduce)').matches;let raf=0,last=-1;
- function draw(){raf=0;const n=new Date(),ms=n.getMilliseconds(),s=n.getSeconds()+(RMd?0:ms/1000),m=n.getMinutes()+s/60,h=(n.getHours()%12)+m/60;
-  H.setAttribute('transform',`rotate(${h*30} 100 100)`);M.setAttribute('transform',`rotate(${m*6} 100 100)`);Sx.setAttribute('transform',`rotate(${s*6} 100 100)`);
-  R.setAttribute('stroke-dashoffset',(609.5*(1-s/60)).toFixed(1));const si=n.getSeconds();if(si!==last){last=si;SN.textContent=String(si).padStart(2,'0')}
-  if(!document.hidden&&curPage==='home')raf=RMd?setTimeout(()=>{raf=0;draw()},1000):requestAnimationFrame(draw)}
- const kick=()=>{if(!raf)draw()};draw();setInterval(kick,1000);document.addEventListener('visibilitychange',kick)}
+{const H=$('#dl-h'),M=$('#dl-m'),Sx=$('#dl-s'),R=$('#dl-sec'),SN=$('#dl-secnum');
+ const loc=()=>(Date.now()-new Date().getTimezoneOffset()*60000)/1000;
+ let ph=-1;function hands(){const t=loc(),hr=(t/120)%720,mn=(t/10)%8640;const wrap=hr<ph;ph=hr;if(wrap){H.style.transition=M.style.transition='none'}H.style.rotate=hr.toFixed(2)+'deg';M.style.rotate=mn.toFixed(2)+'deg';if(wrap)requestAnimationFrame(()=>{H.style.transition=M.style.transition=''})}
+ function sync(){const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000;hands();
+  for(const el of [Sx,R]){el.style.animationDelay=(-s)+'s';el.classList.remove('run');void el.getBoundingClientRect();el.classList.add('run')}}
+ function tickSec(){SN.textContent=String(new Date().getSeconds()).padStart(2,'0');hands()}
+ sync();setInterval(tickSec,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});setInterval(sync,5*60*1000)}
 /* ---------- glisser vers le bas en haut d'une page = retour à l'accueil ---------- */
 {const PH=$('#pullhome');let y0=0,x0=0,pg=null,tr=false,dy=0;
  const reset=()=>{tr=false;pg=null;PH.style.transition='translate .3s,opacity .3s';PH.style.translate='-50% -140%';PH.style.opacity='0';PH.classList.remove('ready')};
@@ -773,7 +774,7 @@ $('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)re
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'43'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'44'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -805,7 +806,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='43';
+{const APPV='44';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

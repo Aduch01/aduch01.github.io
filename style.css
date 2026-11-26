@@ -594,3 +594,28 @@ body.editing .app-ic:nth-child(2n){animation-delay:-.15s}
 /* un élément masqué reste masqué, même si son style l'affiche */
 [hidden]{display:none!important}
 .kb-new.locked{opacity:.55}
+
+/* ====== Fluidité et compatibilité (tablette, iPhone, ordinateur) ====== */
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+/* horloge : la trotteuse et l'anneau tournent sur la carte graphique */
+#dl-h,#dl-m,#dl-s{transform-box:view-box;transform-origin:100px 100px}
+#dl-h,#dl-m{transition:rotate .5s cubic-bezier(.3,1.5,.5,1)}
+#dl-s.run{animation:dl-spin 60s linear infinite}
+#dl-sec.run{animation:dl-ring 60s linear infinite}
+@keyframes dl-spin{from{rotate:0deg}to{rotate:360deg}}
+@keyframes dl-ring{from{stroke-dashoffset:609.5}to{stroke-dashoffset:0}}
+#dial{touch-action:manipulation}
+/* fond aurore plus léger */
+.aurora i{filter:none!important;mix-blend-mode:normal!important;opacity:.55!important;will-change:transform;animation-duration:40s;background:none!important}
+.aurora i:nth-child(1){background-image:radial-gradient(closest-side,var(--a1),transparent)!important}
+.aurora i:nth-child(2){background-image:radial-gradient(closest-side,var(--a2),transparent)!important}
+.aurora i:nth-child(3){background-image:radial-gradient(closest-side,var(--a3),transparent)!important;opacity:.4!important}
+.aurora i:nth-child(4){background-image:radial-gradient(closest-side,var(--a4),transparent)!important;opacity:.3!important}
+.aurora::after{display:none}
+/* verre dépoli moins coûteux */
+.glass,.plate,.chip,.ghost,.seg,.toast,textarea,input[type=text],.day,.stat,.mline,.item{-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
+.wxh-stats div,.wxh-strip button,.wx .day,.wx .stat,.mline{-webkit-backdrop-filter:none;backdrop-filter:none}
+.pic .pl img{will-change:scale}
+/* les pages hors écran ne travaillent pas */
+.page{contain:layout paint}
+@media(prefers-reduced-motion:reduce){#dl-s.run,#dl-sec.run{animation:none}}
