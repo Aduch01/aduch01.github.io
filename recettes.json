@@ -225,5 +225,863 @@
     "ingredients": [],
     "etapes": [],
     "astuces": []
+  },
+  {
+    "id": "carbonara",
+    "titre": "Pâtes carbonara",
+    "art": "pasta",
+    "duree": "20 min",
+    "intro": "La vraie, sans crème : œufs, fromage et poivre qui enrobent les pâtes. Prête en 20 minutes.",
+    "portions": 4,
+    "prep": "5 min",
+    "cuisson": "15 min",
+    "ingredients": [
+      {
+        "q": 400,
+        "u": "g",
+        "n": "spaghetti"
+      },
+      {
+        "q": 150,
+        "u": "g",
+        "n": "guanciale ou lardons"
+      },
+      {
+        "q": 4,
+        "u": "",
+        "n": "jaunes d'œufs"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "œuf entier"
+      },
+      {
+        "q": 80,
+        "u": "g",
+        "n": "pecorino ou parmesan râpé"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "poivre noir du moulin"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Cuire les pâtes",
+        "d": "Fais cuire les spaghetti dans une grande casserole d'eau bouillante bien salée, le temps indiqué sur le paquet (environ 10 min).",
+        "min": 10
+      },
+      {
+        "t": "Dorer les lardons",
+        "d": "Pendant ce temps, fais dorer les lardons dans une poêle sans matière grasse, 5 min à feu moyen.",
+        "min": 5
+      },
+      {
+        "t": "Préparer la sauce",
+        "d": "Dans un bol, fouette les jaunes, l'œuf entier, le fromage râpé et beaucoup de poivre."
+      },
+      {
+        "t": "Mélanger hors du feu",
+        "d": "Égoutte les pâtes en gardant une louche d'eau de cuisson. Hors du feu, mélange pâtes, lardons et sauce aux œufs, en ajoutant un peu d'eau de cuisson pour rendre crémeux."
+      },
+      {
+        "t": "Servir",
+        "d": "Sers tout de suite avec un peu de fromage et de poivre par-dessus."
+      }
+    ],
+    "astuces": [
+      "Toujours hors du feu, sinon les œufs cuisent en omelette.",
+      "L'eau de cuisson féculente rend la sauce onctueuse sans crème."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "soupe-legumes",
+    "titre": "Soupe de légumes maison",
+    "art": "soup",
+    "duree": "40 min",
+    "intro": "Une soupe douce et réconfortante, parfaite les soirs d'hiver.",
+    "portions": 4,
+    "prep": "15 min",
+    "cuisson": "25 min",
+    "ingredients": [
+      {
+        "q": 3,
+        "u": "",
+        "n": "carottes"
+      },
+      {
+        "q": 2,
+        "u": "",
+        "n": "pommes de terre"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "poireau"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "oignon"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "courgette"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "cube de bouillon de légumes"
+      },
+      {
+        "q": 1.2,
+        "u": "l",
+        "n": "eau"
+      },
+      {
+        "q": 1,
+        "u": "c. à soupe",
+        "n": "huile d'olive"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "sel, poivre, crème fraîche (facultatif)"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Préparer",
+        "d": "Épluche et coupe tous les légumes en morceaux."
+      },
+      {
+        "t": "Faire revenir",
+        "d": "Fais revenir l'oignon et le poireau dans l'huile 5 min.",
+        "min": 5
+      },
+      {
+        "t": "Cuire",
+        "d": "Ajoute les autres légumes, l'eau et le cube. Laisse cuire 25 min à petits bouillons.",
+        "min": 25
+      },
+      {
+        "t": "Mixer",
+        "d": "Mixe finement, sale, poivre. Ajoute une cuillère de crème dans chaque bol si tu veux."
+      }
+    ],
+    "astuces": [
+      "Elle se garde 3 jours au frigo et se congèle très bien."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "omelette-champignons",
+    "titre": "Omelette aux champignons",
+    "art": "omelette",
+    "duree": "15 min",
+    "intro": "Le repas express qui fait plaisir : moelleuse, dorée, aux champignons poêlés.",
+    "portions": 2,
+    "prep": "5 min",
+    "cuisson": "10 min",
+    "ingredients": [
+      {
+        "q": 5,
+        "u": "",
+        "n": "œufs"
+      },
+      {
+        "q": 200,
+        "u": "g",
+        "n": "champignons de Paris"
+      },
+      {
+        "q": 20,
+        "u": "g",
+        "n": "beurre"
+      },
+      {
+        "q": 2,
+        "u": "c. à soupe",
+        "n": "lait"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "persil, sel, poivre"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Poêler les champignons",
+        "d": "Émince les champignons et fais-les dorer dans la moitié du beurre 6 min.",
+        "min": 6
+      },
+      {
+        "t": "Battre les œufs",
+        "d": "Bats les œufs avec le lait, sel et poivre."
+      },
+      {
+        "t": "Cuire l'omelette",
+        "d": "Fais fondre le reste du beurre, verse les œufs et cuis 3 à 4 min en ramenant les bords vers le centre.",
+        "min": 4
+      },
+      {
+        "t": "Garnir et plier",
+        "d": "Ajoute les champignons et le persil sur une moitié, plie et sers aussitôt."
+      }
+    ],
+    "astuces": [
+      "Retire-la du feu quand le centre est encore un peu baveux : elle finit de cuire dans l'assiette."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "salade-cesar",
+    "titre": "Salade César au poulet",
+    "art": "salad",
+    "duree": "25 min",
+    "intro": "Croquante et généreuse : poulet doré, croûtons, parmesan et sauce César maison.",
+    "portions": 4,
+    "prep": "15 min",
+    "cuisson": "15 min",
+    "ingredients": [
+      {
+        "q": 2,
+        "u": "",
+        "n": "blancs de poulet"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "laitue romaine"
+      },
+      {
+        "q": 2,
+        "u": "",
+        "n": "tranches de pain"
+      },
+      {
+        "q": 50,
+        "u": "g",
+        "n": "parmesan en copeaux"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "jaune d'œuf"
+      },
+      {
+        "q": 1,
+        "u": "c. à café",
+        "n": "moutarde"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "gousse d'ail"
+      },
+      {
+        "q": 1,
+        "u": "c. à soupe",
+        "n": "jus de citron"
+      },
+      {
+        "q": 10,
+        "u": "cl",
+        "n": "huile d'olive"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Cuire le poulet",
+        "d": "Fais dorer les blancs de poulet à la poêle 6 min de chaque côté, puis coupe-les en lamelles.",
+        "min": 12
+      },
+      {
+        "t": "Faire les croûtons",
+        "d": "Coupe le pain en dés et dore-les 5 min à la poêle avec un filet d'huile.",
+        "min": 5
+      },
+      {
+        "t": "Sauce César",
+        "d": "Fouette le jaune, la moutarde, l'ail écrasé et le citron, puis verse l'huile en filet comme une mayonnaise."
+      },
+      {
+        "t": "Assembler",
+        "d": "Mélange la salade avec la sauce, ajoute poulet, croûtons et copeaux de parmesan."
+      }
+    ],
+    "astuces": [
+      "Ajoute 2 filets d'anchois écrasés dans la sauce pour le goût original."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "croque-monsieur",
+    "titre": "Croque-monsieur",
+    "art": "croque",
+    "duree": "20 min",
+    "intro": "Le classique doré et fondant, prêt en 20 minutes, que tout le monde aime.",
+    "portions": 4,
+    "unite": [
+      "croque",
+      "croques"
+    ],
+    "prep": "8 min",
+    "cuisson": "12 min",
+    "ingredients": [
+      {
+        "q": 8,
+        "u": "",
+        "n": "tranches de pain de mie"
+      },
+      {
+        "q": 4,
+        "u": "",
+        "n": "tranches de jambon"
+      },
+      {
+        "q": 150,
+        "u": "g",
+        "n": "emmental râpé"
+      },
+      {
+        "q": 4,
+        "u": "c. à soupe",
+        "n": "crème fraîche"
+      },
+      {
+        "q": 30,
+        "u": "g",
+        "n": "beurre"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "poivre"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Préchauffer",
+        "d": "Préchauffe le four à 200 °C."
+      },
+      {
+        "t": "Monter les croques",
+        "d": "Beurre le pain, pose jambon et un peu de fromage entre deux tranches."
+      },
+      {
+        "t": "Napper",
+        "d": "Étale la crème sur le dessus, poivre et couvre du reste de fromage."
+      },
+      {
+        "t": "Gratiner",
+        "d": "Enfourne 10 à 12 min jusqu'à ce que ce soit bien doré.",
+        "min": 12
+      }
+    ],
+    "astuces": [
+      "Ajoute un œuf au plat dessus et c'est un croque-madame."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "gratin-dauphinois",
+    "titre": "Gratin dauphinois",
+    "art": "gratin",
+    "duree": "1 h 15",
+    "intro": "Fondant et crémeux, le gratin de pommes de terre de toujours.",
+    "portions": 6,
+    "prep": "20 min",
+    "cuisson": "1 h",
+    "ingredients": [
+      {
+        "q": 1200,
+        "u": "g",
+        "n": "pommes de terre (Charlotte ou Bintje)"
+      },
+      {
+        "q": 50,
+        "u": "cl",
+        "n": "lait"
+      },
+      {
+        "q": 30,
+        "u": "cl",
+        "n": "crème fraîche liquide"
+      },
+      {
+        "q": 2,
+        "u": "",
+        "n": "gousses d'ail"
+      },
+      {
+        "q": 20,
+        "u": "g",
+        "n": "beurre"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "muscade, sel, poivre"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Préparer",
+        "d": "Préchauffe le four à 170 °C. Épluche et coupe les pommes de terre en rondelles de 3 mm (ne les rince pas)."
+      },
+      {
+        "t": "Précuire",
+        "d": "Fais-les cuire 10 min dans le lait et la crème avec l'ail, sel, poivre et muscade, en remuant doucement.",
+        "min": 10
+      },
+      {
+        "t": "Mettre en plat",
+        "d": "Frotte un plat avec une gousse d'ail et beurre-le. Verse le tout et égalise."
+      },
+      {
+        "t": "Cuire au four",
+        "d": "Enfourne 1 h : le dessus doit être bien doré et les pommes de terre fondantes.",
+        "min": 60
+      }
+    ],
+    "astuces": [
+      "Pas de fromage dans le vrai gratin dauphinois : c'est l'amidon des pommes de terre qui le rend crémeux."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "quiche-lorraine",
+    "titre": "Quiche lorraine",
+    "art": "quiche",
+    "duree": "50 min",
+    "intro": "Dorée et moelleuse, idéale avec une salade verte.",
+    "portions": 6,
+    "prep": "15 min",
+    "cuisson": "35 min",
+    "ingredients": [
+      {
+        "q": 1,
+        "u": "",
+        "n": "pâte brisée"
+      },
+      {
+        "q": 200,
+        "u": "g",
+        "n": "lardons"
+      },
+      {
+        "q": 3,
+        "u": "",
+        "n": "œufs"
+      },
+      {
+        "q": 20,
+        "u": "cl",
+        "n": "crème fraîche"
+      },
+      {
+        "q": 20,
+        "u": "cl",
+        "n": "lait"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "muscade, poivre"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Préparer",
+        "d": "Préchauffe le four à 180 °C. Étale la pâte dans un moule et pique le fond."
+      },
+      {
+        "t": "Lardons",
+        "d": "Fais revenir les lardons 5 min et égoutte-les.",
+        "min": 5
+      },
+      {
+        "t": "Appareil",
+        "d": "Fouette œufs, crème, lait, muscade et poivre (pas de sel, les lardons le sont)."
+      },
+      {
+        "t": "Cuire",
+        "d": "Répartis les lardons, verse l'appareil et enfourne 35 à 40 min.",
+        "min": 38
+      }
+    ],
+    "astuces": [
+      "Elle est encore meilleure tiède."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "poulet-curry",
+    "titre": "Poulet curry coco et riz",
+    "art": "curry",
+    "duree": "35 min",
+    "intro": "Doux, parfumé et onctueux au lait de coco : le voyage sans effort.",
+    "portions": 4,
+    "prep": "10 min",
+    "cuisson": "25 min",
+    "ingredients": [
+      {
+        "q": 600,
+        "u": "g",
+        "n": "blancs de poulet"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "oignon"
+      },
+      {
+        "q": 2,
+        "u": "c. à soupe",
+        "n": "curry en poudre"
+      },
+      {
+        "q": 40,
+        "u": "cl",
+        "n": "lait de coco"
+      },
+      {
+        "q": 1,
+        "u": "c. à soupe",
+        "n": "huile"
+      },
+      {
+        "q": 250,
+        "u": "g",
+        "n": "riz basmati"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "coriandre, sel"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Riz",
+        "d": "Fais cuire le riz dans l'eau bouillante salée 11 min.",
+        "min": 11
+      },
+      {
+        "t": "Oignon",
+        "d": "Fais revenir l'oignon émincé dans l'huile 3 min.",
+        "min": 3
+      },
+      {
+        "t": "Poulet",
+        "d": "Ajoute le poulet en dés et fais-le dorer 5 min, puis le curry 1 min.",
+        "min": 6
+      },
+      {
+        "t": "Mijoter",
+        "d": "Verse le lait de coco et laisse mijoter 15 min. Sers avec le riz et la coriandre.",
+        "min": 15
+      }
+    ],
+    "astuces": [
+      "Une poignée d'épinards en fin de cuisson et c'est un plat complet."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "crepes",
+    "titre": "Crêpes",
+    "art": "crepe",
+    "duree": "30 min + repos",
+    "intro": "Fines et légères, pour le goûter ou un dîner sucré.",
+    "portions": 15,
+    "unite": [
+      "crêpe",
+      "crêpes"
+    ],
+    "prep": "10 min",
+    "cuisson": "20 min",
+    "repos": "1 h",
+    "ingredients": [
+      {
+        "q": 250,
+        "u": "g",
+        "n": "farine"
+      },
+      {
+        "q": 4,
+        "u": "",
+        "n": "œufs"
+      },
+      {
+        "q": 50,
+        "u": "cl",
+        "n": "lait"
+      },
+      {
+        "q": 30,
+        "u": "g",
+        "n": "sucre"
+      },
+      {
+        "q": 50,
+        "u": "g",
+        "n": "beurre fondu"
+      },
+      {
+        "q": 1,
+        "u": "pincée",
+        "n": "sel"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Pâte",
+        "d": "Mélange farine, sucre et sel, ajoute les œufs puis le lait petit à petit pour éviter les grumeaux, et enfin le beurre fondu."
+      },
+      {
+        "t": "Repos",
+        "d": "Laisse reposer 1 h : les crêpes seront plus souples.",
+        "min": 60
+      },
+      {
+        "t": "Cuire",
+        "d": "Dans une poêle chaude légèrement beurrée, verse une petite louche, étale et cuis 1 min de chaque côté."
+      }
+    ],
+    "astuces": [
+      "Ajoute 1 c. à soupe de rhum ou de fleur d'oranger dans la pâte pour le parfum."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "pizza-maison",
+    "titre": "Pizza maison express",
+    "art": "pizza",
+    "duree": "25 min",
+    "intro": "Avec une pâte du commerce : croustillante, garnie comme tu aimes, en 25 minutes.",
+    "portions": 1,
+    "unite": [
+      "grande pizza",
+      "grandes pizzas"
+    ],
+    "prep": "10 min",
+    "cuisson": "15 min",
+    "ingredients": [
+      {
+        "q": 1,
+        "u": "",
+        "n": "pâte à pizza"
+      },
+      {
+        "q": 150,
+        "u": "g",
+        "n": "sauce tomate"
+      },
+      {
+        "q": 125,
+        "u": "g",
+        "n": "mozzarella"
+      },
+      {
+        "q": 4,
+        "u": "",
+        "n": "tranches de jambon"
+      },
+      {
+        "q": 100,
+        "u": "g",
+        "n": "champignons"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "origan, huile d'olive"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Préchauffer",
+        "d": "Préchauffe le four à 240 °C, le plus chaud possible."
+      },
+      {
+        "t": "Garnir",
+        "d": "Étale la sauce, puis jambon, champignons émincés et mozzarella en morceaux."
+      },
+      {
+        "t": "Cuire",
+        "d": "Enfourne 12 à 15 min, jusqu'à ce que les bords soient dorés.",
+        "min": 13
+      },
+      {
+        "t": "Finir",
+        "d": "Ajoute un filet d'huile d'olive et l'origan à la sortie du four."
+      }
+    ],
+    "astuces": [
+      "Préchauffe une plaque vide dans le four : la pâte sera plus croustillante dessous."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "hachis-parmentier",
+    "titre": "Hachis parmentier",
+    "art": "parmentier",
+    "duree": "1 h",
+    "intro": "Le plat familial par excellence : viande fondante sous une purée gratinée.",
+    "portions": 6,
+    "prep": "25 min",
+    "cuisson": "35 min",
+    "ingredients": [
+      {
+        "q": 1000,
+        "u": "g",
+        "n": "pommes de terre"
+      },
+      {
+        "q": 500,
+        "u": "g",
+        "n": "bœuf haché"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "oignon"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "n": "gousse d'ail"
+      },
+      {
+        "q": 20,
+        "u": "cl",
+        "n": "lait"
+      },
+      {
+        "q": 50,
+        "u": "g",
+        "n": "beurre"
+      },
+      {
+        "q": 60,
+        "u": "g",
+        "n": "fromage râpé"
+      },
+      {
+        "q": 0,
+        "u": "",
+        "n": "persil, sel, poivre"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Purée",
+        "d": "Cuis les pommes de terre 20 min à l'eau salée, écrase-les avec le lait chaud et le beurre.",
+        "min": 20
+      },
+      {
+        "t": "Viande",
+        "d": "Fais revenir l'oignon et l'ail, puis la viande 8 min. Sale, poivre, ajoute le persil.",
+        "min": 8
+      },
+      {
+        "t": "Monter",
+        "d": "Dans un plat, mets la viande, puis la purée, puis le fromage."
+      },
+      {
+        "t": "Gratiner",
+        "d": "Enfourne 20 min à 200 °C.",
+        "min": 20
+      }
+    ],
+    "astuces": [
+      "Un reste de bœuf bourguignon ou de pot-au-feu fait un hachis encore meilleur."
+    ],
+    "idee": true,
+    "niveau": "Facile"
+  },
+  {
+    "id": "gateau-yaourt",
+    "titre": "Gâteau au yaourt",
+    "art": "cake",
+    "duree": "45 min",
+    "intro": "Le gâteau le plus simple du monde : on mesure tout avec le pot de yaourt.",
+    "portions": 8,
+    "prep": "10 min",
+    "cuisson": "35 min",
+    "ingredients": [
+      {
+        "q": 1,
+        "u": "",
+        "n": "pot de yaourt nature"
+      },
+      {
+        "q": 3,
+        "u": "pots",
+        "n": "farine"
+      },
+      {
+        "q": 2,
+        "u": "pots",
+        "n": "sucre"
+      },
+      {
+        "q": 3,
+        "u": "",
+        "n": "œufs"
+      },
+      {
+        "q": 0.5,
+        "u": "pot",
+        "n": "huile"
+      },
+      {
+        "q": 1,
+        "u": "sachet",
+        "n": "levure chimique"
+      },
+      {
+        "q": 1,
+        "u": "sachet",
+        "n": "sucre vanillé"
+      }
+    ],
+    "etapes": [
+      {
+        "t": "Préchauffer",
+        "d": "Préchauffe le four à 180 °C et beurre un moule."
+      },
+      {
+        "t": "Mélanger",
+        "d": "Verse le yaourt dans un saladier, puis utilise le pot vide pour mesurer le reste. Mélange tout jusqu'à une pâte lisse."
+      },
+      {
+        "t": "Cuire",
+        "d": "Enfourne 35 min : la lame d'un couteau doit ressortir sèche.",
+        "min": 35
+      }
+    ],
+    "astuces": [
+      "Ajoute le zeste d'un citron ou des pépites de chocolat pour varier."
+    ],
+    "idee": true,
+    "niveau": "Facile"
   }
 ]
