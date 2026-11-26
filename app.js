@@ -3,7 +3,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=44';
+import {firebaseConfig,OWNER_UID,PLACE} from './config.js?v=45';
 
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -402,10 +402,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tocs]');if
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var MO=null;
 function fxBadge(t,ok){const b=$('#fxinfo');if(b){b.textContent=t;b.classList.toggle('ok',!!ok)}}
-fxBadge(RM?'Version 44 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 44 · chargement des animations…');
+fxBadge(RM?'Version 45 · animations coupées par le réglage « Réduire les animations » de l\'appareil':'Version 45 · chargement des animations…');
 if(!RM){const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js';sc.async=true;
- sc.onerror=()=>fxBadge('Version 44 · animations non chargées (connexion ?)');
- sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 44 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 44 · animations non chargées')};document.head.appendChild(sc)}
+ sc.onerror=()=>fxBadge('Version 45 · animations non chargées (connexion ?)');
+ sc.onload=()=>{MO=window.Motion||null;if(MO){document.documentElement.classList.add('mo');fxBadge('Version 45 · animations actives ✨',true);setTimeout(()=>$('#fxinfo')?.classList.add('fade'),6000);fxView(document.getElementById('v-'+curPage))}else fxBadge('Version 45 · animations non chargées')};document.head.appendChild(sc)}
 const SPR={type:'spring',stiffness:420,damping:28};
 function fx(el,kf,o){if(!MO||!el)return null;try{return MO.animate(el,kf,{type:'spring',stiffness:420,damping:28,...o})}catch(e){return null}}
 function fxView(v){if(!MO||!v)return;
@@ -646,7 +646,7 @@ let curPage='',firstGo=true;
 const TITLES={home:'Accueil',meteo:'Météo',recettes:'Recettes',courses:'Courses',agenda:'Agenda',notes:'Notes',photos:'Photos'};
 function renderDots(){$('#dots').innerHTML=pagesEl().map(p=>`<button type="button" data-dot="${p.dataset.page}" aria-label="${esc(TITLES[p.dataset.page]||p.dataset.page)}" class="${p.dataset.page===curPage?'on':''}"></button>`).join('')}
 $('#dots').addEventListener('click',e=>{const b=e.target.closest('[data-dot]');if(b)goPage(b.dataset.dot)});
-function setActive(k){if(k===curPage)return;curPage=k;if(k==='home'&&typeof wxDraw==='function'&&!wxRaf&&wxKind)wxRaf=requestAnimationFrame(wxDraw);renderDots();if(k==='courses')renderCS();if(k==='agenda')renderCal();
+function setActive(k){if(k===curPage)return;curPage=k;const hb=$('#homebtn');if(hb)hb.hidden=k==='home';if(k==='home'&&typeof wxDraw==='function'&&!wxRaf&&wxKind)wxRaf=requestAnimationFrame(wxDraw);renderDots();if(k==='courses')renderCS();if(k==='agenda')renderCal();
  const el=document.getElementById('v-'+k);if(!firstGo&&typeof fxView==='function')fxView(el);
  history.replaceState(null,'',k==='home'?location.pathname+location.search:'#'+k)}
 let navLock=null,navUntil=0;
@@ -670,6 +670,10 @@ function syncPages(){const order=['home',...[...document.querySelectorAll('.laun
 document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select')||!$('#viewer').hidden&&$('#viewer').classList.contains('on')||!$('#v-recette').hidden)return;
  const P=pagesEl().map(p=>p.dataset.page),i=P.indexOf(curPage);if(e.key==='ArrowRight'&&i<P.length-1)goPage(P[i+1]);if(e.key==='ArrowLeft'&&i>0)goPage(P[i-1])});
 addEventListener('hashchange',route);syncPages();route();
+/* retour à l'accueil : bouton (ordinateur), touche Échap, bouton « précédent » de la souris */
+$('#homebtn').addEventListener('click',e=>{e.preventDefault();location.hash=''});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&curPage!=='home'&&$('#v-recette').hidden&&$('#settings').hidden&&$('#secret').hidden&&!$('#viewer').classList.contains('on')&&!e.target.closest('input,textarea,select'))location.hash=''});
+document.addEventListener('mouseup',e=>{if(e.button===3&&curPage!=='home'){e.preventDefault();location.hash=''}});
 
 /* ---------- tableau de tâches (Kanban + priorités) dans la page cachée ---------- */
 const KCOLS=[['todo','À faire','#5ecbff'],['doing','En cours','#8b7bff'],['wait','En attente','#ffb020'],['done','Terminé','#30d158']];
@@ -774,7 +778,7 @@ $('#kb-board').addEventListener('click',e=>{if(Date.now()-(kDrag?.end||0)<300)re
  PG.addEventListener('touchcancel',reset,{passive:true})}
 
 /* ---------- paramètres cachés (appui long sur l'heure) ---------- */
-let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'44'+' · '+location.host;status(S.canW?'':'');
+let setAt=0;function openSettings(){const st=$('#settings');if(!st.hidden)return;st.hidden=false;setAt=Date.now();$('#set-ver').textContent='Le Tableau · version '+'45'+' · '+location.host;status(S.canW?'':'');
  fx($('.set-card'),{opacity:[0,1],scale:[.92,1],y:[20,0]},{stiffness:340,damping:24})}
 function closeSettings(){$('#settings').hidden=true}
 $('#set-x').addEventListener('click',closeSettings);
@@ -806,7 +810,7 @@ $('#fs').addEventListener('click',async()=>{try{document.fullscreenElement?await
 lockUI();rerender();renderWx();
 
 /* ---------- mise à jour automatique : recharge la page quand une nouvelle version est en ligne ---------- */
-{const APPV='44';
+{const APPV='45';
  async function chk(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
   if(j.v&&j.v!==APPV&&!editing&&$('#vo').hidden&&!document.querySelector('textarea:focus,input:focus')){location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash)}}catch(e){}}
  setInterval(chk,3*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setTimeout(chk,4000)}

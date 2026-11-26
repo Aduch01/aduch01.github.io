@@ -619,3 +619,13 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 /* les pages hors écran ne travaillent pas */
 .page{contain:layout paint}
 @media(prefers-reduced-motion:reduce){#dl-s.run,#dl-sec.run{animation:none}}
+
+/* bouton « Accueil » sur ordinateur (souris) */
+.homebtn{display:none}
+@media(hover:hover) and (pointer:fine){
+ .homebtn{position:fixed;top:16px;left:16px;z-index:25;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:999px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;background:rgba(20,22,48,.6);transition:background .2s,translate .3s cubic-bezier(.3,1.4,.5,1),opacity .3s}
+ .homebtn svg{width:20px;height:20px}
+ .homebtn:hover{background:linear-gradient(135deg,#8b7bff,#3b82f6)}
+ .homebtn[hidden]{display:inline-flex!important;opacity:0;translate:-20px 0;pointer-events:none}
+ .page:not(.home-pg) .pg{padding-top:72px}
+}
